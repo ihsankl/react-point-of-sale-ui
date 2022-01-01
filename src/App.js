@@ -1,25 +1,62 @@
-import logo from './logo.svg';
-import './App.css';
+/* eslint-disable */
+import React, {useState} from 'react';
+import {
+  Drawer, Toolbar, Box,
+  List,
+  AppBar,
+  Typography,
+  Paper,
+} from '@mui/material';
+import {
+  ShoppingCart,
+} from '@mui/icons-material';
+import Header from './Components/Header';
+import SidebarMenu from './Components/SidebarMenu';
+import {styled} from '@mui/material/styles';
+const APP_NAME = process.env.REACT_APP_NAME;
 
-function App() {
+const PaperContainer = styled(Paper)(({theme}) => ({
+  ...theme.typography.body1,
+  padding: theme.spacing(1),
+  marginTop:'5em',
+  marginLeft:'.5em', 
+  marginRight:'.5em', 
+  display:'flex', 
+  flex:1, 
+  paddingLeft:'1em', 
+  paddingRight:'1em', 
+  flexDirection:'column', 
+  height:'100%',
+}));
+
+const App = ()=> {
+  const [anchor, setAnchor] = useState(null);
+  const [open, setOpen] = useState(false);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div style={{display: 'flex'}}>
+      <Header openDrawer={setOpen} />
+
+      <Drawer
+        sx={{width: '18em'}}
+        variant='permanent'
+        anchor="left"
+        open={true}
+        onClose={() => setOpen(false)}
+      >
+        <Box
+          sx={{width: '18em', paddingTop:'4em'}}
+          role="presentation"
         >
-          Learn React
-        </a>
-      </header>
+          <List>
+            <SidebarMenu />
+          </List>
+        </Box>
+      </Drawer>
+      <PaperContainer elevation={3} square>
+<h1>aaaaaaaaaaaaaaaaAAAAAAAAAAa</h1>
+      </PaperContainer>
     </div>
   );
-}
+};
 
 export default App;
