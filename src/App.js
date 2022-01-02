@@ -21,7 +21,7 @@ import {styled} from '@mui/material/styles';
 import {Title} from './layout';
 import BasicTable from './Components/BasicTable';
 import BasicInput from './Components/BasicInput';
-import {BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import {BrowserRouter, Navigate, Route, Routes, useLocation} from 'react-router-dom';
 // Customer
 import Customer from './Components/Pages/Customer/';
 import CreateCustomer from './Components/Pages/Customer/Create';
@@ -38,33 +38,32 @@ import UpdateProductUnit from './Components/Pages/Product Unit/Update';
 import Supplier from './Components/Pages/Supplier/';
 import CreateSupplier from './Components/Pages/Supplier/Create';
 import UpdateSupplier from './Components/Pages/Supplier/Update';
+// Product
+import Product from './Components/Pages/Product/';
+import CreateProduct from './Components/Pages/Product/Create';
+import UpdateProduct from './Components/Pages/Product/Update';
 
 const APP_NAME = process.env.REACT_APP_NAME;
 
 const App = ()=> {
-  const [anchor, setAnchor] = useState(null);
-  const [open, setOpen] = useState(false);
-  const [openCreate, setOpenCreate] = useState(false);
-
   return (
     <div style={{display: 'flex'}}>
       <BrowserRouter>
-      <Header openDrawer={setOpen} />
-
-      <Drawer
-        sx={{width: '15em'}}
-        variant='permanent'
-        anchor="left"
-      >
-        <Box
-          sx={{width: '15em', paddingTop: '4em'}}
-          role="presentation"
+        <Header />
+        <Drawer
+          sx={{width: '15em'}}
+          variant='permanent'
+          anchor="left"
         >
-          <List>
-            <SidebarMenu />
-          </List>
-        </Box>
-      </Drawer>
+          <Box
+            sx={{width: '15em', paddingTop: '4em'}}
+            role="presentation"
+          >
+            <List>
+              <SidebarMenu />
+            </List>
+          </Box>
+        </Drawer>
         <Routes>
           <Route path="/" element={<Navigate replace to="/customer" />}/>
           <Route path="/customer" element={<Customer />}/>
@@ -85,6 +84,22 @@ const App = ()=> {
           <Route path="/supplier" element={<Supplier />}/>
           <Route path="/supplier/create" element={<CreateSupplier />} />
           <Route path="/supplier/update/:id" element={<UpdateSupplier />} />
+
+          {/* product routes */}
+          <Route path="/product" element={<Product/>}/>
+          <Route path="/product/create" element={<CreateProduct/>}/>
+          <Route path="/product/update/:id" element={<UpdateProduct/>}/>
+
+          {/* redirect unmatch route */}
+          <Route path="*" element={<Navigate replace to="/customer" />}/>
+
+          {/* TODO: add invoice UI. foreign key required: user_id */}
+          {/* TODO: add purchase order UI. foreign key required: product_id, user_id, supplier_id */}
+          {/* TODO: add receive product UI. foreign key required: product_id, user_id, supplier_id */}
+          {/* TODO: add sales UI. foreign key required: invoice_id, product_id */}
+          {/* TODO: add login UI */}
+          {/* TODO: add reports UI */}
+          {/* TODO: add 404 Not Found page */}
 
         </Routes>
       </BrowserRouter>

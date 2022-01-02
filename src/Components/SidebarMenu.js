@@ -50,6 +50,7 @@ const SidebarMenu = () => {
 
       <ListItem
         button
+        onClick={() => navigate('/product')}
       >
         <ListItemIcon>
           <ShoppingBasket />

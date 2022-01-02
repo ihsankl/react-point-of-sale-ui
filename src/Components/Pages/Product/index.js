@@ -1,15 +1,15 @@
-import {Search} from '@mui/icons-material';
 import {Button, TextField} from '@mui/material';
 import React from 'react';
 import {SubHeader, PaperContainer, Title} from '../../../layout';
-import BasicTable from '../../BasicTable';
 import {useNavigate} from 'react-router-dom';
+import {Search} from '@mui/icons-material';
+import BasicTable from '../../BasicTable';
 
-const ProductCategory = () => {
+const Product = () => {
   const navigate = useNavigate();
   return (
     <PaperContainer elevation={3} square>
-      <Title>Product Category</Title>
+      <Title>Product</Title>
       <SubHeader>
         <Button
           onClick={()=> navigate('create')}
@@ -29,4 +29,4 @@ const ProductCategory = () => {
   );
 };
 
-export default ProductCategory;
+export default Product;

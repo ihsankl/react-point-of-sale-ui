@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
-import {ContentContainer, PaperContainer, Title} from '../../../layout';
+import {SubHeader, PaperContainer, Title} from '../../../layout';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
   product_category_name: '',
 };
-
 
 const CreateProductCategory = () => {
   const [formValues, setFormValues] = useState(defaultValues);
@@ -29,9 +28,9 @@ const CreateProductCategory = () => {
   return (
     <PaperContainer elevation={3} square>
       <Title>Create Product Category</Title>
-      <ContentContainer>
+      <SubHeader>
         <BasicInput fields={fields} onSubmit={null} />
-      </ContentContainer>
+      </SubHeader>
 
     </PaperContainer>
   );

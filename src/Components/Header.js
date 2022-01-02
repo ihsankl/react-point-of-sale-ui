@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 
 const APP_NAME = process.env.REACT_APP_NAME;
 
-const Header = ({openDrawer}) => {
+const Header = () => {
   const [anchorEl, setaAchorEl] = useState(null);
 
   return (
@@ -24,8 +24,6 @@ const Header = ({openDrawer}) => {
         </div>
         <div>
           <IconButton
-            // className={classes.menuLeft}
-            // aria-owns={open ? "menu-appbar" : null}
             aria-haspopup="true"
             onClick={(e) => setaAchorEl(e.currentTarget)}
             color="inherit"

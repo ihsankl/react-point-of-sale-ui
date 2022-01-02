@@ -1,31 +1,24 @@
-import {FormControl, TextField, Button} from '@mui/material';
+import {TextField, Button} from '@mui/material';
 import React from 'react';
 import PropTypes from 'prop-types';
-import {styled} from '@mui/material/styles';
 import {useNavigate, useLocation} from 'react-router-dom';
 import {removeLastSlash} from '../helper';
+import {FormContainer, FormControlContainer} from '../layout';
 
-const FormContainer = styled('form')(({theme}) => ({
-  ...theme.typography.body1,
-  gap: '1em',
-  display: 'flex',
-  flexDirection: 'column',
-  width: '100%',
-}));
-
-const BasicInput = ({isUpdate, fields, onSubmit}) => {
+const BasicInput = ({isUpdate, fields, onSubmit, children}) => {
   const navigate = useNavigate();
   const location = useLocation();
 
   return (<>
-    <FormControl sx={{width: '50%'}}>
-      <FormContainer onSubmit={(e) => e.preventDefault()}>
+    <FormContainer onSubmit={(e) => e.preventDefault()}>
+      <FormControlContainer>
         {fields.map((field, index) => {
           return (
             <TextField
               key={index}
               id={field.id}
               label={field.label}
+              name={field.id}
               value={field.value}
               variant="outlined"
               fullWidth
@@ -33,30 +26,31 @@ const BasicInput = ({isUpdate, fields, onSubmit}) => {
             />
           );
         })}
-        <div style={{display: 'flex', gap: '.5em'}}>
-          <Button
-            sx={{width: '50%'}}
-            variant="contained"
-            color="primary"
-            type="submit"
-            onClick={onSubmit}
-          >
-            {isUpdate ? 'Update' : 'Create'}
-          </Button>
-          <Button
-            sx={{width: '50%'}}
-            variant="contained"
-            color="primary"
-            onClick={
-              ()=> navigate(removeLastSlash(location.pathname),
-                  {state: {from: location}})
-            }
-          >
-            {'Cancel'}
-          </Button>
-        </div>
-      </FormContainer>
-    </FormControl>
+      </FormControlContainer>
+      {children}
+      <div style={{display: 'flex', gap: '.5em', width: '50%'}}>
+        <Button
+          sx={{width: '50%'}}
+          variant="contained"
+          color="primary"
+          type="submit"
+          onClick={onSubmit}
+        >
+          {isUpdate ? 'Update' : 'Create'}
+        </Button>
+        <Button
+          sx={{width: '50%'}}
+          variant="contained"
+          color="primary"
+          onClick={
+            ()=> navigate(removeLastSlash(location.pathname),
+                {state: {from: location}})
+          }
+        >
+          {'Cancel'}
+        </Button>
+      </div>
+    </FormContainer>
   </>);
 };
 
@@ -69,6 +63,7 @@ BasicInput.propTypes = {
   })).isRequired,
   onSubmit: PropTypes.func.isRequired,
   isUpdate: PropTypes.bool,
+  children: PropTypes.node,
 };
 
 export default BasicInput;

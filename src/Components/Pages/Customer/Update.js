@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ContentContainer, PaperContainer, Title} from '../../../layout';
+import {SubHeader, PaperContainer, Title} from '../../../layout';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -59,9 +59,9 @@ const UpdateCustomer = () => {
   return (
     <PaperContainer elevation={3} square>
       <Title>Update Customer</Title>
-      <ContentContainer>
+      <SubHeader>
         <BasicInput isUpdate fields={fields} onSubmit={null}/>
-      </ContentContainer>
+      </SubHeader>
     </PaperContainer>
   );
 };

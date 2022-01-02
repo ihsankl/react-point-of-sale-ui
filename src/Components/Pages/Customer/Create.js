@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {ContentContainer, PaperContainer, Title} from '../../../layout';
+import {SubHeader, PaperContainer, Title} from '../../../layout';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -50,9 +50,9 @@ const CreateCustomer = () => {
   return (
     <PaperContainer elevation={3} square>
       <Title>Create Customer</Title>
-      <ContentContainer>
+      <SubHeader>
         <BasicInput fields={fields} onSubmit={null} />
-      </ContentContainer>
+      </SubHeader>
 
     </PaperContainer>
   );

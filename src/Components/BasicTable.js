@@ -68,7 +68,9 @@ const BasicTable = ({data}) => {
 };
 
 BasicTable.propTypes = {
-  data: PropTypes.array,
+  data: PropTypes.array.isRequired,
+  rows: PropTypes.array.isRequired,
+  columns: PropTypes.array.isRequired,
 };
 
 export default BasicTable;

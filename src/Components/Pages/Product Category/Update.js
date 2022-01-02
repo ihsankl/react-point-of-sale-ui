@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ContentContainer, PaperContainer, Title} from '../../../layout';
+import {SubHeader, PaperContainer, Title} from '../../../layout';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -37,9 +37,9 @@ const UpdateProductCategory = () => {
   return (
     <PaperContainer elevation={3} square>
       <Title>Update Product Category</Title>
-      <ContentContainer>
+      <SubHeader>
         <BasicInput isUpdate fields={fields} onSubmit={null}/>
-      </ContentContainer>
+      </SubHeader>
     </PaperContainer>
   );
 };
