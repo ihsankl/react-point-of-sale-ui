@@ -21,17 +21,37 @@ const CreateCustomer = () => {
     });
   };
 
-  const customerFields = [
-    {id: 'customer_code', label: 'Code', onChange: handleInputChange},
-    {id: 'customer_name', label: 'Name', onChange: handleInputChange},
-    {id: 'customer_address', label: 'Address', onChange: handleInputChange},
-    {id: 'customer_contact', label: 'Contact', onChange: handleInputChange},
+  const fields = [
+    {
+      id: 'customer_code',
+      label: 'Code',
+      onChange: handleInputChange,
+      value: formValues.customer_code,
+    },
+    {
+      id: 'customer_name',
+      label: 'Name',
+      onChange: handleInputChange,
+      value: formValues.customer_name,
+    },
+    {
+      id: 'customer_address',
+      label: 'Address',
+      onChange: handleInputChange,
+      value: formValues.customer_address,
+    },
+    {
+      id: 'customer_contact',
+      label: 'Contact',
+      onChange: handleInputChange,
+      value: formValues.customer_contact,
+    },
   ];
   return (
     <PaperContainer elevation={3} square>
       <Title>Create Customer</Title>
       <ContentContainer>
-        <BasicInput fields={customerFields} onSubmit={null} />
+        <BasicInput fields={fields} onSubmit={null} />
       </ContentContainer>
 
     </PaperContainer>

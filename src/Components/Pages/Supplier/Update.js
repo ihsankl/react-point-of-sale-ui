@@ -3,11 +3,11 @@ import {ContentContainer, PaperContainer, Title} from '../../../layout';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
-  customer_code: '',
-  customer_name: '',
-  customer_address: '',
-  customer_contact: '',
-  customer_id: 0,
+  supplier_code: '',
+  supplier_name: '',
+  supplier_address: '',
+  supplier_email: '',
+  supplier_contact: '',
 };
 
 const UpdateSupplier = () => {
@@ -29,38 +29,38 @@ const UpdateSupplier = () => {
     });
   };
 
-  const customerFields = [
+  const fields = [
     {
-      id: 'customer_code',
+      id: 'supplier_code',
       label: 'Code',
       onChange: handleInputChange,
-      value: formValues.customer_code,
+      value: formValues.supplier_code,
     },
     {
-      id: 'customer_name',
+      id: 'supplier_name',
       label: 'Name',
       onChange: handleInputChange,
-      value: formValues.customer_name,
+      value: formValues.supplier_name,
     },
     {
-      id: 'customer_address',
+      id: 'supplier_address',
       label: 'Address',
       onChange: handleInputChange,
-      value: formValues.customer_address,
+      value: formValues.supplier_address,
     },
     {
-      id: 'customer_contact',
+      id: 'supplier_contact',
       label: 'Contact',
       onChange: handleInputChange,
-      value: formValues.customer_contact,
+      value: formValues.supplier_contact,
     },
   ];
 
   return (
     <PaperContainer elevation={3} square>
-      <Title>Update Customer</Title>
+      <Title>Update Supplier</Title>
       <ContentContainer>
-        <BasicInput isUpdate fields={customerFields} onSubmit={null}/>
+        <BasicInput isUpdate fields={fields} onSubmit={null}/>
       </ContentContainer>
     </PaperContainer>
   );

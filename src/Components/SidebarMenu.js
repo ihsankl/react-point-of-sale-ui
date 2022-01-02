@@ -13,9 +13,11 @@ import {
   ListAlt,
 } from '@mui/icons-material';
 import {capitalize} from '../helper';
-
+import {useNavigate} from 'react-router-dom';
 
 const SidebarMenu = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <ListItem
@@ -29,6 +31,7 @@ const SidebarMenu = () => {
 
       <ListItem
         button
+        onClick={() => navigate('/customer')}
       >
         <ListItemIcon>
           <PersonAdd />
@@ -56,6 +59,7 @@ const SidebarMenu = () => {
 
       <ListItem
         button
+        onClick={() => navigate('/product_category')}
       >
         <ListItemIcon>
           <Category />
@@ -65,6 +69,7 @@ const SidebarMenu = () => {
 
       <ListItem
         button
+        onClick={() => navigate('/product_unit')}
       >
         <ListItemIcon>
           <ListAlt />
@@ -92,6 +97,7 @@ const SidebarMenu = () => {
 
       <ListItem
         button
+        onClick={() => navigate('/supplier')}
       >
         <ListItemIcon>
           <PersonAdd />

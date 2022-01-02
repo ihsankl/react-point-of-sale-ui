@@ -3,10 +3,7 @@ import {ContentContainer, PaperContainer, Title} from '../../../layout';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
-  customer_code: '',
-  customer_name: '',
-  customer_address: '',
-  customer_contact: '',
+  product_unit_name: '',
 };
 
 
@@ -21,17 +18,19 @@ const CreateProductUnit = () => {
     });
   };
 
-  const customerFields = [
-    {id: 'customer_code', label: 'Code', onChange: handleInputChange},
-    {id: 'customer_name', label: 'Name', onChange: handleInputChange},
-    {id: 'customer_address', label: 'Address', onChange: handleInputChange},
-    {id: 'customer_contact', label: 'Contact', onChange: handleInputChange},
+  const fields = [
+    {
+      id: 'product_unit_name',
+      label: 'Name',
+      onChange: handleInputChange,
+      value: formValues.product_unit_name,
+    },
   ];
   return (
     <PaperContainer elevation={3} square>
-      <Title>Create Customer</Title>
+      <Title>Create Product Unit</Title>
       <ContentContainer>
-        <BasicInput fields={customerFields} onSubmit={null} />
+        <BasicInput fields={fields} onSubmit={null} />
       </ContentContainer>
 
     </PaperContainer>

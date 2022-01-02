@@ -21,18 +21,25 @@ import {styled} from '@mui/material/styles';
 import {Title} from './layout';
 import BasicTable from './Components/BasicTable';
 import BasicInput from './Components/BasicInput';
-import {BrowserRouter, Route, Redirect, Routes as Switch} from 'react-router-dom';
+import {BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+// Customer
 import Customer from './Components/Pages/Customer/';
 import CreateCustomer from './Components/Pages/Customer/Create';
 import UpdateCustomer from './Components/Pages/Customer/Update';
-const APP_NAME = process.env.REACT_APP_NAME;
+// Product Category
+import ProductCategory from './Components/Pages/Product Category/';
+import CreateProductCategory from './Components/Pages/Product Category/Create';
+import UpdateProductCategory from './Components/Pages/Product Category/Update';
+// Product Unit
+import ProductUnit from './Components/Pages/Product Unit/';
+import CreateProductUnit from './Components/Pages/Product Unit/Create';
+import UpdateProductUnit from './Components/Pages/Product Unit/Update';
+// Supplier
+import Supplier from './Components/Pages/Supplier/';
+import CreateSupplier from './Components/Pages/Supplier/Create';
+import UpdateSupplier from './Components/Pages/Supplier/Update';
 
-const defaultValues = {
-  customer_code: '',
-  customer_name: '',
-  customer_address: '',
-  customer_contact: '',
-};
+const APP_NAME = process.env.REACT_APP_NAME;
 
 const App = ()=> {
   const [anchor, setAnchor] = useState(null);
@@ -41,6 +48,7 @@ const App = ()=> {
 
   return (
     <div style={{display: 'flex'}}>
+      <BrowserRouter>
       <Header openDrawer={setOpen} />
 
       <Drawer
@@ -57,16 +65,28 @@ const App = ()=> {
           </List>
         </Box>
       </Drawer>
-      <BrowserRouter>
-        <Switch>
-          <Route exact path="/customer" element={<Customer/>}/>
-        </Switch>
-        <Switch>
-          <Route exact path="/customer/create" element={<CreateCustomer/>}/>
-        </Switch>
-        <Switch>
-          <Route exact path="/customer/update" element={<UpdateCustomer/>}/>
-        </Switch>
+        <Routes>
+          <Route path="/" element={<Navigate replace to="/customer" />}/>
+          <Route path="/customer" element={<Customer />}/>
+          <Route path="/customer/create" element={<CreateCustomer />} />
+          <Route path="/customer/update/:id" element={<UpdateCustomer />} />
+
+          {/* product category routes */}
+          <Route path="/product_category" element={<ProductCategory />}/>
+          <Route path="/product_category/create" element={<CreateProductCategory />} />
+          <Route path="/product_category/update/:id" element={<UpdateProductCategory />} />
+
+          {/* product unit routes */}
+          <Route path="/product_unit" element={<ProductUnit />}/>
+          <Route path="/product_unit/create" element={<CreateProductUnit />} />
+          <Route path="/product_unit/update/:id" element={<UpdateProductUnit />} />
+
+          {/* supplier routes */}
+          <Route path="/supplier" element={<Supplier />}/>
+          <Route path="/supplier/create" element={<CreateSupplier />} />
+          <Route path="/supplier/update/:id" element={<UpdateSupplier />} />
+
+        </Routes>
       </BrowserRouter>
     </div>
   );

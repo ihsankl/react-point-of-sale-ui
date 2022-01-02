@@ -3,11 +3,7 @@ import {ContentContainer, PaperContainer, Title} from '../../../layout';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
-  customer_code: '',
-  customer_name: '',
-  customer_address: '',
-  customer_contact: '',
-  customer_id: 0,
+  product_unit_name: '',
 };
 
 const UpdateProductCategory = () => {
@@ -29,30 +25,12 @@ const UpdateProductCategory = () => {
     });
   };
 
-  const customerFields = [
+  const fields = [
     {
-      id: 'customer_code',
-      label: 'Code',
-      onChange: handleInputChange,
-      value: formValues.customer_code,
-    },
-    {
-      id: 'customer_name',
+      id: 'product_unit_name',
       label: 'Name',
       onChange: handleInputChange,
-      value: formValues.customer_name,
-    },
-    {
-      id: 'customer_address',
-      label: 'Address',
-      onChange: handleInputChange,
-      value: formValues.customer_address,
-    },
-    {
-      id: 'customer_contact',
-      label: 'Contact',
-      onChange: handleInputChange,
-      value: formValues.customer_contact,
+      value: formValues.product_unit_name,
     },
   ];
 
@@ -60,7 +38,7 @@ const UpdateProductCategory = () => {
     <PaperContainer elevation={3} square>
       <Title>Update Customer</Title>
       <ContentContainer>
-        <BasicInput isUpdate fields={customerFields} onSubmit={null}/>
+        <BasicInput isUpdate fields={fields} onSubmit={null}/>
       </ContentContainer>
     </PaperContainer>
   );

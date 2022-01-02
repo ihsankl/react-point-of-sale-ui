@@ -29,7 +29,7 @@ const UpdateCustomer = () => {
     });
   };
 
-  const customerFields = [
+  const fields = [
     {
       id: 'customer_code',
       label: 'Code',
@@ -60,7 +60,7 @@ const UpdateCustomer = () => {
     <PaperContainer elevation={3} square>
       <Title>Update Customer</Title>
       <ContentContainer>
-        <BasicInput isUpdate fields={customerFields} onSubmit={null}/>
+        <BasicInput isUpdate fields={fields} onSubmit={null}/>
       </ContentContainer>
     </PaperContainer>
   );
