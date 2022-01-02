@@ -6,45 +6,50 @@ import {
   AppBar,
   Typography,
   Paper,
+  Button,
+  TextField,
+  FormControl,
 } from '@mui/material';
 import {
   ShoppingCart,
+  Search,
 } from '@mui/icons-material';
+import {DataGrid} from '@mui/x-data-grid';
 import Header from './Components/Header';
 import SidebarMenu from './Components/SidebarMenu';
 import {styled} from '@mui/material/styles';
+import {Title} from './layout';
+import BasicTable from './Components/BasicTable';
+import BasicInput from './Components/BasicInput';
+import {BrowserRouter, Route, Redirect, Routes as Switch} from 'react-router-dom';
+import Customer from './Components/Pages/Customer/';
+import CreateCustomer from './Components/Pages/Customer/Create';
+import UpdateCustomer from './Components/Pages/Customer/Update';
 const APP_NAME = process.env.REACT_APP_NAME;
 
-const PaperContainer = styled(Paper)(({theme}) => ({
-  ...theme.typography.body1,
-  padding: theme.spacing(1),
-  marginTop:'5em',
-  marginLeft:'.5em', 
-  marginRight:'.5em', 
-  display:'flex', 
-  flex:1, 
-  paddingLeft:'1em', 
-  paddingRight:'1em', 
-  flexDirection:'column', 
-  height:'100%',
-}));
+const defaultValues = {
+  customer_code: '',
+  customer_name: '',
+  customer_address: '',
+  customer_contact: '',
+};
 
 const App = ()=> {
   const [anchor, setAnchor] = useState(null);
   const [open, setOpen] = useState(false);
+  const [openCreate, setOpenCreate] = useState(false);
+
   return (
     <div style={{display: 'flex'}}>
       <Header openDrawer={setOpen} />
 
       <Drawer
-        sx={{width: '18em'}}
+        sx={{width: '15em'}}
         variant='permanent'
         anchor="left"
-        open={true}
-        onClose={() => setOpen(false)}
       >
         <Box
-          sx={{width: '18em', paddingTop:'4em'}}
+          sx={{width: '15em', paddingTop: '4em'}}
           role="presentation"
         >
           <List>
@@ -52,9 +57,17 @@ const App = ()=> {
           </List>
         </Box>
       </Drawer>
-      <PaperContainer elevation={3} square>
-<h1>aaaaaaaaaaaaaaaaAAAAAAAAAAa</h1>
-      </PaperContainer>
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/customer" element={<Customer/>}/>
+        </Switch>
+        <Switch>
+          <Route exact path="/customer/create" element={<CreateCustomer/>}/>
+        </Switch>
+        <Switch>
+          <Route exact path="/customer/update" element={<UpdateCustomer/>}/>
+        </Switch>
+      </BrowserRouter>
     </div>
   );
 };
