@@ -42,6 +42,18 @@ import UpdateSupplier from './Components/Pages/Supplier/Update';
 import Product from './Components/Pages/Product/';
 import CreateProduct from './Components/Pages/Product/Create';
 import UpdateProduct from './Components/Pages/Product/Update';
+// Invoice
+import Invoice from './Components/Pages/Invoice/';
+import CreateInvoice from './Components/Pages/Invoice/Create';
+import UpdateInvoice from './Components/Pages/Invoice/Update';
+// Purchase Order
+import PurchaseOrder from './Components/Pages/Purchase Order/';
+import CreatePurchaseOrder from './Components/Pages/Purchase Order/Create';
+import UpdatePurchaseOrder from './Components/Pages/Purchase Order/Update';
+// Receive Product
+import ReceiveProduct from './Components/Pages/Receive Product/';
+import CreateReceiveProduct from './Components/Pages/Receive Product/Create';
+import UpdateReceiveProduct from './Components/Pages/Receive Product/Update';
 
 const APP_NAME = process.env.REACT_APP_NAME;
 
@@ -90,12 +102,24 @@ const App = ()=> {
           <Route path="/product/create" element={<CreateProduct/>}/>
           <Route path="/product/update/:id" element={<UpdateProduct/>}/>
 
+          {/* invoice routes */}
+          <Route path="/invoice" element={<Invoice/>}/>
+          <Route path="/invoice/create" element={<CreateInvoice/>}/>
+          <Route path="/invoice/update/:id" element={<UpdateInvoice/>}/>
+
+          {/* purchase order routes */}
+          <Route path="/purchase_order" element={<PurchaseOrder/>}/>
+          <Route path="/purchase_order/create" element={<CreatePurchaseOrder/>}/>
+          <Route path="/purchase_order/update/:id" element={<UpdatePurchaseOrder/>}/>
+
+          {/* receive product routes */}
+          <Route path="/receive_product" element={<ReceiveProduct/>}/>
+          <Route path="/receive_product/create" element={<CreateReceiveProduct/>}/>
+          <Route path="/receive_product/update/:id" element={<UpdateReceiveProduct/>}/>
+
           {/* redirect unmatch route */}
           <Route path="*" element={<Navigate replace to="/customer" />}/>
 
-          {/* TODO: add invoice UI. foreign key required: user_id */}
-          {/* TODO: add purchase order UI. foreign key required: product_id, user_id, supplier_id */}
-          {/* TODO: add receive product UI. foreign key required: product_id, user_id, supplier_id */}
           {/* TODO: add sales UI. foreign key required: invoice_id, product_id */}
           {/* TODO: add login UI */}
           {/* TODO: add reports UI */}

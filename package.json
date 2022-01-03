@@ -5,6 +5,7 @@
   "dependencies": {
     "@fontsource/roboto": "^4.5.1",
     "@mui/icons-material": "^5.2.5",
+    "@mui/lab": "^5.0.0-alpha.62",
     "@mui/material": "^5.2.6",
     "@mui/styled-engine": "npm:@mui/styled-engine-sc@^5.1.0",
     "@mui/styled-engine-sc": "^5.1.0",
@@ -13,6 +14,7 @@
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.24.0",
+    "dayjs": "^1.10.7",
     "prop-types": "^15.8.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

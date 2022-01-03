@@ -59,7 +59,6 @@ const CreateSupplier = () => {
       <SubHeader>
         <BasicInput fields={fields} onSubmit={null} />
       </SubHeader>
-
     </PaperContainer>
   );
 };

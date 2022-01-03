@@ -32,7 +32,6 @@ const CreateProductUnit = () => {
       <SubHeader>
         <BasicInput fields={fields} onSubmit={null} />
       </SubHeader>
-
     </PaperContainer>
   );
 };

@@ -32,6 +32,22 @@ const columns = [
     valueGetter: (params) =>
       `${params.row.firstName || ''} ${params.row.lastName || ''}`,
   },
+  {
+    field: 'action',
+    headerName: 'Action',
+    width: 100,
+    cellRenderer: (params) => {
+      return (
+        <button
+          onClick={() => {
+            console.log(params.data);
+          }}
+        >
+          {'Edit'}
+        </button>
+      );
+    },
+  },
 ];
 
 const rows = [

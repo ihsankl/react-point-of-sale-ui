@@ -53,7 +53,6 @@ const CreateCustomer = () => {
       <SubHeader>
         <BasicInput fields={fields} onSubmit={null} />
       </SubHeader>
-
     </PaperContainer>
   );
 };

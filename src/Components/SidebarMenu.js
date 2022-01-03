@@ -41,6 +41,7 @@ const SidebarMenu = () => {
 
       <ListItem
         button
+        onClick={() => navigate('/invoice')}
       >
         <ListItemIcon>
           <Receipt />
@@ -80,6 +81,7 @@ const SidebarMenu = () => {
 
       <ListItem
         button
+        onClick={() => navigate('/purchase_order')}
       >
         <ListItemIcon>
           <ShoppingCart />
@@ -89,6 +91,7 @@ const SidebarMenu = () => {
 
       <ListItem
         button
+        onClick={() => navigate('/receive_product')}
       >
         <ListItemIcon>
           <Receipt />

@@ -1,5 +1,5 @@
 // /* eslint-disable */
-import {InputLabel, MenuItem, Select} from '@mui/material';
+import {InputLabel, MenuItem, Select, TextField} from '@mui/material';
 import React, {useState} from 'react';
 import {
   FormControlContainer,
@@ -18,7 +18,7 @@ const defaultValues = {
   product_re_order_level: '',
   product_unit_id: '',
   product_category_id: '',
-  product_user_id: '',
+  product_user_id: 1,
 };
 
 const CreateProduct = () => {
@@ -111,23 +111,15 @@ const CreateProduct = () => {
             </Select>
           </FormControlContainer>
           <FormControlContainer>
-            <InputLabel
-              id="product_user_id_label"
-            >
-                User
-            </InputLabel>
-            <Select
-              labelId="product_user_id_label"
-              id="product_user_id"
-              name="product_user_id"
-              label="Product Unit"
-              value={formValues.product_user_id}
-              onChange={handleInputChange}
-            >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={11}>asd</MenuItem>
-              <MenuItem value={12}>dsa</MenuItem>
-            </Select>
+            <TextField
+              id={'product_user_id'}
+              label={'User'}
+              name={'product_user_id'}
+              defaultValue={formValues.product_user_id}
+              disabled
+              variant="outlined"
+              fullWidth
+            />
           </FormControlContainer>
         </BasicInput>
       </SubHeader>
