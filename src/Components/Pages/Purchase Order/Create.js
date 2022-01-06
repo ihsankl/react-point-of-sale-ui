@@ -6,7 +6,7 @@ import {
   FormControlContainer,
   PaperContainer,
   SubHeader,
-  Title,
+  TitleWithDivider,
 } from '../../../layout';
 import BasicInput from '../../BasicInput';
 
@@ -60,7 +60,7 @@ const CreatePurchaseOrder = () => {
 
   return (
     <PaperContainer elevation={3} square>
-      <Title>Create Purchase Order</Title>
+      <TitleWithDivider>Create Purchase Order</TitleWithDivider>
       <SubHeader>
         <BasicInput fields={fields} onSubmit={()=> console.log(formValues)}>
           <FormControlContainer>

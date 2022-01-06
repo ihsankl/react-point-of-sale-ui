@@ -6,7 +6,7 @@ import {
   FormControlContainer,
   PaperContainer,
   SubHeader,
-  Title,
+  TitleWithDivider,
 } from '../../../layout';
 import BasicInput from '../../BasicInput';
 
@@ -60,7 +60,7 @@ const UpdateReceiveProduct = () => {
 
   return (
     <PaperContainer elevation={3} square>Supplier
-      <Title>Create Purchase Order</Title>
+      <TitleWithDivider>Create Purchase Order</TitleWithDivider>
       <SubHeader>
         <BasicInput fields={fields} onSubmit={null}>
           <FormControlContainer>

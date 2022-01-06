@@ -1,7 +1,7 @@
 import {Search} from '@mui/icons-material';
 import {Button, TextField} from '@mui/material';
 import React from 'react';
-import {SubHeader, PaperContainer, Title} from '../../../layout';
+import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import BasicTable from '../../BasicTable';
 import {useNavigate} from 'react-router-dom';
 
@@ -9,7 +9,7 @@ const ProductUnit = () => {
   const navigate = useNavigate();
   return (
     <PaperContainer elevation={3} square>
-      <Title>Product Unit</Title>
+      <TitleWithDivider>Product Unit</TitleWithDivider>
       <SubHeader>
         <Button
           onClick={()=> navigate('create')}

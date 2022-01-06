@@ -5,7 +5,7 @@ import {
   FormControlContainer,
   PaperContainer,
   SubHeader,
-  Title,
+  TitleWithDivider,
 } from '../../../layout';
 import BasicInput from '../../BasicInput';
 import DateAdapter from '@mui/lab/AdapterDayjs';
@@ -52,7 +52,7 @@ const CreateInvoice = () => {
 
   return (
     <PaperContainer elevation={3} square>
-      <Title>Create Invoice</Title>
+      <TitleWithDivider>Create Invoice</TitleWithDivider>
       <SubHeader>
         <BasicInput fields={fields} onSubmit={null}>
           <FormControlContainer>

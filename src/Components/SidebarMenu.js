@@ -11,6 +11,7 @@ import {
   ShoppingBasket,
   Category,
   ListAlt,
+  Article,
 } from '@mui/icons-material';
 import {capitalize} from '../helper';
 import {useNavigate} from 'react-router-dom';
@@ -22,6 +23,7 @@ const SidebarMenu = () => {
     <>
       <ListItem
         button
+        onClick={() => navigate('/sales')}
       >
         <ListItemIcon>
           <Receipt />
@@ -107,6 +109,16 @@ const SidebarMenu = () => {
           <PersonAdd />
         </ListItemIcon>
         <ListItemText primary={capitalize('supplier')} />
+      </ListItem>
+
+      <ListItem
+        button
+        onClick={() => navigate('/sales_report')}
+      >
+        <ListItemIcon>
+          <Article />
+        </ListItemIcon>
+        <ListItemText primary={capitalize('sales_report')} />
       </ListItem>
 
     </>

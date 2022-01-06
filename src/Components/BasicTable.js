@@ -36,6 +36,7 @@ const columns = [
     field: 'action',
     headerName: 'Action',
     width: 100,
+    editable: false,
     cellRenderer: (params) => {
       return (
         <button

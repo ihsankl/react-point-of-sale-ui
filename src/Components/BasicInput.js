@@ -28,7 +28,11 @@ const BasicInput = ({isUpdate, fields, onSubmit, children}) => {
         })}
       </FormControlContainer>
       {children}
-      <div style={{display: 'flex', gap: '.5em', width: '50%'}}>
+      <div style={{
+        display: 'flex',
+        gap: '.5em',
+        width: 'clamp(35em, 50%, 80%)',
+      }}>
         <Button
           sx={{width: '50%'}}
           variant="contained"

@@ -54,6 +54,8 @@ import UpdatePurchaseOrder from './Components/Pages/Purchase Order/Update';
 import ReceiveProduct from './Components/Pages/Receive Product/';
 import CreateReceiveProduct from './Components/Pages/Receive Product/Create';
 import UpdateReceiveProduct from './Components/Pages/Receive Product/Update';
+// Sales
+import Sales from './Components/Pages/Sales/';
 
 const APP_NAME = process.env.REACT_APP_NAME;
 
@@ -77,7 +79,7 @@ const App = ()=> {
           </Box>
         </Drawer>
         <Routes>
-          <Route path="/" element={<Navigate replace to="/customer" />}/>
+          <Route path="/" element={<Navigate replace to="/sales" />}/>
           <Route path="/customer" element={<Customer />}/>
           <Route path="/customer/create" element={<CreateCustomer />} />
           <Route path="/customer/update/:id" element={<UpdateCustomer />} />
@@ -117,13 +119,23 @@ const App = ()=> {
           <Route path="/receive_product/create" element={<CreateReceiveProduct/>}/>
           <Route path="/receive_product/update/:id" element={<UpdateReceiveProduct/>}/>
 
+          {/* sales routes */}
+          <Route path="/sales" element={<Sales/>}/>
+
           {/* redirect unmatch route */}
-          <Route path="*" element={<Navigate replace to="/customer" />}/>
+          <Route path="*" element={<Navigate replace to="/sales" />}/>
 
           {/* TODO: add sales UI. foreign key required: invoice_id, product_id */}
           {/* TODO: add login UI */}
           {/* TODO: add reports UI */}
           {/* TODO: add 404 Not Found page */}
+          {/* TODO: add keyboard shortcuts for actions:
+            1. quick move to scan
+            2. quick add/remove item
+            3. print receipt
+            4. quick move to paid
+           */}
+           {/* TODO: give documentation for keyboard shortcuts */}
 
         </Routes>
       </BrowserRouter>

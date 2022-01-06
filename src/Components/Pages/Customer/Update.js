@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {SubHeader, PaperContainer, Title} from '../../../layout';
+import {useParams} from 'react-router-dom';
+import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -12,10 +13,12 @@ const defaultValues = {
 
 const UpdateCustomer = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const urlParams = useParams();
 
   useEffect(() => {
     // get data from backend first
     // then set the formValues
+    console.log(urlParams.id);
     return () => {
 
     };
@@ -58,9 +61,9 @@ const UpdateCustomer = () => {
 
   return (
     <PaperContainer elevation={3} square>
-      <Title>Update Customer</Title>
+      <TitleWithDivider>Update Customer</TitleWithDivider>
       <SubHeader>
-        <BasicInput isUpdate fields={fields} onSubmit={null}/>
+        <BasicInput isUpdate fields={fields} onSubmit={null} />
       </SubHeader>
     </PaperContainer>
   );

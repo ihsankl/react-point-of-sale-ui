@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {SubHeader, PaperContainer, Title} from '../../../layout';
+import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -27,7 +27,7 @@ const CreateProductCategory = () => {
   ];
   return (
     <PaperContainer elevation={3} square>
-      <Title>Create Product Category</Title>
+      <TitleWithDivider>Create Product Category</TitleWithDivider>
       <SubHeader>
         <BasicInput fields={fields} onSubmit={null} />
       </SubHeader>

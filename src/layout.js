@@ -1,7 +1,7 @@
 import {FormControl, Paper} from '@mui/material';
 import {styled} from '@mui/material/styles';
 
-export const Title = styled(`h4`)(({theme}) => ({
+export const TitleWithDivider = styled(`h4`)(({theme}) => ({
   ...theme.typography.h4,
   borderBottom: `2px solid ${theme.palette.primary.main}`,
   margin: 0,
@@ -40,8 +40,15 @@ export const FormContainer = styled('form')(({theme}) => ({
 
 export const FormControlContainer = styled(FormControl)(({theme}) => ({
   ...theme.typography.body1,
-  width: '50%',
+  minWidth: '35em',
+  maxWidth: '50%',
   display: 'flex',
   flexDirection: 'column',
   gap: '.5em',
+}));
+
+export const Title = styled(`h4`)(({theme}) => ({
+  ...theme.typography.h5,
+  padding: '.2em 0 .2em 0',
+  margin: 0,
 }));

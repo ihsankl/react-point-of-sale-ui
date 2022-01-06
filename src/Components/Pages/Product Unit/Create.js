@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {SubHeader, PaperContainer, Title} from '../../../layout';
+import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -28,7 +28,7 @@ const CreateProductUnit = () => {
   ];
   return (
     <PaperContainer elevation={3} square>
-      <Title>Create Product Unit</Title>
+      <TitleWithDivider>Create Product Unit</TitleWithDivider>
       <SubHeader>
         <BasicInput fields={fields} onSubmit={null} />
       </SubHeader>
