@@ -1,6 +1,7 @@
 import {Add, Delete, Edit, Remove} from '@mui/icons-material';
 import {Autocomplete, IconButton, TextField} from '@mui/material';
 import {DataGrid} from '@mui/x-data-grid';
+import Axios from 'axios';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   FormContainer,
@@ -141,7 +142,7 @@ const top100Films = [
 ];
 
 const columns = [
-  {field: 'id', headerName: 'No.', width: 70},,
+  {field: 'id', headerName: 'No.', width: 70}, ,
   {
     field: 'product',
     headerName: 'Product',
@@ -232,6 +233,7 @@ const rows = [
 const Sales = () => {
   const [pageSize, setPageSize] = useState(20);
   const [paid, setPaid] = useState(0);
+  const [code, setCode] = useState('');
   const barcodeRef = useRef(null);
   const keys = ['Shift', 'E'];
   const handleKeyboardShortcut = useCallback((keys) => {
@@ -246,10 +248,18 @@ const Sales = () => {
     };
   }, []);
 
+  const sendData = async () => {
+    try {
+      Axios.post('http://192.168.1.16:5000/testing', {name: code});
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <PaperContainer elevation={3} square>
       <TitleWithDivider>Sales</TitleWithDivider>
-      <SubHeader/>
+      <SubHeader />
       <div style={{
         height: 'calc(100vh - 15.5em)',
         display: 'flex',
@@ -265,6 +275,14 @@ const Sales = () => {
               renderInput={
                 (params) =>
                   <TextField
+                    onChange={(e) => setCode(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        sendData();
+                      }
+                    }}
                     inputRef={barcodeRef}
                     {...params}
                     label="Name or Code"
@@ -308,7 +326,7 @@ const Sales = () => {
             value={paid}
             variant="standard"
             fullWidth
-            onChange={(e)=> setPaid(e.target.value)}
+            onChange={(e) => setPaid(e.target.value)}
           />
           <Title>Changes :</Title>
           <Title sx={{fontSize: '2em'}}>Total :</Title>
