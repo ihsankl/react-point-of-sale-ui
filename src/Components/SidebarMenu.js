@@ -8,117 +8,186 @@ import {
   ShoppingCart,
   Receipt,
   PersonAdd,
-  ShoppingBasket,
   Category,
   ListAlt,
   Article,
 } from '@mui/icons-material';
 import {capitalize} from '../helper';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 const SidebarMenu = () => {
   const navigate = useNavigate();
+  // revert menu button color if the user is on the same page
+  const location = useLocation();
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
+  const contrastButton = (theme, path) => {
+    return {
+      // eslint-disable-next-line quote-props
+      backgroundColor: isActive(path) ?
+      theme.palette.primary.main : theme.palette.primary.contrastText,
+      '&:hover': {
+        backgroundColor: isActive(path) ?
+        theme.palette.primary.main : theme.palette.primary.contrastText,
+      },
+    };
+  };
+
+  const contrastIcon = (theme, path) => {
+    return {
+      color: isActive(path) ?
+      theme.palette.primary.contrastText : theme.palette.text.secondary,
+    };
+  };
 
   return (
     <>
       <ListItem
         button
+        sx={(theme)=> contrastButton(theme, '/sales')}
         onClick={() => navigate('/sales')}
       >
         <ListItemIcon>
-          <Receipt />
+          <Receipt sx={(theme)=> contrastIcon(theme, '/sales')} />
         </ListItemIcon>
-        <ListItemText primary={capitalize('sales')} />
+        <ListItemText
+          sx={(theme)=> contrastIcon(theme, '/sales')}
+          primary={capitalize('sales')}
+        />
       </ListItem>
 
       <ListItem
         button
+        sx={(theme)=> contrastButton(theme, '/customer')}
         onClick={() => navigate('/customer')}
       >
         <ListItemIcon>
-          <PersonAdd />
+          <PersonAdd sx={(theme)=> contrastIcon(theme, '/customer')} />
         </ListItemIcon>
-        <ListItemText primary={capitalize('customer')} />
+        <ListItemText
+          sx={(theme)=> contrastIcon(theme, '/customer')}
+          primary={capitalize('customer')}
+        />
       </ListItem>
 
       <ListItem
         button
+        sx={(theme)=> contrastButton(theme, '/invoice')}
         onClick={() => navigate('/invoice')}
       >
         <ListItemIcon>
-          <Receipt />
+          <Receipt
+            sx={(theme)=> contrastIcon(theme, '/invoice')}
+          />
         </ListItemIcon>
-        <ListItemText primary={capitalize('invoice')} />
+        <ListItemText
+          sx={(theme)=> contrastIcon(theme, '/invoice')}
+          primary={capitalize('invoice')} />
       </ListItem>
 
       <ListItem
         button
+        sx={(theme)=> contrastButton(theme, '/product')}
         onClick={() => navigate('/product')}
       >
         <ListItemIcon>
-          <ShoppingBasket />
+          <ShoppingCart sx={(theme)=> contrastIcon(theme, '/product')} />
         </ListItemIcon>
-        <ListItemText primary={capitalize('product')} />
+        <ListItemText
+          sx={(theme)=> contrastIcon(theme, '/product')}
+          primary={capitalize('product')} />
       </ListItem>
 
       <ListItem
         button
+        sx={(theme)=> contrastButton(theme, '/product_category')}
         onClick={() => navigate('/product_category')}
       >
         <ListItemIcon>
-          <Category />
+          <Category
+            sx={(theme)=> contrastIcon(theme, '/product_category')}
+          />
         </ListItemIcon>
-        <ListItemText primary={capitalize('product_category')} />
+        <ListItemText
+          sx={(theme)=> contrastIcon(theme, '/product_category')}
+          primary={capitalize('product_category')} />
       </ListItem>
 
       <ListItem
         button
+        sx={(theme)=> contrastButton(theme, '/product_unit')}
         onClick={() => navigate('/product_unit')}
       >
         <ListItemIcon>
-          <ListAlt />
+          <ListAlt
+            sx={(theme)=> contrastIcon(theme, '/product_unit')}
+          />
         </ListItemIcon>
-        <ListItemText primary={capitalize('product_unit')} />
+        <ListItemText
+          sx={(theme)=> contrastIcon(theme, '/product_unit')}
+          primary={capitalize('product_unit')} />
       </ListItem>
 
       <ListItem
         button
+        sx={(theme)=> contrastButton(theme, '/purchase_order')}
         onClick={() => navigate('/purchase_order')}
       >
         <ListItemIcon>
-          <ShoppingCart />
+          <ShoppingCart
+            sx={(theme)=> contrastIcon(theme, '/purchase_order')}
+          />
         </ListItemIcon>
-        <ListItemText primary={capitalize('purchase_order')} />
+        <ListItemText
+          sx={(theme)=> contrastIcon(theme, '/purchase_order')}
+          primary={capitalize('purchase_order')} />
       </ListItem>
 
       <ListItem
         button
+        sx={(theme)=> contrastButton(theme, '/receive_product')}
         onClick={() => navigate('/receive_product')}
       >
         <ListItemIcon>
-          <Receipt />
+          <Receipt
+            sx={(theme)=> contrastIcon(theme, '/receive_product')}
+          />
         </ListItemIcon>
-        <ListItemText primary={capitalize('receive_product')} />
+        <ListItemText
+          sx={(theme)=> contrastIcon(theme, '/receive_product')}
+          primary={capitalize('receive_product')} />
       </ListItem>
 
       <ListItem
         button
+        sx={(theme)=> contrastButton(theme, '/supplier')}
         onClick={() => navigate('/supplier')}
       >
         <ListItemIcon>
-          <PersonAdd />
+          <PersonAdd
+            sx={(theme)=> contrastIcon(theme, '/supplier')}
+          />
         </ListItemIcon>
-        <ListItemText primary={capitalize('supplier')} />
+        <ListItemText
+          sx={(theme)=> contrastIcon(theme, '/supplier')}
+          primary={capitalize('supplier')} />
       </ListItem>
 
       <ListItem
         button
+        sx={(theme)=> contrastButton(theme, '/sales_report')}
         onClick={() => navigate('/sales_report')}
       >
         <ListItemIcon>
-          <Article />
+          <Article
+            sx={(theme)=> contrastIcon(theme, '/sales_report')}
+          />
         </ListItemIcon>
-        <ListItemText primary={capitalize('sales_report')} />
+        <ListItemText
+          sx={(theme)=> contrastIcon(theme, '/sales_report')}
+          primary={capitalize('sales_report')} />
       </ListItem>
 
     </>

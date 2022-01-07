@@ -134,8 +134,10 @@ const App = ()=> {
             2. quick add/remove item
             3. print receipt
             4. quick move to paid
+            5. press edit > edit item price > enter to get out of edit mode
            */}
            {/* TODO: give documentation for keyboard shortcuts */}
+           {/* TODO: create theme customization */}
 
         </Routes>
       </BrowserRouter>

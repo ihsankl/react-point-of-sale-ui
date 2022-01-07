@@ -17,7 +17,7 @@ const Header = () => {
     <AppBar position="fixed" sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}>
       <Toolbar style={{justifyContent: 'space-between'}}>
         <div style={{display: 'flex'}}>
-          <ShoppingCart sx={{marginRight: '2em'}} />
+          <ShoppingCart sx={{marginRight: '1em'}} />
           <Typography variant='button' component="div">
             {APP_NAME}
           </Typography>
