@@ -8,10 +8,19 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {Provider} from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react';
+import storage from './Redux/Store';
+
+const {Store, Persistor} = storage();
 
 ReactDOM.render(
     <React.StrictMode>
-      <App />
+      <Provider store={Store}>
+        <PersistGate loading={null} persistor={Persistor}>
+          <App />
+        </PersistGate>
+      </Provider>
     </React.StrictMode>,
     document.getElementById('root'),
 );

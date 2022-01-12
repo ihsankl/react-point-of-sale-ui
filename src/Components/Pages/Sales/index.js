@@ -1,8 +1,10 @@
 import {Add, Delete, Edit, Remove} from '@mui/icons-material';
 import {Autocomplete, IconButton, TextField} from '@mui/material';
 import {DataGrid} from '@mui/x-data-grid';
-import Axios from 'axios';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
+import useKeyboardShortcut from 'use-keyboard-shortcut';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchUsers} from '../../../Redux/Slicer/User';
 import {
   FormContainer,
   FormControlContainer,
@@ -11,7 +13,6 @@ import {
   Title,
   TitleWithDivider,
 } from '../../../layout';
-import useKeyboardShortcut from '../../CustomHooks/useKeyboardShortcut';
 
 const top100Films = [
   {label: 'The Shawshank Redemption', year: 1994},
@@ -232,28 +233,45 @@ const rows = [
 
 const Sales = () => {
   const [pageSize, setPageSize] = useState(20);
-  const [paid, setPaid] = useState(0);
+  const [paid, setPaid] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const [code, setCode] = useState('');
   const barcodeRef = useRef(null);
-  const keys = ['Shift', 'E'];
-  const handleKeyboardShortcut = useCallback((keys) => {
-    setPaid((currPaid) => currPaid + 1);
-  }, [paid]);
-  useKeyboardShortcut(keys, handleKeyboardShortcut);
+  const paidRef = useRef(null);
+  // eslint-disable-next-line no-unused-vars
+  const User = useSelector((state) => state.User.data?.data);
+  const dispatch = useDispatch();
+
+  // quick move to scan field
+  useKeyboardShortcut(['Control', 'S'],
+      () => barcodeRef.current.focus(),
+      {overrideSystem: true});
+
+  // quick move to paid field
+  useKeyboardShortcut(['Control', 'X'],
+      () => paidRef.current.focus(),
+      {overrideSystem: true});
+
+  // print receipt
+  useKeyboardShortcut(['Control', 'P'],
+      () => console.log('Pressed Control + P'),
+      {overrideSystem: true});
+
+  // edit mode
+  useKeyboardShortcut(['Control', 'E'],
+      () => console.log('Pressed Control + E'),
+      {overrideSystem: true});
 
   useEffect(() => {
     barcodeRef.current.focus();
+    getAllUsers();
     return () => {
-      barcodeRef.current.blur();
+      barcodeRef.current?.blur();
     };
   }, []);
 
-  const sendData = async () => {
-    try {
-      Axios.post('http://192.168.1.16:5000/testing', {name: code});
-    } catch (error) {
-      console.log(error.message);
-    }
+  const getAllUsers = async () => {
+    await dispatch(fetchUsers()).unwrap();
   };
 
   return (
@@ -275,7 +293,9 @@ const Sales = () => {
               renderInput={
                 (params) =>
                   <TextField
-                    onChange={(e) => setCode(e.target.value)}
+                    onChange={(e) => {
+                      setCode(e.target.value);
+                    }}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
@@ -319,9 +339,11 @@ const Sales = () => {
           marginTop: '1em',
         }}>
           <TextField
+            inputRef={paidRef}
             sx={{width: '10em', fontSize: '2em'}}
             id={'paid'}
             label={'Paid'}
+            type={'number'}
             name={'paid'}
             value={paid}
             variant="standard"

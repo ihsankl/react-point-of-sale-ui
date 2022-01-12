@@ -3,6 +3,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  ListSubheader,
 } from '@mui/material';
 import {
   ShoppingCart,
@@ -17,10 +18,10 @@ import {useLocation, useNavigate} from 'react-router-dom';
 
 const SidebarMenu = () => {
   const navigate = useNavigate();
-  // revert menu button color if the user is on the same page
+  // revert menu button color if the user is on the same page or it's subpage
   const location = useLocation();
   const isActive = (path) => {
-    return location.pathname === path;
+    return location.pathname.includes(path);
   };
 
   const contrastButton = (theme, path) => {
@@ -58,6 +59,7 @@ const SidebarMenu = () => {
         />
       </ListItem>
 
+      <ListSubheader>MASTER</ListSubheader>
       <ListItem
         button
         sx={(theme)=> contrastButton(theme, '/customer')}
@@ -102,32 +104,32 @@ const SidebarMenu = () => {
 
       <ListItem
         button
-        sx={(theme)=> contrastButton(theme, '/product_category')}
-        onClick={() => navigate('/product_category')}
+        sx={(theme)=> contrastButton(theme, '/category')}
+        onClick={() => navigate('/category')}
       >
         <ListItemIcon>
           <Category
-            sx={(theme)=> contrastIcon(theme, '/product_category')}
+            sx={(theme)=> contrastIcon(theme, '/category')}
           />
         </ListItemIcon>
         <ListItemText
-          sx={(theme)=> contrastIcon(theme, '/product_category')}
-          primary={capitalize('product_category')} />
+          sx={(theme)=> contrastIcon(theme, '/category')}
+          primary={capitalize('category')} />
       </ListItem>
 
       <ListItem
         button
-        sx={(theme)=> contrastButton(theme, '/product_unit')}
-        onClick={() => navigate('/product_unit')}
+        sx={(theme)=> contrastButton(theme, '/unit')}
+        onClick={() => navigate('/unit')}
       >
         <ListItemIcon>
           <ListAlt
-            sx={(theme)=> contrastIcon(theme, '/product_unit')}
+            sx={(theme)=> contrastIcon(theme, '/unit')}
           />
         </ListItemIcon>
         <ListItemText
-          sx={(theme)=> contrastIcon(theme, '/product_unit')}
-          primary={capitalize('product_unit')} />
+          sx={(theme)=> contrastIcon(theme, '/unit')}
+          primary={capitalize('unit')} />
       </ListItem>
 
       <ListItem
@@ -175,6 +177,7 @@ const SidebarMenu = () => {
           primary={capitalize('supplier')} />
       </ListItem>
 
+      <ListSubheader>REPORT</ListSubheader>
       <ListItem
         button
         sx={(theme)=> contrastButton(theme, '/sales_report')}
