@@ -90,7 +90,7 @@ export const deleteCustomer = createAsyncThunk(
 
 const customerSlice = createSlice({
   name: 'customer',
-  initialState: initialState,
+  initialState: {...initialState},
   extraReducers: (builder) => {
     builder.addCase(getCustomers.pending, (state, action) => {
       state.isLoading = true;

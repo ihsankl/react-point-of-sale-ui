@@ -27,3 +27,17 @@ export const headersBuilder = (token = 'myverysecrettoken') => {
     },
   };
 };
+
+/**
+ * options builder for material autocomplete component
+ * @param {object} data data to show.
+ * @return {object} The result.
+ */
+export const optionsBuilder = (data) => {
+  return data.map((item) => {
+    return {
+      value: item,
+      label: item,
+    };
+  });
+};

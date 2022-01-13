@@ -91,7 +91,7 @@ export const deleteUser = createAsyncThunk(
 
 const userSlice = createSlice({
   name: 'user',
-  initialState: initialState,
+  initialState: {...initialState},
   extraReducers: (builder) => {
     // get users
     builder.addCase(fetchUsers.pending, (state) => {

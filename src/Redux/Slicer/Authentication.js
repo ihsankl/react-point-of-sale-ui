@@ -60,12 +60,14 @@ export const checkToken = createAsyncThunk(
 
 const authenticationSlice = createSlice({
   name: 'authentication',
-  initialState: initialState,
+  initialState: {...initialState},
   extraReducers: (builder) => {
+    // login
     builder.addCase(login.pending, (state) => {
       state.isLoading = true;
       state.isError = false;
       state.isSuccess = false;
+      state.data = null;
     });
     builder.addCase(login.fulfilled, (state, action) => {
       state.data = action.payload;
@@ -77,11 +79,14 @@ const authenticationSlice = createSlice({
       state.isLoading = false;
       state.isError = true;
       state.isSuccess = false;
+      state.data = null;
     });
+    // logout
     builder.addCase(logout.pending, (state) => {
       state.isLoading = true;
       state.isError = false;
       state.isSuccess = false;
+      state.data = null;
     });
     builder.addCase(logout.fulfilled, (state) => {
       state.data = null;
@@ -93,11 +98,14 @@ const authenticationSlice = createSlice({
       state.isLoading = false;
       state.isError = true;
       state.isSuccess = false;
+      state.data = null;
     });
+    // check token
     builder.addCase(checkToken.pending, (state) => {
       state.isLoading = true;
       state.isError = false;
       state.isSuccess = false;
+      state.data = null;
     });
     builder.addCase(checkToken.fulfilled, (state, action) => {
       state.data = action.payload;
@@ -109,6 +117,7 @@ const authenticationSlice = createSlice({
       state.isLoading = false;
       state.isError = true;
       state.isSuccess = false;
+      state.data = null;
     });
   },
 });

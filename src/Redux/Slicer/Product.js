@@ -33,14 +33,10 @@ export const getProduct = createAsyncThunk(
 export const getProductById = createAsyncThunk(
     types.GET_PRODUCT_BY_ID,
     async (id) => {
-      try {
-        const response = await Axios.get(`${BASE_URL}/product/${id}`, {
-          ...headersBuilder(),
-        });
-        return response.data;
-      } catch (error) {
-        throw new Error(error);
-      }
+      const response = await Axios.get(`${BASE_URL}/product/${id}`, {
+        ...headersBuilder(),
+      });
+      return response;
     },
 );
 
@@ -93,7 +89,7 @@ export const deleteProduct = createAsyncThunk(
 // slicer
 export const productSlice = createSlice({
   name: 'product',
-  initialState: initialState,
+  initialState: {...initialState},
   extraReducers: (builder) => {
     builder.addCase(getProduct.pending, (state, action) => {
       state.isLoading = true;
@@ -108,10 +104,11 @@ export const productSlice = createSlice({
       state.data = action.payload;
     });
     builder.addCase(getProduct.rejected, (state, action) => {
+      console.log('action >>>', action);
       state.isLoading = false;
       state.isError = true;
       state.isSuccess = false;
-      state.data = null;
+      state.data = action.payload;
     });
     builder.addCase(createProduct.pending, (state, action) => {
       state.isLoading = true;

@@ -90,7 +90,7 @@ export const deleteInvoice = createAsyncThunk(
 // slicer
 const invoiceSlice = createSlice({
   name: 'invoice',
-  initialState: initialState,
+  initialState: {...initialState},
   extraReducers: (builder) => {
     builder.addCase(getInvoice.pending, (state, action) => {
       state.isLoading = true;
