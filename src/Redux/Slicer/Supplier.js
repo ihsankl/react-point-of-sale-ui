@@ -1,7 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import Axios from 'axios';
-import {headersBuilder} from '../../helper';
-import {initialState} from './User';
+import {headersBuilder, createBasicReducer, initialState} from '../../helper';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -16,14 +15,14 @@ const types = {
 // get all supplier
 export const getSupplier = createAsyncThunk(
     types.GET_SUPPLIER,
-    async () => {
+    async (data = null, thunkAPI) => {
       try {
         const response = await Axios.get(`${BASE_URL}/supplier`, {
           ...headersBuilder(),
         });
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -31,14 +30,14 @@ export const getSupplier = createAsyncThunk(
 // get supplier by id
 export const getSupplierById = createAsyncThunk(
     types.GET_SUPPLIER_BY_ID,
-    async (id) => {
+    async (data, thunkAPI) => {
       try {
         const response = await Axios.get(`${BASE_URL}/supplier/${id}`, {
           ...headersBuilder(),
         });
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -47,14 +46,14 @@ export const getSupplierById = createAsyncThunk(
 // create supplier
 export const createSupplier = createAsyncThunk(
     types.CREATE_SUPPLIER,
-    async (supplier) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.post(`${BASE_URL}/supplier`, {
+        const response = await Axios.post(`${BASE_URL}/supplier`, data, {
           ...headersBuilder(),
-          ...supplier});
+        });
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -62,14 +61,15 @@ export const createSupplier = createAsyncThunk(
 // update supplier
 export const updateSupplier = createAsyncThunk(
     types.UPDATE_SUPPLIER,
-    async (supplier) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.put(`${BASE_URL}/supplier`, {
-          ...headersBuilder(),
-          ...supplier});
+        const response = await Axios.put(
+            `${BASE_URL}/supplier${data.id}`, data, {
+              ...headersBuilder(),
+            });
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -77,13 +77,13 @@ export const updateSupplier = createAsyncThunk(
 // delete supplier
 export const deleteSupplier = createAsyncThunk(
     types.DELETE_SUPPLIER,
-    async (id) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.delete(`${BASE_URL}/supplier/${id}`, {
+        const response = await Axios.delete(`${BASE_URL}/supplier/${data.id}`, {
           ...headersBuilder()});
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -94,99 +94,54 @@ const supplierSlice = createSlice({
   initialState: {...initialState},
   extraReducers: (builder) => {
     //   get supplier
+    builder.addCase(getSupplier.pending, (state, action) => {
+      createBasicReducer(state, action, 'PENDING');
+    });
     builder.addCase(getSupplier.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(getSupplier.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
-      state.error = true;
-    });
-    builder.addCase(getSupplier.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
     //   get supplier by id
+    builder.addCase(getSupplierById.pending, (state, action) => {
+      createBasicReducer(state, action, 'PENDING');
+    });
     builder.addCase(getSupplierById.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(getSupplierById.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
-      state.error = true;
-    });
-    builder.addCase(getSupplierById.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
     //   create supplier
+    builder.addCase(createSupplier.pending, (state, action) => {
+      createBasicReducer(state, action, 'PENDING');
+    });
     builder.addCase(createSupplier.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(createSupplier.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
-      state.error = true;
-    });
-    builder.addCase(createSupplier.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
     //   update supplier
+    builder.addCase(updateSupplier.pending, (state, action) => {
+      createBasicReducer(state, action, 'PENDING');
+    });
     builder.addCase(updateSupplier.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(updateSupplier.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
-      state.error = true;
-    });
-    builder.addCase(updateSupplier.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
     //   delete supplier
+    builder.addCase(deleteSupplier.pending, (state, action) => {
+      createBasicReducer(state, action, 'PENDING');
+    });
     builder.addCase(deleteSupplier.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(deleteSupplier.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
-      state.error = true;
-    });
-    builder.addCase(deleteSupplier.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
   },
 });

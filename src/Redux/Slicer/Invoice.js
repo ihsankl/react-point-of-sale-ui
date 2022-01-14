@@ -1,7 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import Axios from 'axios';
-import {headersBuilder} from '../../helper';
-import {initialState} from './User';
+import {headersBuilder, createBasicReducer, initialState} from '../../helper';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -17,14 +16,14 @@ const types = {
 // get all invoice
 export const getInvoice = createAsyncThunk(
     types.GET_INVOICE,
-    async () => {
+    async (data = null, thunkAPI) => {
       try {
         const response = await Axios.get(`${BASE_URL}/invoice`, {
           ...headersBuilder(),
         });
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -32,14 +31,14 @@ export const getInvoice = createAsyncThunk(
 // get invoice by id
 export const getInvoiceById = createAsyncThunk(
     types.GET_INVOICE_BY_ID,
-    async (id) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.get(`${BASE_URL}/invoice/${id}`, {
+        const response = await Axios.get(`${BASE_URL}/invoice/${data.id}`, {
           ...headersBuilder(),
         });
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -47,14 +46,14 @@ export const getInvoiceById = createAsyncThunk(
 // create invoice
 export const createInvoice = createAsyncThunk(
     types.CREATE_INVOICE,
-    async (invoice) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.post(`${BASE_URL}/invoice`, {
+        await Axios.post(`${BASE_URL}/invoice`, data, {
           ...headersBuilder(),
-          ...invoice});
-        return response.data;
+        });
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -62,14 +61,14 @@ export const createInvoice = createAsyncThunk(
 // update invoice
 export const updateInvoice = createAsyncThunk(
     types.UPDATE_INVOICE,
-    async (invoice) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.put(`${BASE_URL}/invoice/${invoice.id}`, {
+        await Axios.put(`${BASE_URL}/invoice/${data.id}`, data, {
           ...headersBuilder(),
-          ...invoice});
-        return response.data;
+        });
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -77,12 +76,12 @@ export const updateInvoice = createAsyncThunk(
 // delete invoice
 export const deleteInvoice = createAsyncThunk(
     types.DELETE_INVOICE,
-    async (id) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.delete(`${BASE_URL}/invoice/${id}`);
-        return response.data;
+        await Axios.delete(`${BASE_URL}/invoice/${data.id}`);
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -92,62 +91,56 @@ const invoiceSlice = createSlice({
   name: 'invoice',
   initialState: {...initialState},
   extraReducers: (builder) => {
+    // get all
     builder.addCase(getInvoice.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(getInvoice.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(getInvoice.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
-
+    // get 1
     builder.addCase(getInvoiceById.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
+      createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(getInvoiceById.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(getInvoiceById.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
-
+    // create
     builder.addCase(createInvoice.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(createInvoice.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(createInvoice.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = null;
-    },
-    );
+      createBasicReducer(state, action, 'REJECTED');
+    });
+    // update
+    builder.addCase(updateInvoice.pending, (state, action) => {
+      createBasicReducer(state, action, 'PENDING');
+    });
+    builder.addCase(updateInvoice.fulfilled, (state, action) => {
+      createBasicReducer(state, action, 'FULFILLED');
+    });
+    builder.addCase(updateInvoice.rejected, (state, action) => {
+      createBasicReducer(state, action, 'REJECTED');
+    });
+    // delete
+    builder.addCase(deleteInvoice.pending, (state, action) => {
+      createBasicReducer(state, action, 'PENDING');
+    });
+    builder.addCase(deleteInvoice.fulfilled, (state, action) => {
+      createBasicReducer(state, action, 'FULFILLED');
+    });
+    builder.addCase(deleteInvoice.rejected, (state, action) => {
+      createBasicReducer(state, action, 'REJECTED');
+    });
   },
 });
 

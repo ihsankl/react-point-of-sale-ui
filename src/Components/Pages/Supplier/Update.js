@@ -1,8 +1,12 @@
 import React, {useEffect, useState} from 'react';
+import {useDispatch} from 'react-redux';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
+import {updateSupplier} from '../../../Redux/Slicer/Supplier';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
+  supplier_id: 0,
   supplier_code: '',
   supplier_name: '',
   supplier_address: '',
@@ -12,14 +16,40 @@ const defaultValues = {
 
 const UpdateSupplier = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const dispatch = useDispatch();
+  const {state} = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // get data from backend first
-    // then set the formValues
+    if (!!state) {
+      const data = {
+        supplier_id: state.data[0].id,
+        supplier_code: state.data[0].code,
+        supplier_name: state.data[0].name,
+        supplier_address: state.data[0].address,
+        supplier_email: state.data[0].email,
+        supplier_contact: state.data[0].contact,
+      };
+      setFormValues(data);
+    } else {
+      navigate(-1);
+    }
     return () => {
 
     };
   }, []);
+
+  const handleSubmit = () => {
+    const data = {
+      id: formValues.supplier_id,
+      code: formValues.supplier_code,
+      name: formValues.supplier_name,
+      address: formValues.supplier_address,
+      email: formValues.supplier_email,
+      contact: formValues.supplier_contact,
+    };
+    dispatch(updateSupplier(data));
+  };
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -60,7 +90,7 @@ const UpdateSupplier = () => {
     <PaperContainer elevation={3} square>
       <TitleWithDivider>Update Supplier</TitleWithDivider>
       <SubHeader>
-        <BasicInput isUpdate fields={fields} onSubmit={null}/>
+        <BasicInput isUpdate fields={fields} onSubmit={handleSubmit}/>
       </SubHeader>
     </PaperContainer>
   );

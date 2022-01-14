@@ -1,6 +1,8 @@
 // /* eslint-disable */
 import {InputLabel, MenuItem, Select, TextField} from '@mui/material';
 import React, {useState} from 'react';
+import {useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {
   FormControlContainer,
   PaperContainer,
@@ -22,6 +24,11 @@ const defaultValues = {
 };
 
 const CreateProduct = () => {
+  const dispatch = useDispatch();
+  const ProductUnit = useSelector((state) => state.ProductUnit);
+  const ProductUnitData = ProductUnit.data?.data ?? [];
+  const Category = useSelector((state) => state.Category);
+  const CategoryData = Category.data?.data ?? [];
   const [formValues, setFormValues] = useState(defaultValues);
 
   const handleInputChange = (e) => {
@@ -30,6 +37,21 @@ const CreateProduct = () => {
       ...formValues,
       [name]: value,
     });
+  };
+
+  const handleSubmit = () => {
+    const data = {
+      code: formValues.product_code,
+      name: formValues.product_name,
+      unit_in_stock: formValues.product_unit_in_stock,
+      disc_percentage: formValues.product_disc_percentage,
+      unit_price: formValues.product_unit_price,
+      re_order_level: formValues.product_re_order_level,
+      unit_id: formValues.product_unit_id,
+      category_id: formValues.product_category_id,
+      user_id: formValues.product_user_id,
+    };
+    dispatch(createProduct(data));
   };
 
   const fields = [
@@ -75,7 +97,7 @@ const CreateProduct = () => {
     <PaperContainer elevation={3} square>
       <TitleWithDivider>Create Product</TitleWithDivider>
       <SubHeader>
-        <BasicInput fields={fields} onSubmit={null}>
+        <BasicInput fields={fields} onSubmit={handleSubmit}>
           <FormControlContainer>
             <InputLabel id="product_unit_id_label">Product Unit</InputLabel>
             <Select
@@ -86,9 +108,9 @@ const CreateProduct = () => {
               value={formValues.product_unit_id}
               onChange={handleInputChange}
             >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={11}>asd</MenuItem>
-              <MenuItem value={12}>dsa</MenuItem>
+              {ProductUnitData.map((item) => (
+                <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
+              ))}
             </Select>
           </FormControlContainer>
           <FormControlContainer>
@@ -105,9 +127,9 @@ const CreateProduct = () => {
               value={formValues.product_category_id}
               onChange={handleInputChange}
             >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={11}>asd</MenuItem>
-              <MenuItem value={12}>dsa</MenuItem>
+              {CategoryData.map((item) => (
+                <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
+              ))}
             </Select>
           </FormControlContainer>
           <FormControlContainer>

@@ -1,7 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import Axios from 'axios';
-import {headersBuilder} from '../../helper';
-import {initialState} from './User';
+import {headersBuilder, createBasicReducer, initialState} from '../../helper';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -10,19 +9,20 @@ const types = {
   GET_RECEIVE_PRODUCT_BY_ID: 'getReceiveProductById',
   CREATE_RECEIVE_PRODUCT: 'createReceiveProduct',
   UPDATE_RECEIVE_PRODUCT: 'updateReceiveProduct',
+  DELETE_RECEIVE_PRODUCT: 'deleteReceiveProduct',
 };
 
 // get all receive product
 export const getReceiveProduct = createAsyncThunk(
     types.GET_RECEIVE_PRODUCT,
-    async () => {
+    async (data = null, thunkAPI) => {
       try {
         const response = await Axios.get(`${BASE_URL}/receive_product`, {
           ...headersBuilder(),
         });
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -30,14 +30,15 @@ export const getReceiveProduct = createAsyncThunk(
 // get receive product by id
 export const getReceiveProductById = createAsyncThunk(
     types.GET_RECEIVE_PRODUCT_BY_ID,
-    async (id) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.get(`${BASE_URL}/receive_product/${id}`, {
-          ...headersBuilder(),
-        });
+        const response = await Axios.get(
+            `${BASE_URL}/receive_product/${data.id}`, {
+              ...headersBuilder(),
+            });
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -45,14 +46,14 @@ export const getReceiveProductById = createAsyncThunk(
 // create receive product
 export const createReceiveProduct = createAsyncThunk(
     types.CREATE_RECEIVE_PRODUCT,
-    async (receiveProduct) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.post(`${BASE_URL}/receive_product`, {
+        await Axios.post(`${BASE_URL}/receive_product`, data, {
           ...headersBuilder(),
-          ...receiveProduct});
-        return response.data;
+        });
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -60,14 +61,14 @@ export const createReceiveProduct = createAsyncThunk(
 // update receive product
 export const updateReceiveProduct = createAsyncThunk(
     types.UPDATE_RECEIVE_PRODUCT,
-    async (receiveProduct) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.put(`${BASE_URL}/receive_product`, {
+        await Axios.put(`${BASE_URL}/receive_product/${data.id}`, data, {
           ...headersBuilder(),
-          ...receiveProduct});
-        return response.data;
+        });
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -75,15 +76,15 @@ export const updateReceiveProduct = createAsyncThunk(
 // delete receive product
 export const deleteReceiveProduct = createAsyncThunk(
     types.DELETE_RECEIVE_PRODUCT,
-    async (id) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.delete(
-            `${BASE_URL}/receive_product/${id}`, {
+        await Axios.delete(
+            `${BASE_URL}/receive_product/${data.id}`, {
               ...headersBuilder(),
             });
-        return response.data;
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -94,98 +95,58 @@ const receiveProductSlice = createSlice({
   initialState: {...initialState},
   extraReducers: (builder) => {
     //   get all receive product
+    builder.addCase(getReceiveProduct.pending, (state, action) => {
+      createBasicReducer(state, action, 'PENDING');
+    });
     builder.addCase(getReceiveProduct.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(getReceiveProduct.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
-      state.error = true;
+      createBasicReducer(state, action, 'REJECTED');
     });
-    builder.addCase(getReceiveProduct.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
-    });
+
     // get receive product by id
+    builder.addCase(getReceiveProductById.pending, (state, action) => {
+      createBasicReducer(state, action, 'PENDING');
+    });
     builder.addCase(getReceiveProductById.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(getReceiveProductById.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
-      state.error = true;
+      createBasicReducer(state, action, 'REJECTED');
     });
-    builder.addCase(getReceiveProductById.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
-      state.data = null;
-    });
+
     // create receive product
+    builder.addCase(createReceiveProduct.pending, (state, action) => {
+      createBasicReducer(state, action, 'PENDING');
+    });
     builder.addCase(createReceiveProduct.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(createReceiveProduct.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
-      state.error = true;
+      createBasicReducer(state, action, 'REJECTED');
     });
-    builder.addCase(createReceiveProduct.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
-      state.data = null;
-    });
+
     // update receive product
+    builder.addCase(updateReceiveProduct.pending, (state, action) => {
+      createBasicReducer(state, action, 'PENDING');
+    });
     builder.addCase(updateReceiveProduct.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(updateReceiveProduct.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
-      state.error = true;
+      createBasicReducer(state, action, 'REJECTED');
     });
-    builder.addCase(updateReceiveProduct.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
-      state.data = null;
-    });
+
     // delete receive product
+    builder.addCase(deleteReceiveProduct.pending, (state, action) => {
+      createBasicReducer(state, action, 'PENDING');
+    });
     builder.addCase(deleteReceiveProduct.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(deleteReceiveProduct.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
-      state.error = true;
-    });
-    builder.addCase(deleteReceiveProduct.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
   },
 });

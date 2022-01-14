@@ -1,15 +1,19 @@
 // /* eslint-disable */
 import {InputLabel, MenuItem, Select} from '@mui/material';
 import React, {useEffect, useState} from 'react';
+import {useDispatch} from 'react-redux';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {
   FormControlContainer,
   PaperContainer,
   SubHeader,
   TitleWithDivider,
 } from '../../../layout';
+import {updateProduct} from '../../../Redux/Slicer/Product';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
+  product_id: '',
   product_code: '',
   product_name: '',
   product_unit_in_stock: '',
@@ -23,6 +27,48 @@ const defaultValues = {
 
 const UpdateProduct = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const dispatch = useDispatch();
+  const {state} = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!!state) {
+      const data = {
+        product_id: state.data[0].id,
+        product_code: state.data[0].code,
+        product_name: state.data[0].name,
+        product_unit_in_stock: state.data[0].unit_in_stock,
+        product_disc_percentage: state.data[0].disc_percentage,
+        product_unit_price: state.data[0].unit_price,
+        product_re_order_level: state.data[0].re_order_level,
+        product_unit_id: state.data[0].unit_id,
+        product_category_id: state.data[0].category_id,
+        product_user_id: state.data[0].user_id,
+      };
+      setFormValues(data);
+    } else {
+      navigate(-1);
+    }
+    return () => {
+
+    };
+  }, []);
+
+  const handleSubmit = () => {
+    const data = {
+      id: formValues.product_id,
+      code: formValues.product_code,
+      name: formValues.product_name,
+      unit_in_stock: formValues.product_unit_in_stock,
+      disc_percentage: formValues.product_disc_percentage,
+      unit_price: formValues.product_unit_price,
+      re_order_level: formValues.product_re_order_level,
+      unit_id: formValues.product_unit_id,
+      category_id: formValues.product_category_id,
+      user_id: formValues.product_user_id,
+    };
+    dispatch(updateProduct(data));
+  };
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -31,14 +77,6 @@ const UpdateProduct = () => {
       [name]: value,
     });
   };
-
-  useEffect(() => {
-    //   get data from backend first
-    //   then set the formValues
-    return () => {
-
-    };
-  }, []);
 
   const fields = [
     {
@@ -83,7 +121,7 @@ const UpdateProduct = () => {
     <PaperContainer elevation={3} square>
       <TitleWithDivider>Update Product</TitleWithDivider>
       <SubHeader>
-        <BasicInput fields={fields} onSubmit={null}>
+        <BasicInput fields={fields} onSubmit={handleSubmit}>
           <FormControlContainer>
             <InputLabel id="product_unit_id_label">Product Unit</InputLabel>
             <Select

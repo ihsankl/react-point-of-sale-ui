@@ -1,7 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import Axios from 'axios';
-import {headersBuilder} from '../../helper';
-import {initialState} from './User';
+import {headersBuilder, createBasicReducer, initialState} from '../../helper';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -16,14 +15,14 @@ const types = {
 // get all product category
 export const getProductUnit = createAsyncThunk(
     types.GET_PRODUCT_UNIT,
-    async () => {
+    async (data = null, thunkAPI) => {
       try {
         const response = await Axios.get(`${BASE_URL}/product_unit`, {
           ...headersBuilder(),
         });
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -31,14 +30,15 @@ export const getProductUnit = createAsyncThunk(
 // get product category by id
 export const getProductUnitById = createAsyncThunk(
     types.GET_PRODUCT_UNIT_BY_ID,
-    async (id) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.get(`${BASE_URL}/product_unit/${id}`, {
-          ...headersBuilder(),
-        });
+        const response = await Axios.get(
+            `${BASE_URL}/product_unit/${data.id}`, {
+              ...headersBuilder(),
+            });
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -46,14 +46,14 @@ export const getProductUnitById = createAsyncThunk(
 // create product category
 export const createProductUnit = createAsyncThunk(
     types.CREATE_PRODUCT_UNIT,
-    async (productUnit) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.post(`${BASE_URL}/product_unit`, {
+        await Axios.post(`${BASE_URL}/product_unit`, data, {
           ...headersBuilder(),
-          ...productUnit});
-        return response.data;
+        });
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -61,17 +61,16 @@ export const createProductUnit = createAsyncThunk(
 // update product category
 export const updateProductUnit = createAsyncThunk(
     types.UPDATE_PRODUCT_UNIT,
-    async (productUnit) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.put(
-            `${BASE_URL}/product_unit/${productUnit.id}`,
+        await Axios.put(
+            `${BASE_URL}/product_unit/${data.id}`, data,
             {
               ...headersBuilder(),
-              ...productUnit,
             });
-        return response.data;
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -79,14 +78,14 @@ export const updateProductUnit = createAsyncThunk(
 // delete product category
 export const deleteProductUnit = createAsyncThunk(
     types.DELETE_PRODUCT_UNIT,
-    async (id) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.delete(`${BASE_URL}/product_unit/${id}`, {
+        await Axios.delete(`${BASE_URL}/product_unit/${data.id}`, {
           ...headersBuilder(),
         });
-        return response.data;
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -99,91 +98,54 @@ const productUnitSlice = createSlice({
   },
   extraReducers: (builder) => {
     //   get all product unit
-    builder.addCase(getProductUnit.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
-    });
     builder.addCase(getProductUnit.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
+      createBasicReducer(state, action, 'PENDING');
+    });
+    builder.addCase(getProductUnit.fulfilled, (state, action) => {
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(getProductUnit.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
+      createBasicReducer(state, action, 'REJECTED');
     });
     //   get product unit by id
-    builder.addCase(getProductUnitById.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
-    });
     builder.addCase(getProductUnitById.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
+      createBasicReducer(state, action, 'PENDING');
+    });
+    builder.addCase(getProductUnitById.fulfilled, (state, action) => {
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(getProductUnitById.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
+      createBasicReducer(state, action, 'REJECTED');
     });
     //   create product unit
-    builder.addCase(createProductUnit.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
-    });
     builder.addCase(createProductUnit.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
+      createBasicReducer(state, action, 'PENDING');
+    });
+    builder.addCase(createProductUnit.fulfilled, (state, action) => {
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(createProductUnit.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
+      createBasicReducer(state, action, 'REJECTED');
     });
     //   update product unit
-    builder.addCase(updateProductUnit.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
-    });
     builder.addCase(updateProductUnit.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
+      createBasicReducer(state, action, 'PENDING');
+    });
+    builder.addCase(updateProductUnit.fulfilled, (state, action) => {
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(updateProductUnit.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
+      createBasicReducer(state, action, 'REJECTED');
     });
     //   delete product unit
-    builder.addCase(deleteProductUnit.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.isError = false;
-    });
     builder.addCase(deleteProductUnit.pending, (state, action) => {
-      state.isLoading = true;
-      state.isSuccess = false;
-      state.isError = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
+    });
+    builder.addCase(deleteProductUnit.fulfilled, (state, action) => {
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(deleteProductUnit.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = true;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
   },
 });

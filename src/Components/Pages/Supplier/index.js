@@ -4,9 +4,36 @@ import React from 'react';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import BasicTable from '../../BasicTable';
 import {useNavigate} from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
+import {columnsBuilder} from '../../../helper';
+import {getSupplier} from '../../../Redux/Slicer/Supplier';
 
 const Supplier = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const Supplier = useSelector((state) => state.Supplier);
+  const SupplierData = Supplier.data?.data ?? [];
+
+  useEffect(() => {
+    initSupplier();
+    return () => {
+
+    };
+  }, []);
+
+  const initSupplier = async () => {
+    await dispatch(getSupplier()).unwrap();
+  };
+
+  const handleUpdate = (id) => {
+    const data = SupplierData.filter((item) => item.id === id);
+    navigate(`/supplier/update/${id}`, {state: {data}});
+  };
+
+  const handleDelete = (id) => {
+    console.log('delete not implemented');
+  };
+
   return (
     <PaperContainer elevation={3} square>
       <TitleWithDivider>Supplier</TitleWithDivider>
@@ -25,7 +52,12 @@ const Supplier = () => {
           />
         </div>
       </SubHeader>
-      <BasicTable/>
+      <BasicTable
+        dataRows={SupplierData}
+        dataColumns={
+          columnsBuilder(SupplierData[0], handleUpdate, handleDelete)
+        }
+      />
     </PaperContainer>
   );
 };

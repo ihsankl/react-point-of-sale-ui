@@ -1,7 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import Axios from 'axios';
-import {headersBuilder} from '../../helper';
-import {initialState} from './User';
+import {headersBuilder, initialState, createBasicReducer} from '../../helper';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -16,14 +15,14 @@ const types = {
 // get all category
 export const getAllCategory = createAsyncThunk(
     types.GET_ALL_CATEGORY,
-    async () => {
+    async (data = null, thunkAPI) => {
       try {
         const response = await Axios.get(`${BASE_URL}/category`, {
           ...headersBuilder(),
         });
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -31,14 +30,14 @@ export const getAllCategory = createAsyncThunk(
 // get category by id
 export const getCategoryById = createAsyncThunk(
     types.GET_CATEGORY_BY_ID,
-    async (id) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.get(`${BASE_URL}/category/${id}`, {
+        const response = await Axios.get(`${BASE_URL}/category/${data.id}`, {
           ...headersBuilder(),
         });
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -46,14 +45,13 @@ export const getCategoryById = createAsyncThunk(
 // create category
 export const createCategory = createAsyncThunk(
     types.CREATE_CATEGORY,
-    async (category) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.post(`${BASE_URL}/category`, {
-          ...headersBuilder(),
-          ...category});
-        return response.data;
+        await Axios.post(`${BASE_URL}/category`, data, {
+          ...headersBuilder()});
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -61,14 +59,14 @@ export const createCategory = createAsyncThunk(
 // update category
 export const updateCategory = createAsyncThunk(
     types.UPDATE_CATEGORY,
-    async (category) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.put(`${BASE_URL}/category`, {
+        await Axios.put(`${BASE_URL}/category/${data.id}`, data, {
           ...headersBuilder(),
-          ...category});
-        return response.data;
+        });
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -76,15 +74,15 @@ export const updateCategory = createAsyncThunk(
 // delete category
 export const deleteCategory = createAsyncThunk(
     types.DELETE_CATEGORY,
-    async (category) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.delete(
-            `${BASE_URL}/category/${category.id}`, {
+        await Axios.delete(
+            `${BASE_URL}/category/${data.id}`, {
               ...headersBuilder(),
             });
-        return response.data;
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -95,99 +93,53 @@ const categorySlice = createSlice({
   initialState: {...initialState},
   extraReducers: (builder) => {
     // get all category
-    builder.addCase(getAllCategory.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
-    });
     builder.addCase(getAllCategory.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
+    });
+    builder.addCase(getAllCategory.fulfilled, (state, action) => {
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(getAllCategory.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
     // get category by id
-    builder.addCase(getCategoryById.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
-    });
     builder.addCase(getCategoryById.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
+    });
+    builder.addCase(getCategoryById.fulfilled, (state, action) => {
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(getCategoryById.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
     // create category
-    builder.addCase(createCategory.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
-    });
     builder.addCase(createCategory.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
+    });
+    builder.addCase(createCategory.fulfilled, (state, action) => {
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(createCategory.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
     // update category
-    builder.addCase(updateCategory.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
-    });
     builder.addCase(updateCategory.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
+    });
+    builder.addCase(updateCategory.fulfilled, (state, action) => {
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(updateCategory.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
     // delete category
-    builder.addCase(deleteCategory.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
-    });
     builder.addCase(deleteCategory.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
+    }); builder.addCase(deleteCategory.fulfilled, (state, action) => {
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(deleteCategory.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
   },
 });

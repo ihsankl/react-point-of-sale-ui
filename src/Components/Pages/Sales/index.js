@@ -107,14 +107,12 @@ const rows = [
 const Sales = () => {
   const [pageSize, setPageSize] = useState(20);
   const [paid, setPaid] = useState('');
-  // eslint-disable-next-line no-unused-vars
   const [code, setCode] = useState('');
   const barcodeRef = useRef(null);
   const paidRef = useRef(null);
-  // TODO: fetch products
-  // eslint-disable-next-line no-unused-vars
   const Product = useSelector((state) => state.Product);
-  const ProductData = useSelector((state) => state.Product.data?.data);
+  // eslint-disable-next-line no-unused-vars
+  const ProductData = Product.data?.data;
   const dispatch = useDispatch();
 
   // quick move to scan field
@@ -140,7 +138,6 @@ const Sales = () => {
   useEffect(() => {
     barcodeRef.current.focus();
     getAllProducts();
-    console.log(ProductData);
     return () => {
       barcodeRef.current?.blur();
     };
@@ -164,7 +161,7 @@ const Sales = () => {
             <Autocomplete
               disablePortal
               id="combo-box-demo"
-              options={null}
+              options={ProductData ?? []}
               // sx={{width: 300}}
               renderInput={
                 (params) =>
@@ -176,7 +173,7 @@ const Sales = () => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
                         e.stopPropagation();
-                        sendData();
+                        console.log(code);
                       }
                     }}
                     inputRef={barcodeRef}

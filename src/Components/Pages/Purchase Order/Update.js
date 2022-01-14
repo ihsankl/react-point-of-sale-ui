@@ -9,8 +9,12 @@ import {
   TitleWithDivider,
 } from '../../../layout';
 import BasicInput from '../../BasicInput';
+import {updatePurchaseOrder} from '../../../Redux/Slicer/Purchase Order';
+import {useDispatch, useSelector} from 'react-redux';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 const defaultValues = {
+  purchase_order_id: '',
   purchase_order_qty: '',
   purchase_order_sub_total: '',
   purchase_order_order_date: new Date(),
@@ -22,6 +26,34 @@ const defaultValues = {
 
 const UpdatePurchaseOrder = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const dispatch = useDispatch();
+  const {state} = useLocation();
+  const navigate = useNavigate();
+  const Supplier = useSelector((x) => x.Supplier);
+  const Product = useSelector((x) => x.Product);
+  const SupplierData = Supplier.data?.data ?? [];
+  const ProductData = Product.data?.data ?? [];
+
+  useEffect(() => {
+    if (!!state) {
+      const data = {
+        purchase_order_id: state.data[0].id,
+        purchase_order_qty: state.data[0].qty,
+        purchase_order_sub_total: state.data[0].sub_total,
+        purchase_order_order_date: state.data[0].order_date,
+        purchase_order_unit_price: state.data[0].unit_price,
+        purchase_order_product_id: state.data[0].product_id,
+        purchase_order_user_id: state.data[0].user_id,
+        purchase_order_supplier_id: state.data[0].supplier_id,
+      };
+      setFormValues(data);
+    } else {
+      navigate(-1);
+    }
+    return () => {
+
+    };
+  }, []);
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -58,11 +90,25 @@ const UpdatePurchaseOrder = () => {
     },
   ];
 
+  const handleSubmit = () => {
+    const data = {
+      id: formValues.purchase_order_id,
+      qty: formValues.purchase_order_qty,
+      sub_total: formValues.purchase_order_sub_total,
+      order_date: formValues.purchase_order_order_date,
+      unit_price: formValues.purchase_order_unit_price,
+      product_id: formValues.purchase_order_product_id,
+      user_id: formValues.purchase_order_user_id,
+      supplier_id: formValues.purchase_order_supplier_id,
+    };
+    dispatch(updatePurchaseOrder(data));
+  };
+
   return (
-    <PaperContainer elevation={3} square>Supplier
-      <TitleWithDivider>Create Purchase Order</TitleWithDivider>
+    <PaperContainer elevation={3} square>
+      <TitleWithDivider>Update Purchase Order</TitleWithDivider>
       <SubHeader>
-        <BasicInput fields={fields} onSubmit={null}>
+        <BasicInput fields={fields} onSubmit={handleSubmit}>
           <FormControlContainer>
             <LocalizationProvider dateAdapter={DateAdapter}>
               <DesktopDatePicker
@@ -92,9 +138,11 @@ const UpdatePurchaseOrder = () => {
               value={formValues.purchase_order_supplier_id}
               onChange={handleInputChange}
             >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={11}>asd</MenuItem>
-              <MenuItem value={12}>dsa</MenuItem>
+              {SupplierData.map((value) => (
+                <MenuItem key={value.id} value={value.id}>
+                  {value.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControlContainer>
           <FormControlContainer>
@@ -111,9 +159,11 @@ const UpdatePurchaseOrder = () => {
               value={formValues.purchase_order_product_id}
               onChange={handleInputChange}
             >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={11}>asd</MenuItem>
-              <MenuItem value={12}>dsa</MenuItem>
+              {ProductData.map((value) => (
+                <MenuItem key={value.id} value={value.id}>
+                  {value.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControlContainer>
           <FormControlContainer>

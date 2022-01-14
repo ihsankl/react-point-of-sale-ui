@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
+import {useDispatch} from 'react-redux';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
+import {updateCustomer} from '../../../Redux/Slicer/Customer';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -13,12 +15,23 @@ const defaultValues = {
 
 const UpdateCustomer = () => {
   const [formValues, setFormValues] = useState(defaultValues);
-  const urlParams = useParams();
+  const dispatch = useDispatch();
+  const {state} = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // get data from backend first
-    // then set the formValues
-    console.log(urlParams.id);
+    if (!!state) {
+      const data = {
+        customer_code: state.data[0].code,
+        customer_name: state.data[0].name,
+        customer_address: state.data[0].address,
+        customer_contact: state.data[0].contact,
+        customer_id: state.data[0].id,
+      };
+      setFormValues(data);
+    } else {
+      navigate(-1);
+    }
     return () => {
 
     };
@@ -59,11 +72,22 @@ const UpdateCustomer = () => {
     },
   ];
 
+  const handleSubmit = () => {
+    const data = {
+      id: formValues.customer_id,
+      code: formValues.customer_code,
+      name: formValues.customer_name,
+      address: formValues.customer_address,
+      contact: formValues.customer_contact,
+    };
+    dispatch(updateCustomer(data));
+  };
+
   return (
     <PaperContainer elevation={3} square>
       <TitleWithDivider>Update Customer</TitleWithDivider>
       <SubHeader>
-        <BasicInput isUpdate fields={fields} onSubmit={null} />
+        <BasicInput isUpdate fields={fields} onSubmit={handleSubmit} />
       </SubHeader>
     </PaperContainer>
   );

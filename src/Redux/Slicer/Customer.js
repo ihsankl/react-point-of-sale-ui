@@ -1,7 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import Axios from 'axios';
-import {headersBuilder} from '../../helper';
-import {initialState} from './User';
+import {createBasicReducer, headersBuilder, initialState} from '../../helper';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -16,14 +15,14 @@ const types = {
 // get all customers
 export const getCustomers = createAsyncThunk(
     types.GET_CUSTOMERS,
-    async () => {
+    async (data = null, thunkAPI) => {
       try {
         const response = await Axios.get(`${BASE_URL}/customer`, {
           ...headersBuilder(),
         });
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -31,14 +30,14 @@ export const getCustomers = createAsyncThunk(
 // get customer by id
 export const getCustomerById = createAsyncThunk(
     types.GET_CUSTOMER_BY_ID,
-    async (id) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.get(`${BASE_URL}/customer/${id}`, {
+        const response = await Axios.get(`${BASE_URL}/customer/${data.id}`, {
           ...headersBuilder(),
         });
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -46,14 +45,13 @@ export const getCustomerById = createAsyncThunk(
 // create customer
 export const createCustomer = createAsyncThunk(
     types.CREATE_CUSTOMER,
-    async (customer) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.post(`${BASE_URL}/customer`, {
-          ...headersBuilder(),
-          ...customer});
-        return response.data;
+        await Axios.post(`${BASE_URL}/customer`, data, {
+          ...headersBuilder()});
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -61,14 +59,14 @@ export const createCustomer = createAsyncThunk(
 // update customer
 export const updateCustomer = createAsyncThunk(
     types.UPDATE_CUSTOMER,
-    async (customer) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.put(`${BASE_URL}/customer/${customer.id}`,
-            {...headersBuilder(), ...customer},
+        await Axios.put(`${BASE_URL}/customer/${data.id}`, data,
+            {...headersBuilder()},
         );
-        return response.data;
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -76,14 +74,14 @@ export const updateCustomer = createAsyncThunk(
 // delete customer
 export const deleteCustomer = createAsyncThunk(
     types.DELETE_CUSTOMER,
-    async (id) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.delete(`${BASE_URL}/customer/${id}`, {
+        await Axios.delete(`${BASE_URL}/customer/${data.id}`, {
           ...headersBuilder(),
         });
-        return response.data;
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -92,83 +90,56 @@ const customerSlice = createSlice({
   name: 'customer',
   initialState: {...initialState},
   extraReducers: (builder) => {
+    // get all
     builder.addCase(getCustomers.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(getCustomers.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(getCustomers.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = action.payload;
+      createBasicReducer(state, action, 'REJECTED');
     });
-
+    // get 1
     builder.addCase(getCustomerById.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(getCustomerById.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(getCustomerById.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = action.payload;
+      createBasicReducer(state, action, 'REJECTED');
     });
-
+    // create
     builder.addCase(createCustomer.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(createCustomer.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(createCustomer.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = action.payload;
+      createBasicReducer(state, action, 'REJECTED');
     });
-
+    // update
     builder.addCase(updateCustomer.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(updateCustomer.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
-    },
-    );
+      createBasicReducer(state, action, 'FULFILLED');
+    });
     builder.addCase(updateCustomer.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = action.payload;
-    },
-    );
+      createBasicReducer(state, action, 'REJECTED');
+    });
+    // delete
+    builder.addCase(deleteCustomer.pending, (state, action) => {
+      createBasicReducer(state, action, 'PENDING');
+    });
+    builder.addCase(deleteCustomer.fulfilled, (state, action) => {
+      createBasicReducer(state, action, 'FULFILLED');
+    });
+    builder.addCase(deleteCustomer.rejected, (state, action) => {
+      createBasicReducer(state, action, 'REJECTED');
+    });
   },
 });
 

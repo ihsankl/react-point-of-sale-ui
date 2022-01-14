@@ -4,9 +4,36 @@ import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import {useNavigate} from 'react-router-dom';
 import {Search} from '@mui/icons-material';
 import BasicTable from '../../BasicTable';
+import {useDispatch, useSelector} from 'react-redux';
+import {getReceiveProduct} from '../../../Redux/Slicer/Receive Product';
+import {columnsBuilder} from '../../../helper';
 
 const ReceiveProduct = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const ReceiveProduct = useSelector((state) => state.ReceiveProduct);
+  const ReceiveProductData = ReceiveProduct.data?.data ?? [];
+
+  useEffect(() => {
+    initReceiveProduct();
+    return () => {
+
+    };
+  }, []);
+
+  const initReceiveProduct = async () => {
+    await dispatch(getReceiveProduct()).unwrap();
+  };
+
+  const handleUpdate = (id) => {
+    const data = CustomerData.filter((item) => item.id === id);
+    navigate(`/receive_product/update/${id}`, {state: {data}});
+  };
+
+  const handleDelete = (id) => {
+    console.log('delete not implemented');
+  };
+
   return (
     <PaperContainer elevation={3} square>
       <TitleWithDivider>Receive Product</TitleWithDivider>
@@ -24,7 +51,12 @@ const ReceiveProduct = () => {
           />
         </div>
       </SubHeader>
-      <BasicTable/>
+      <BasicTable
+        dataRows={ReceiveProductData}
+        dataColumns={
+          columnsBuilder(ReceiveProductData[0], handleUpdate, handleDelete)
+        }
+      />
     </PaperContainer>
   );
 };

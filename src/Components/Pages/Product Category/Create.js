@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
+import {useDispatch} from 'react-redux';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
+import {createCategory} from '../../../Redux/Slicer/Category';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -7,6 +9,7 @@ const defaultValues = {
 };
 
 const CreateProductCategory = () => {
+  const dispatch = useDispatch();
   const [formValues, setFormValues] = useState(defaultValues);
 
   const handleInputChange = (e) => {
@@ -15,6 +18,13 @@ const CreateProductCategory = () => {
       ...formValues,
       [name]: value,
     });
+  };
+
+  const handleSubmit = () => {
+    const data = {
+      name: formValues.product_category_name,
+    };
+    dispatch(createCategory(data));
   };
 
   const fields = [
@@ -29,7 +39,7 @@ const CreateProductCategory = () => {
     <PaperContainer elevation={3} square>
       <TitleWithDivider>Create Product Category</TitleWithDivider>
       <SubHeader>
-        <BasicInput fields={fields} onSubmit={null} />
+        <BasicInput fields={fields} onSubmit={handleSubmit} />
       </SubHeader>
     </PaperContainer>
   );

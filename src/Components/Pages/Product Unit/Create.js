@@ -1,13 +1,15 @@
 import React, {useState} from 'react';
+import {useDispatch} from 'react-redux';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
+import {createProductUnit} from '../../../Redux/Slicer/Product Unit';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
   product_unit_name: '',
 };
 
-
 const CreateProductUnit = () => {
+  const dispatch = useDispatch();
   const [formValues, setFormValues] = useState(defaultValues);
 
   const handleInputChange = (e) => {
@@ -16,6 +18,13 @@ const CreateProductUnit = () => {
       ...formValues,
       [name]: value,
     });
+  };
+
+  const handleSubmit = () => {
+    const data = {
+      name: formValues.product_unit_name,
+    };
+    dispatch(createProductUnit(data));
   };
 
   const fields = [
@@ -30,7 +39,7 @@ const CreateProductUnit = () => {
     <PaperContainer elevation={3} square>
       <TitleWithDivider>Create Product Unit</TitleWithDivider>
       <SubHeader>
-        <BasicInput fields={fields} onSubmit={null} />
+        <BasicInput fields={fields} onSubmit={handleSubmit} />
       </SubHeader>
     </PaperContainer>
   );

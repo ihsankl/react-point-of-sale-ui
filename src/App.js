@@ -196,7 +196,8 @@ const App = ()=> {
            */}
           {/* TODO: give documentation for keyboard shortcuts */}
           {/* TODO: create theme customization */}
-
+           {/* TODO: add validation for each form */}
+           {/* TODO: add loading and notifications */}
         </Routes>
       </BrowserRouter>
     </div>

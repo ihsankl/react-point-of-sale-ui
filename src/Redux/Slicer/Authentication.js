@@ -1,7 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import Axios from 'axios';
-import {headersBuilder} from '../../helper';
-import {initialState} from './User';
+import {headersBuilder, initialState, createBasicReducer} from '../../helper';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -14,12 +13,12 @@ const types = {
 // user login
 export const login = createAsyncThunk(
     types.LOGIN,
-    async (user) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.post(`${BASE_URL}/login`, user);
+        const response = await Axios.post(`${BASE_URL}/login`, data);
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -27,7 +26,7 @@ export const login = createAsyncThunk(
 // user logout
 export const logout = createAsyncThunk(
     types.LOGOUT,
-    async () => {
+    async (data = null, thunkAPI) => {
       try {
         const response = await Axios.post(`${BASE_URL}/logout`,
             {
@@ -36,7 +35,7 @@ export const logout = createAsyncThunk(
         );
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -44,7 +43,7 @@ export const logout = createAsyncThunk(
 // check token
 export const checkToken = createAsyncThunk(
     types.CHECK_TOKEN,
-    async () => {
+    async (data = null, thunkAPI) => {
       try {
         const response = await Axios.get(`${BASE_URL}/checkToken`,
             {
@@ -53,7 +52,7 @@ export const checkToken = createAsyncThunk(
         );
         return response.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -64,60 +63,33 @@ const authenticationSlice = createSlice({
   extraReducers: (builder) => {
     // login
     builder.addCase(login.pending, (state) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(login.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(login.rejected, (state) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
     // logout
     builder.addCase(logout.pending, (state) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(logout.fulfilled, (state) => {
-      state.data = null;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(logout.rejected, (state) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
     // check token
     builder.addCase(checkToken.pending, (state) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(checkToken.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(checkToken.rejected, (state) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
   },
 });

@@ -63,13 +63,13 @@ const rows = [
   {id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65},
 ];
 
-const BasicTable = ({data}) => {
+const BasicTable = ({dataRows = rows, dataColumns = columns}) => {
   const [pageSize, setPageSize] = useState(20);
   return (
     <div style={{height: 'calc(100vh - 15.5em)'}}>
       <DataGrid
-        rows={rows}
-        columns={columns}
+        rows={dataRows}
+        columns={dataColumns}
         pageSize={pageSize}
         rowsPerPageOptions={[5, 10, 20]}
         disableSelectionOnClick
@@ -85,9 +85,8 @@ const BasicTable = ({data}) => {
 };
 
 BasicTable.propTypes = {
-  data: PropTypes.array.isRequired,
-  rows: PropTypes.array.isRequired,
-  columns: PropTypes.array.isRequired,
+  dataRows: PropTypes.array.isRequired,
+  dataColumns: PropTypes.array.isRequired,
 };
 
 export default BasicTable;

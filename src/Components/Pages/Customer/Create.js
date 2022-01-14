@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
+import {useDispatch} from 'react-redux';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
+import {createCustomer} from '../../../Redux/Slicer/Customer';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -9,8 +11,8 @@ const defaultValues = {
   customer_contact: '',
 };
 
-
 const CreateCustomer = () => {
+  const dispatch = useDispatch();
   const [formValues, setFormValues] = useState(defaultValues);
 
   const handleInputChange = (e) => {
@@ -19,6 +21,16 @@ const CreateCustomer = () => {
       ...formValues,
       [name]: value,
     });
+  };
+
+  const handleSubmit = () => {
+    const data = {
+      code: formValues.customer_code,
+      name: formValues.customer_name,
+      address: formValues.customer_address,
+      contact: formValues.customer_contact,
+    };
+    dispatch(createCustomer(data));
   };
 
   const fields = [
@@ -51,7 +63,7 @@ const CreateCustomer = () => {
     <PaperContainer elevation={3} square>
       <TitleWithDivider>Create Customer</TitleWithDivider>
       <SubHeader>
-        <BasicInput fields={fields} onSubmit={null} />
+        <BasicInput fields={fields} onSubmit={handleSubmit} />
       </SubHeader>
     </PaperContainer>
   );

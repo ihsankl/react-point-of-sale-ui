@@ -1,16 +1,17 @@
 import {TextField, Button} from '@mui/material';
 import React from 'react';
 import PropTypes from 'prop-types';
-import {useNavigate, useLocation} from 'react-router-dom';
-import {removeLastSlash} from '../helper';
+import {useNavigate} from 'react-router-dom';
 import {FormContainer, FormControlContainer} from '../layout';
 
 const BasicInput = ({isUpdate, fields, onSubmit, children}) => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   return (<>
-    <FormContainer onSubmit={(e) => e.preventDefault()}>
+    <FormContainer onSubmit={(e) => {
+      e.preventDefault();
+      onSubmit(e);
+    }}>
       <FormControlContainer>
         {fields.map((field, index) => {
           return (
@@ -38,7 +39,6 @@ const BasicInput = ({isUpdate, fields, onSubmit, children}) => {
           variant="contained"
           color="primary"
           type="submit"
-          onClick={onSubmit}
         >
           {isUpdate ? 'Update' : 'Create'}
         </Button>
@@ -47,8 +47,7 @@ const BasicInput = ({isUpdate, fields, onSubmit, children}) => {
           variant="contained"
           color="primary"
           onClick={
-            ()=> navigate(removeLastSlash(location.pathname),
-                {state: {from: location}})
+            ()=> navigate(-1)
           }
         >
           {'Cancel'}

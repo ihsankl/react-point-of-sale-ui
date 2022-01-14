@@ -1,7 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import Axios from 'axios';
-import {headersBuilder} from '../../helper';
-import {initialState} from './User';
+import {headersBuilder, createBasicReducer, initialState} from '../../helper';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -11,20 +10,19 @@ const types = {
   CREATE_PRODUCT: 'createProduct',
   UPDATE_PRODUCT: 'updateProduct',
   DELETE_PRODUCT: 'deleteProduct',
-
 };
 
 // get all product
 export const getProduct = createAsyncThunk(
     types.GET_PRODUCT,
-    async () => {
+    async (data = null, thunkAPI) => {
       try {
-        const response = await Axios.get(`${BASE_URL}/product`, {
+        const res = await Axios.get(`${BASE_URL}/product`, {
           ...headersBuilder(),
         });
-        return response.data;
+        return res.data;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -32,25 +30,29 @@ export const getProduct = createAsyncThunk(
 // get product by id
 export const getProductById = createAsyncThunk(
     types.GET_PRODUCT_BY_ID,
-    async (id) => {
-      const response = await Axios.get(`${BASE_URL}/product/${id}`, {
-        ...headersBuilder(),
-      });
-      return response;
+    async (data, thunkAPI) => {
+      try {
+        const res = await Axios.get(`${BASE_URL}/product/${data.id}`, {
+          ...headersBuilder(),
+        });
+        return res.data;
+      } catch (error) {
+        throw thunkAPI.rejectWithValue(error);
+      }
     },
 );
 
 // create product
 export const createProduct = createAsyncThunk(
     types.CREATE_PRODUCT,
-    async (product) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.post(`${BASE_URL}/product`, {
+        await Axios.post(`${BASE_URL}/product`, data, {
           ...headersBuilder(),
-          ...product});
-        return response.data;
+        });
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -58,14 +60,14 @@ export const createProduct = createAsyncThunk(
 // update product
 export const updateProduct = createAsyncThunk(
     types.UPDATE_PRODUCT,
-    async (product) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.put(`${BASE_URL}/product`, {
+        await Axios.put(`${BASE_URL}/product/${data.id}`, data, {
           ...headersBuilder(),
-          ...product});
-        return response.data;
+        });
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -73,15 +75,15 @@ export const updateProduct = createAsyncThunk(
 // delete product
 export const deleteProduct = createAsyncThunk(
     types.DELETE_PRODUCT,
-    async (product) => {
+    async (data, thunkAPI) => {
       try {
-        const response = await Axios.delete(
-            `${BASE_URL}/product/${product.id}`, {
+        await Axios.delete(
+            `${BASE_URL}/product/${data.id}`, {
               ...headersBuilder(),
             });
-        return response.data;
+        return;
       } catch (error) {
-        throw new Error(error);
+        throw thunkAPI.rejectWithValue(error);
       }
     },
 );
@@ -91,82 +93,58 @@ export const productSlice = createSlice({
   name: 'product',
   initialState: {...initialState},
   extraReducers: (builder) => {
+    // get all product
     builder.addCase(getProduct.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(getProduct.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
-      state.data = action.payload;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(getProduct.rejected, (state, action) => {
-      console.log('action >>>', action);
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = action.payload;
+      createBasicReducer(state, action, 'REJECTED');
     });
+    // get 1
+    builder.addCase(getProductById.pending, (state, action) => {
+      createBasicReducer(state, action, 'PENDING');
+    });
+    builder.addCase(getProductById.fulfilled, (state, action) => {
+      createBasicReducer(state, action, 'FULFILLED');
+    });
+    builder.addCase(getProductById.rejected, (state, action) => {
+      createBasicReducer(state, action, 'REJECTED');
+    });
+    // create product
     builder.addCase(createProduct.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(createProduct.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
-      state.data = action.payload;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(createProduct.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
+    // update product
     builder.addCase(updateProduct.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(updateProduct.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
-      state.data = action.payload;
+      createBasicReducer(state, action, 'FULFILLED');
     });
     builder.addCase(updateProduct.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'REJECTED');
     });
+    // delete product
     builder.addCase(deleteProduct.pending, (state, action) => {
-      state.isLoading = true;
-      state.isError = false;
-      state.isSuccess = false;
-      state.data = null;
+      createBasicReducer(state, action, 'PENDING');
     },
     );
     builder.addCase(deleteProduct.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.isError = false;
-      state.isSuccess = true;
-      state.data = action.payload;
+      createBasicReducer(state, action, 'FULFILLED');
     },
     );
     builder.addCase(deleteProduct.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.isSuccess = false;
-      state.data = null;
-    },
-    );
+      createBasicReducer(state, action, 'REJECTED');
+    });
   },
 });
 

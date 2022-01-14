@@ -1,17 +1,31 @@
 import React, {useEffect, useState} from 'react';
+import {useDispatch} from 'react-redux';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
+import {updateProductUnit} from '../../../Redux/Slicer/Product Unit';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
+  product_unit_id: '',
   product_unit_name: '',
 };
 
 const UpdateProductCategory = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const dispatch = useDispatch();
+  const {state} = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // get data from backend first
-    // then set the formValues
+    if (!!state) {
+      const data = {
+        product_unit_id: state.data[0].id,
+        product_unit_name: state.data[0].name,
+      };
+      setFormValues(data);
+    } else {
+      navigate(-1);
+    }
     return () => {
 
     };
@@ -25,6 +39,15 @@ const UpdateProductCategory = () => {
     });
   };
 
+  const handleSubmit = () => {
+    const data = {
+      id: formValues.product_unit_id,
+      name: formValues.product_unit_name,
+    };
+    dispatch(updateProductUnit(data));
+  };
+
+
   const fields = [
     {
       id: 'product_unit_name',
@@ -36,9 +59,9 @@ const UpdateProductCategory = () => {
 
   return (
     <PaperContainer elevation={3} square>
-      <TitleWithDivider>Update Customer</TitleWithDivider>
+      <TitleWithDivider>Update Product Unit</TitleWithDivider>
       <SubHeader>
-        <BasicInput isUpdate fields={fields} onSubmit={null}/>
+        <BasicInput isUpdate fields={fields} onSubmit={handleSubmit}/>
       </SubHeader>
     </PaperContainer>
   );

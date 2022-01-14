@@ -9,6 +9,9 @@ import {
 } from '../../../layout';
 import BasicInput from '../../BasicInput';
 import DateAdapter from '@mui/lab/AdapterDayjs';
+import {useDispatch} from 'react-redux';
+import {createInvoice} from '../../../Redux/Slicer/Invoice';
+import dayjs from 'dayjs';
 
 const defaultValues = {
   invoice_total_amount: '',
@@ -19,6 +22,7 @@ const defaultValues = {
 };
 
 const CreateInvoice = () => {
+  const dispatch = useDispatch();
   const [formValues, setFormValues] = useState(defaultValues);
 
   const handleInputChange = (e) => {
@@ -33,6 +37,18 @@ const CreateInvoice = () => {
     const value = {...formValues};
     value.invoice_date_recorded = newValue;
     setFormValues(value);
+  };
+
+  const handleSubmit = () => {
+    const data = {
+      total_amount: formValues.invoice_total_amount,
+      amount_tendered: formValues.invoice_amount_tendered,
+      // eslint-disable-next-line max-len
+      date_recorded: dayjs(formValues.invoice_date_recorded).format('YYYY-MM-DD'),
+      user_id: formValues.invoice_user_id,
+      customer_id: formValues.invoice_customer_id,
+    };
+    dispatch(createInvoice(data));
   };
 
   const fields = [
@@ -54,7 +70,7 @@ const CreateInvoice = () => {
     <PaperContainer elevation={3} square>
       <TitleWithDivider>Create Invoice</TitleWithDivider>
       <SubHeader>
-        <BasicInput fields={fields} onSubmit={null}>
+        <BasicInput fields={fields} onSubmit={handleSubmit}>
           <FormControlContainer>
             <LocalizationProvider dateAdapter={DateAdapter}>
               <DesktopDatePicker
