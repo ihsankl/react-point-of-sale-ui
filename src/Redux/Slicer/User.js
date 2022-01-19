@@ -85,7 +85,17 @@ export const deleteUser = createAsyncThunk(
 const userSlice = createSlice({
   name: 'user',
   initialState: {...initialState},
-  extraReducers: (builder) => {
+  reducers: {
+    clearError: (state) => {
+      state.error = {
+        state: false,
+        message: null,
+      };
+    },
+    clearSuccess: (state) => {
+      state.isSuccess = false;
+    },
+  }, extraReducers: (builder) => {
     // get users
     builder.addCase(fetchUsers.pending, (state) => {
       createBasicReducer(state, action, 'PENDING');
@@ -139,4 +149,5 @@ const userSlice = createSlice({
   },
 });
 
+export const {clearError, clearSuccess} = userSlice.actions;
 export default userSlice.reducer;

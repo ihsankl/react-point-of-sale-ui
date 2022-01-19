@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {useLocation, useNavigate} from 'react-router-dom';
+import {isNumber} from '../../../helper';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import {updateCustomer} from '../../../Redux/Slicer/Customer';
 import BasicInput from '../../BasicInput';
@@ -69,6 +70,10 @@ const UpdateCustomer = () => {
       label: 'Contact',
       onChange: handleInputChange,
       value: formValues.customer_contact,
+      error: !isNumber(formValues.customer_contact),
+      helperText: isNumber(formValues.customer_contact) ?
+      '' : 'Contact must be a number',
+
     },
   ];
 
@@ -84,12 +89,14 @@ const UpdateCustomer = () => {
   };
 
   return (
-    <PaperContainer elevation={3} square>
-      <TitleWithDivider>Update Customer</TitleWithDivider>
-      <SubHeader>
-        <BasicInput isUpdate fields={fields} onSubmit={handleSubmit} />
-      </SubHeader>
-    </PaperContainer>
+    <>
+      <PaperContainer elevation={3} square>
+        <TitleWithDivider>Update Customer</TitleWithDivider>
+        <SubHeader>
+          <BasicInput isUpdate fields={fields} onSubmit={handleSubmit} />
+        </SubHeader>
+      </PaperContainer>
+    </>
   );
 };
 

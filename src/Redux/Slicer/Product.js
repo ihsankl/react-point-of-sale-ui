@@ -92,7 +92,17 @@ export const deleteProduct = createAsyncThunk(
 export const productSlice = createSlice({
   name: 'product',
   initialState: {...initialState},
-  extraReducers: (builder) => {
+  reducers: {
+    clearError: (state) => {
+      state.error = {
+        state: false,
+        message: null,
+      };
+    },
+    clearSuccess: (state) => {
+      state.isSuccess = false;
+    },
+  }, extraReducers: (builder) => {
     // get all product
     builder.addCase(getProduct.pending, (state, action) => {
       createBasicReducer(state, action, 'PENDING');
@@ -148,4 +158,5 @@ export const productSlice = createSlice({
   },
 });
 
+export const {clearError, clearSuccess} = productSlice.actions;
 export default productSlice.reducer;

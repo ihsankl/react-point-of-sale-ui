@@ -54,16 +54,22 @@ const UpdateProductCategory = () => {
       label: 'Name',
       onChange: handleInputChange,
       value: formValues.product_unit_name,
+      error: !formValues.product_unit_name,
+      helperText: !!formValues.product_unit_name ?
+      '' : 'Please enter product unit name',
+
     },
   ];
 
   return (
-    <PaperContainer elevation={3} square>
-      <TitleWithDivider>Update Product Unit</TitleWithDivider>
-      <SubHeader>
-        <BasicInput isUpdate fields={fields} onSubmit={handleSubmit}/>
-      </SubHeader>
-    </PaperContainer>
+    <>
+      <PaperContainer elevation={3} square>
+        <TitleWithDivider>Update Product Unit</TitleWithDivider>
+        <SubHeader>
+          <BasicInput isUpdate fields={fields} onSubmit={handleSubmit}/>
+        </SubHeader>
+      </PaperContainer>
+    </>
   );
 };
 

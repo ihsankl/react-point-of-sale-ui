@@ -1,5 +1,7 @@
+/* eslint-disable camelcase */
 import React, {useState} from 'react';
 import {useDispatch} from 'react-redux';
+import {isNumber} from '../../../helper';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import {createCustomer} from '../../../Redux/Slicer/Customer';
 import BasicInput from '../../BasicInput';
@@ -32,8 +34,9 @@ const CreateCustomer = () => {
     };
     dispatch(createCustomer(data));
   };
+  // form validation
 
-  const fields = [
+  const fieldsInitState = [
     {
       id: 'customer_code',
       label: 'Code',
@@ -57,15 +60,21 @@ const CreateCustomer = () => {
       label: 'Contact',
       onChange: handleInputChange,
       value: formValues.customer_contact,
+      error: !isNumber(formValues.customer_contact),
+      helperText: isNumber(formValues.customer_contact) ?
+      '' : 'Contact must be a number',
     },
   ];
+
   return (
-    <PaperContainer elevation={3} square>
-      <TitleWithDivider>Create Customer</TitleWithDivider>
-      <SubHeader>
-        <BasicInput fields={fields} onSubmit={handleSubmit} />
-      </SubHeader>
-    </PaperContainer>
+    <>
+      <PaperContainer elevation={3} square>
+        <TitleWithDivider>Create Customer</TitleWithDivider>
+        <SubHeader>
+          <BasicInput fields={fieldsInitState} onSubmit={handleSubmit} />
+        </SubHeader>
+      </PaperContainer>
+    </>
   );
 };
 

@@ -12,6 +12,7 @@ const defaultValues = {
 
 const UpdateProductCategory = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+
   const dispatch = useDispatch();
   const {state} = useLocation();
   const navigate = useNavigate();
@@ -45,24 +46,30 @@ const UpdateProductCategory = () => {
       label: 'Name',
       onChange: handleInputChange,
       value: formValues.product_category_name,
+      error: !formValues.product_category_name,
+      helperText: !!formValues.product_category_name ?
+      '' : 'Please enter category name',
+
     },
   ];
 
   const handleSubmit = () => {
     const data = {
-      id: formValues.product_categoryid,
-      name: formValues.product_categoryname,
+      id: formValues.product_category_id,
+      name: formValues.product_category_name,
     };
     dispatch(updateCategory(data));
   };
 
   return (
-    <PaperContainer elevation={3} square>
-      <TitleWithDivider>Update Product Category</TitleWithDivider>
-      <SubHeader>
-        <BasicInput isUpdate fields={fields} onSubmit={handleSubmit}/>
-      </SubHeader>
-    </PaperContainer>
+    <>
+      <PaperContainer elevation={3} square>
+        <TitleWithDivider>Update Product Category</TitleWithDivider>
+        <SubHeader>
+          <BasicInput isUpdate fields={fields} onSubmit={handleSubmit}/>
+        </SubHeader>
+      </PaperContainer>
+    </>
   );
 };
 

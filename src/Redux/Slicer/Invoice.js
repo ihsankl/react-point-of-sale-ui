@@ -78,7 +78,9 @@ export const deleteInvoice = createAsyncThunk(
     types.DELETE_INVOICE,
     async (data, thunkAPI) => {
       try {
-        await Axios.delete(`${BASE_URL}/invoice/${data.id}`);
+        await Axios.delete(`${BASE_URL}/invoice/${data.id}`, {
+          ...headersBuilder(),
+        });
         return;
       } catch (error) {
         throw thunkAPI.rejectWithValue(error);
@@ -90,6 +92,17 @@ export const deleteInvoice = createAsyncThunk(
 const invoiceSlice = createSlice({
   name: 'invoice',
   initialState: {...initialState},
+  reducers: {
+    clearError: (state) => {
+      state.error = {
+        state: false,
+        message: null,
+      };
+    },
+    clearSuccess: (state) => {
+      state.isSuccess = false;
+    },
+  },
   extraReducers: (builder) => {
     // get all
     builder.addCase(getInvoice.pending, (state, action) => {
@@ -144,4 +157,5 @@ const invoiceSlice = createSlice({
   },
 });
 
+export const {clearError, clearSuccess} = invoiceSlice.actions;
 export default invoiceSlice.reducer;

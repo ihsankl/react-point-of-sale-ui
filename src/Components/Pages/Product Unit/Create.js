@@ -33,15 +33,20 @@ const CreateProductUnit = () => {
       label: 'Name',
       onChange: handleInputChange,
       value: formValues.product_unit_name,
+      error: !formValues.product_unit_name,
+      helperText: !!formValues.product_unit_name ?
+      '' : 'Please enter product unit name',
     },
   ];
   return (
-    <PaperContainer elevation={3} square>
-      <TitleWithDivider>Create Product Unit</TitleWithDivider>
-      <SubHeader>
-        <BasicInput fields={fields} onSubmit={handleSubmit} />
-      </SubHeader>
-    </PaperContainer>
+    <>
+      <PaperContainer elevation={3} square>
+        <TitleWithDivider>Create Product Unit</TitleWithDivider>
+        <SubHeader>
+          <BasicInput fields={fields} onSubmit={handleSubmit} />
+        </SubHeader>
+      </PaperContainer>
+    </>
   );
 };
 

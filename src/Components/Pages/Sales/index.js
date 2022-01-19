@@ -14,6 +14,7 @@ import {
   TitleWithDivider,
 } from '../../../layout';
 import {getProduct} from '../../../Redux/Slicer/Product';
+import {optionsBuilder} from '../../../helper';
 
 const columns = [
   {field: 'id', headerName: 'No.', width: 70}, ,
@@ -111,8 +112,7 @@ const Sales = () => {
   const barcodeRef = useRef(null);
   const paidRef = useRef(null);
   const Product = useSelector((state) => state.Product);
-  // eslint-disable-next-line no-unused-vars
-  const ProductData = Product.data?.data;
+  const ProductData = Product.data?.data ?? [];
   const dispatch = useDispatch();
 
   // quick move to scan field
@@ -137,7 +137,9 @@ const Sales = () => {
 
   useEffect(() => {
     barcodeRef.current.focus();
-    getAllProducts();
+    if (ProductData.length === 0) {
+      getAllProducts();
+    }
     return () => {
       barcodeRef.current?.blur();
     };
@@ -148,86 +150,91 @@ const Sales = () => {
   };
 
   return (
-    <PaperContainer elevation={3} square>
-      <TitleWithDivider>Sales</TitleWithDivider>
-      <SubHeader />
-      <div style={{
-        height: 'calc(100vh - 15.5em)',
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
-        <FormContainer onSubmit={(e) => e.preventDefault()}>
-          <FormControlContainer>
-            <Autocomplete
-              disablePortal
-              id="combo-box-demo"
-              options={ProductData ?? []}
-              // sx={{width: 300}}
-              renderInput={
-                (params) =>
-                  <TextField
-                    onChange={(e) => {
-                      setCode(e.target.value);
-                    }}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log(code);
-                      }
-                    }}
-                    inputRef={barcodeRef}
-                    {...params}
-                    label="Name or Code"
-                  />
-              }
-            />
-          </FormControlContainer>
-        </FormContainer>
-        <DataGrid
-          sx={{
-            marginTop: '1em',
+    <>
+      <PaperContainer elevation={3} square>
+        <TitleWithDivider>Sales</TitleWithDivider>
+        <SubHeader />
+        <div style={{
+          height: 'calc(100vh - 15.5em)',
+          display: 'flex',
+          flexDirection: 'column',
+        }}>
+          <FormContainer onSubmit={(e) => e.preventDefault()}>
+            <FormControlContainer>
+              <Autocomplete
+                onInputChange={(e, value) => {
+                  console.log(e);
+                }}
+                disablePortal
+                id="combo-box-demo"
+                options={optionsBuilder(ProductData)}
+                // sx={{width: 300}}
+                renderInput={
+                  (params) =>
+                    <TextField
+                      onChange={(e) => {
+                        setCode(e.target.value);
+                      }}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log(code);
+                        }
+                      }}
+                      inputRef={barcodeRef}
+                      {...params}
+                      label="Name or Code"
+                    />
+                }
+              />
+            </FormControlContainer>
+          </FormContainer>
+          <DataGrid
+            sx={{
+              marginTop: '1em',
+              maxWidth: '50%',
+              minWidth: '40em',
+            }}
+            rows={rows}
+            columns={columns}
+            pageSize={pageSize}
+            rowsPerPageOptions={[5, 10, 20]}
+            disableSelectionOnClick
+            onPageSizeChange={(page) => {
+              setPageSize(page);
+            }}
+            onRowEditCommit={(row) => {
+              console.log(row); console.log('onRowEditCommit');
+            }}
+          />
+          <div style={{
             maxWidth: '50%',
             minWidth: '40em',
-          }}
-          rows={rows}
-          columns={columns}
-          pageSize={pageSize}
-          rowsPerPageOptions={[5, 10, 20]}
-          disableSelectionOnClick
-          onPageSizeChange={(page) => {
-            setPageSize(page);
-          }}
-          onRowEditCommit={(row) => {
-            console.log(row); console.log('onRowEditCommit');
-          }}
-        />
-        <div style={{
-          maxWidth: '50%',
-          minWidth: '40em',
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexDirection: 'column',
-          gap: '1em',
-          marginTop: '1em',
-        }}>
-          <TextField
-            inputRef={paidRef}
-            sx={{width: '10em', fontSize: '2em'}}
-            id={'paid'}
-            label={'Paid'}
-            type={'number'}
-            name={'paid'}
-            value={paid}
-            variant="standard"
-            fullWidth
-            onChange={(e) => setPaid(e.target.value)}
-          />
-          <Title>Changes :</Title>
-          <Title sx={{fontSize: '2em'}}>Total :</Title>
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexDirection: 'column',
+            gap: '1em',
+            marginTop: '1em',
+          }}>
+            <TextField
+              inputRef={paidRef}
+              sx={{width: '10em', fontSize: '2em'}}
+              id={'paid'}
+              label={'Paid'}
+              type={'number'}
+              name={'paid'}
+              value={paid}
+              variant="standard"
+              fullWidth
+              onChange={(e) => setPaid(e.target.value)}
+            />
+            <Title>Changes :</Title>
+            <Title sx={{fontSize: '2em'}}>Total :</Title>
+          </div>
         </div>
-      </div>
-    </PaperContainer>
+      </PaperContainer>
+    </>
   );
 };
 

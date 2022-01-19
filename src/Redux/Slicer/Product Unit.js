@@ -96,6 +96,17 @@ const productUnitSlice = createSlice({
   initialState: {
     ...initialState,
   },
+  reducers: {
+    clearError: (state) => {
+      state.error = {
+        message: null,
+        state: false,
+      };
+    },
+    clearSuccess: (state) => {
+      state.isSuccess = false;
+    },
+  },
   extraReducers: (builder) => {
     //   get all product unit
     builder.addCase(getProductUnit.pending, (state, action) => {
@@ -150,4 +161,5 @@ const productUnitSlice = createSlice({
   },
 });
 
+export const {clearError, clearSuccess} = productUnitSlice.actions;
 export default productUnitSlice.reducer;

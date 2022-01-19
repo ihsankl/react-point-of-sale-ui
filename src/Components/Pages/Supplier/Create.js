@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
+import {useDispatch} from 'react-redux';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
+import {createSupplier} from '../../../Redux/Slicer/Supplier';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -11,6 +13,7 @@ const defaultValues = {
 };
 
 const CreateSupplier = () => {
+  const dispatch = useDispatch();
   const [formValues, setFormValues] = useState(defaultValues);
 
   const handleInputChange = (e) => {
@@ -53,13 +56,27 @@ const CreateSupplier = () => {
       value: formValues.supplier_contact,
     },
   ];
+
+  const handleSubmit = () => {
+    const data = {
+      code: formValues.supplier_code,
+      name: formValues.supplier_name,
+      address: formValues.supplier_address,
+      email: formValues.supplier_email,
+      contact: formValues.supplier_contact,
+    };
+    dispatch(createSupplier(data));
+  };
+
   return (
-    <PaperContainer elevation={3} square>
-      <TitleWithDivider>Create Supplier</TitleWithDivider>
-      <SubHeader>
-        <BasicInput fields={fields} onSubmit={null} />
-      </SubHeader>
-    </PaperContainer>
+    <>
+      <PaperContainer elevation={3} square>
+        <TitleWithDivider>Create Supplier</TitleWithDivider>
+        <SubHeader>
+          <BasicInput fields={fields} onSubmit={handleSubmit} />
+        </SubHeader>
+      </PaperContainer>
+    </>
   );
 };
 

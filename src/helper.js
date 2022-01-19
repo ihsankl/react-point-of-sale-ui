@@ -25,7 +25,7 @@ export const removeLastSlash = (str) => {
 
 // headers builder
 // eslint-disable-next-line max-len
-export const headersBuilder = (token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInBhc3N3b3JkIjoiJDJiJDEwJElYdmdSZ1RjUGFUYmlUbmN0ZmZJRGU1VFJveXdzcHZZdUZmeW1VOHFFeXNuTWhMWDhNa2RHIiwiZnVsbG5hbWUiOiItIiwicm9sZSI6ImFkbWluIiwiY29udGFjdCI6Ii0iLCJpYXQiOjE2NDIxMTY1NTEsImV4cCI6MTY0MjIwMjk1MX0.CwluhrasCii2wIXvTa2c8KN74N-Iyqmv5wkmjrifzAw') => {
+export const headersBuilder = (token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAxLCJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiIkMmEkMTAkbExVZjB6QnBQZENQdGdGekkwQTU3dVRZRGYvSnlYTkhnc1lpUGFQNngzNjRsRmFVY2hvYmkiLCJmdWxsbmFtZSI6bnVsbCwicm9sZSI6ImFkbWluIiwiY29udGFjdCI6bnVsbCwiaWF0IjoxNjQyNTAzNTQ4LCJleHAiOjE2NDI1ODk5NDh9.4lZDB1b3m3JewWFObxNpTyurgygs0PFJABgoqQSlonU') => {
   return {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -41,8 +41,7 @@ export const headersBuilder = (token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ
 export const optionsBuilder = (data) => {
   return data.map((item) => {
     return {
-      value: item,
-      label: item,
+      label: item?.name,
     };
   });
 };
@@ -109,11 +108,15 @@ export const columnsBuilder = (data, editCb, deleteCb) => {
         headerName: capitalize(property),
         sortable: true,
         editable: false,
-        width: 200,
+        // set width based on content length
+        width: 150,
+        // hide every column containing id
+        hide: property.includes('id') ? true : false,
         valueGetter: (params)=> dateFormatter(params.row[property]),
       });
     }
   }
+
   columnsArr.push({
     field: 'actions',
     headerName: 'Actions',
@@ -144,6 +147,7 @@ export const columnsBuilder = (data, editCb, deleteCb) => {
       );
     },
   });
+
   return columnsArr;
 };
 
@@ -152,9 +156,69 @@ export const columnsBuilder = (data, editCb, deleteCb) => {
 export const dateFormatter = (value) => {
   // example of date string = 2022-01-13T17:00:00.000Z
   const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
-
   if (pattern.test(value)) {
     return dayjs(value).format('YYYY-MM-DD');
   }
   return value;
+};
+
+// return true if the value is number
+export const isNumber = (value) => {
+  if (!value) return false;
+  return !isNaN(value);
+};
+
+// create uuid
+export const uuid = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = (Math.random() * 16) | 0;
+    const v = c == 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
+
+// rupiah formatter
+export const rupiahFormatter = (value) => {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+  }).format(value);
+};
+
+// convert thounsand into K
+export const thousandFormatter = (value) => {
+  if (value < 1000) return value;
+  if (value >= 1000 && value < 1000000) {
+    return `${(value / 1000).toFixed(2)}K`;
+  }
+  if (value >= 1000000) {
+    return `${(value / 1000000).toFixed(2)}M`;
+  }
+};
+
+// random color for each data
+export const randomColor = () => {
+  return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+};
+
+// this function is exclusive to Invoice State
+// will break if the data is not Invoice State
+export const getInvoices = (howLong, data) => {
+  const today = dayjs();
+  const subtractor = today.subtract(howLong, 'day');
+  const invoices = data.filter((item) => {
+    return dayjs(item.date_recorded).isBetween(subtractor, today);
+  });
+  return invoices;
+};
+
+// this function is exclusive to Sales State
+// will break if the data is not Sales State
+export const getSales = (invoice, data) => {
+  const sales = data.filter(
+      (sale) => invoice.some(
+          (invoiceData) => invoiceData.id === sale.invoice_id,
+      ),
+  );
+  return sales;
 };

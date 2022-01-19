@@ -94,7 +94,17 @@ export const deletePurchaseOrder = createAsyncThunk(
 const purchaseOrderSlice = createSlice({
   name: 'purchaseOrder',
   initialState: {...initialState},
-  extraReducers: (builder) => {
+  reducers: {
+    clearError: (state) => {
+      state.error = {
+        state: false,
+        message: null,
+      };
+    },
+    clearSuccess: (state) => {
+      state.isSuccess = false;
+    },
+  }, extraReducers: (builder) => {
     // get all purchase order
     builder.addCase(getPurchaseOrder.pending, (state, action) => {
       createBasicReducer(state, action, 'PENDING');
@@ -148,4 +158,5 @@ const purchaseOrderSlice = createSlice({
   },
 });
 
+export const {clearError, clearSuccess} = purchaseOrderSlice.actions;
 export default purchaseOrderSlice.reducer;

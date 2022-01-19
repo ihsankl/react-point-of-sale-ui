@@ -16,6 +16,7 @@ const BasicInput = ({isUpdate, fields, onSubmit, children}) => {
         {fields.map((field, index) => {
           return (
             <TextField
+              error={field.error}
               key={index}
               id={field.id}
               label={field.label}
@@ -24,6 +25,7 @@ const BasicInput = ({isUpdate, fields, onSubmit, children}) => {
               variant="outlined"
               fullWidth
               onChange={field.onChange}
+              helperText={field.helperText}
             />
           );
         })}
@@ -63,6 +65,8 @@ BasicInput.propTypes = {
     label: PropTypes.string.isRequired,
     value: PropTypes.any.isRequired,
     onChange: PropTypes.func.isRequired,
+    helperText: PropTypes.string,
+    error: PropTypes.bool,
   })).isRequired,
   onSubmit: PropTypes.func.isRequired,
   isUpdate: PropTypes.bool,

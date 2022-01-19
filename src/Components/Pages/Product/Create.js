@@ -1,5 +1,14 @@
 // /* eslint-disable */
-import {InputLabel, MenuItem, Select, TextField} from '@mui/material';
+import {
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material';
+import {DesktopDatePicker, LocalizationProvider} from '@mui/lab';
+import DateAdapter from '@mui/lab/AdapterDayjs';
+import dayjs from 'dayjs';
 import React, {useState} from 'react';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
@@ -9,7 +18,9 @@ import {
   SubHeader,
   TitleWithDivider,
 } from '../../../layout';
+import {createProduct} from '../../../Redux/Slicer/Product';
 import BasicInput from '../../BasicInput';
+import {isNumber} from '../../../helper';
 
 const defaultValues = {
   product_code: '',
@@ -21,6 +32,7 @@ const defaultValues = {
   product_unit_id: '',
   product_category_id: '',
   product_user_id: 1,
+  product_expired_date: new Date(),
 };
 
 const CreateProduct = () => {
@@ -39,6 +51,12 @@ const CreateProduct = () => {
     });
   };
 
+  const handleDateChange = (newValue) => {
+    const value = {...formValues};
+    value.product_expired_date = newValue;
+    setFormValues(value);
+  };
+
   const handleSubmit = () => {
     const data = {
       code: formValues.product_code,
@@ -50,6 +68,7 @@ const CreateProduct = () => {
       unit_id: formValues.product_unit_id,
       category_id: formValues.product_category_id,
       user_id: formValues.product_user_id,
+      expired_date: dayjs(formValues.product_expired_date).format('YYYY-MM-DD'),
     };
     dispatch(createProduct(data));
   };
@@ -60,30 +79,43 @@ const CreateProduct = () => {
       label: 'Code',
       onChange: handleInputChange,
       value: formValues.product_code,
+      error: !formValues.product_code,
+      helperText: formValues.product_code ? '' : 'Code is required',
     },
     {
       id: 'product_name',
       label: 'Name',
       onChange: handleInputChange,
       value: formValues.product_name,
+      error: !formValues.product_name,
+      helperText: !!formValues.product_name ? '' : 'Name is required',
     },
     {
       id: 'product_unit_in_stock',
       label: 'Unit in Stock',
       onChange: handleInputChange,
       value: formValues.product_unit_in_stock,
+      error: !isNumber(formValues.product_unit_in_stock),
+      helperText: isNumber(formValues.product_unit_in_stock) ?
+      '' : 'Unit in Stock must be a number',
     },
     {
       id: 'product_disc_percentage',
       label: 'Disc Percentage',
       onChange: handleInputChange,
       value: formValues.product_disc_percentage,
+      error: !isNumber(formValues.product_disc_percentage),
+      helperText: isNumber(formValues.product_disc_percentage) ?
+      '' : 'Disc Percentage must be a number',
     },
     {
       id: 'product_unit_price',
       label: 'Unit Price',
       onChange: handleInputChange,
       value: formValues.product_unit_price,
+      error: !isNumber(formValues.product_unit_price),
+      helperText: isNumber(formValues.product_unit_price) ?
+      '' : 'Unit Price must be a number',
     },
     {
       id: 'product_re_order_level',
@@ -94,58 +126,87 @@ const CreateProduct = () => {
   ];
 
   return (
-    <PaperContainer elevation={3} square>
-      <TitleWithDivider>Create Product</TitleWithDivider>
-      <SubHeader>
-        <BasicInput fields={fields} onSubmit={handleSubmit}>
-          <FormControlContainer>
-            <InputLabel id="product_unit_id_label">Product Unit</InputLabel>
-            <Select
-              labelId="product_unit_id_label"
-              id="product_unit_id"
-              name="product_unit_id"
-              label="Product Unit"
-              value={formValues.product_unit_id}
-              onChange={handleInputChange}
-            >
-              {ProductUnitData.map((item) => (
-                <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControlContainer>
-          <FormControlContainer>
-            <InputLabel
-              id="product_category_id_label"
-            >
+    <>
+      <PaperContainer elevation={3} square>
+        <TitleWithDivider>Create Product</TitleWithDivider>
+        <SubHeader>
+          <BasicInput fields={fields} onSubmit={handleSubmit}>
+            <FormControlContainer>
+              <InputLabel id="product_unit_id_label">Product Unit</InputLabel>
+              <Select
+                error={!formValues.product_unit_id}
+                labelId="product_unit_id_label"
+                id="product_unit_id"
+                name="product_unit_id"
+                label="Product Unit"
+                value={formValues.product_unit_id}
+                onChange={handleInputChange}
+              >
+                {ProductUnitData.map((item) => (
+                  <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
+                ))}
+              </Select>
+              {!formValues.product_unit_id &&
+            <FormHelperText error={!formValues.product_unit_id}>
+              Product Unit is required
+            </FormHelperText>
+              }
+            </FormControlContainer>
+            <FormControlContainer>
+              <LocalizationProvider dateAdapter={DateAdapter}>
+                <DesktopDatePicker
+                  label="Expired Date"
+                  labelId="product_expired_date_label"
+                  inputFormat="YYYY-DD-MM"
+                  name="product_expired_date"
+                  mask='____-__-__'
+                  id="product_expired_date"
+                  value={formValues.product_expired_date}
+                  onChange={handleDateChange}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+            </FormControlContainer>
+            <FormControlContainer>
+              <InputLabel
+                id="product_category_id_label"
+              >
                 Product Category
-            </InputLabel>
-            <Select
-              labelId="product_category_id_label"
-              id="product_category_id"
-              name="product_category_id"
-              label="Product Unit"
-              value={formValues.product_category_id}
-              onChange={handleInputChange}
-            >
-              {CategoryData.map((item) => (
-                <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControlContainer>
-          <FormControlContainer>
-            <TextField
-              id={'product_user_id'}
-              label={'User'}
-              name={'product_user_id'}
-              defaultValue={formValues.product_user_id}
-              disabled
-              variant="outlined"
-              fullWidth
-            />
-          </FormControlContainer>
-        </BasicInput>
-      </SubHeader>
-    </PaperContainer>
+              </InputLabel>
+              <Select
+                error={!formValues.product_category_id}
+                labelId="product_category_id_label"
+                id="product_category_id"
+                name="product_category_id"
+                label="Product Unit"
+                value={formValues.product_category_id}
+                onChange={handleInputChange}
+              >
+                {CategoryData.map((item) => (
+                  <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
+                ))}
+              </Select>
+              {!formValues.product_category_id &&
+            <FormHelperText error={!formValues.product_category_id}>
+              Product Category is required
+            </FormHelperText>
+              }
+            </FormControlContainer>
+            <FormControlContainer>
+              <TextField
+                id={'product_user_id'}
+                label={'User'}
+                name={'product_user_id'}
+                defaultValue={formValues.product_user_id}
+                disabled
+                variant="outlined"
+                fullWidth
+              />
+            </FormControlContainer>
+          </BasicInput>
+        </SubHeader>
+      </PaperContainer>
+    </>
   );
 };
 

@@ -9,15 +9,16 @@ import {
 } from '../../../layout';
 import BasicInput from '../../BasicInput';
 import DateAdapter from '@mui/lab/AdapterDayjs';
-import {useLocation, useNavigate, useParams} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {useDispatch} from 'react-redux';
 import {updateInvoice} from '../../../Redux/Slicer/Invoice';
 import dayjs from 'dayjs';
+import {isNumber} from '../../../helper';
 
 const defaultValues = {
   invoice_id: '',
   invoice_total_amount: '',
-  invoice_amount_tendered: '',
+  invoice_amount_tendered: 0,
   invoice_date_recorded: new Date(),
   invoice_user_id: 1,
   invoice_customer_id: 1,
@@ -25,8 +26,6 @@ const defaultValues = {
 
 const UpdateInvoice = () => {
   const [formValues, setFormValues] = useState(defaultValues);
-  // eslint-disable-next-line no-unused-vars
-  const urlParams = useParams();
   const dispatch = useDispatch();
   const {state} = useLocation();
   const navigate = useNavigate();
@@ -57,14 +56,13 @@ const UpdateInvoice = () => {
     const data = {
       id: formValues.invoice_id,
       total_amount: formValues.invoice_total_amount,
-      amount_tendered: formValues.invoice_amount_tendered,
+      amount_tendered: !!formValues.invoice_amount_tendered ?? 0,
       // eslint-disable-next-line max-len
       date_recorded: dayjs(formValues.invoice_date_recorded).format('YYYY-MM-DD'),
       user_id: formValues.invoice_user_id,
       customer_id: formValues.invoice_customer_id,
     };
     dispatch(updateInvoice(data));
-    fetchData();
   };
 
   const handleInputChange = (e) => {
@@ -87,6 +85,9 @@ const UpdateInvoice = () => {
       label: 'Total Amount',
       onChange: handleInputChange,
       value: formValues.invoice_total_amount,
+      error: !isNumber(formValues.invoice_total_amount),
+      helperText: isNumber(formValues.invoice_total_amount) ?
+      '' : 'Total Amount must be a number',
     },
     {
       id: 'invoice_amount_tendered',
@@ -97,50 +98,52 @@ const UpdateInvoice = () => {
   ];
 
   return (
-    <PaperContainer elevation={3} square>
-      <TitleWithDivider>Update Invoice</TitleWithDivider>
-      <SubHeader>
-        <BasicInput fields={fields} onSubmit={handleSubmit}>
-          <FormControlContainer>
-            <LocalizationProvider dateAdapter={DateAdapter}>
-              <DesktopDatePicker
-                label="Date Recorded"
-                labelId="invoice_date_recorded_label"
-                inputFormat="YYYY-DD-MM"
-                name="invoice_date_recorded"
-                mask='____-__-__'
-                id="invoice_date_recorded"
-                value={formValues.invoice_date_recorded}
-                onChange={handleDateChange}
-                renderInput={(params) => <TextField {...params} />}
+    <>
+      <PaperContainer elevation={3} square>
+        <TitleWithDivider>Update Invoice</TitleWithDivider>
+        <SubHeader>
+          <BasicInput isUpdate fields={fields} onSubmit={handleSubmit}>
+            <FormControlContainer>
+              <LocalizationProvider dateAdapter={DateAdapter}>
+                <DesktopDatePicker
+                  label="Date Recorded"
+                  labelId="invoice_date_recorded_label"
+                  inputFormat="YYYY-DD-MM"
+                  name="invoice_date_recorded"
+                  mask='____-__-__'
+                  id="invoice_date_recorded"
+                  value={formValues.invoice_date_recorded}
+                  onChange={handleDateChange}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+            </FormControlContainer>
+            <FormControlContainer>
+              <TextField
+                id={'invoice_user_id'}
+                label={'User'}
+                name={'invoice_user_id'}
+                defaultValue={formValues.invoice_user_id}
+                disabled
+                variant="outlined"
+                fullWidth
               />
-            </LocalizationProvider>
-          </FormControlContainer>
-          <FormControlContainer>
-            <TextField
-              id={'invoice_user_id'}
-              label={'User'}
-              name={'invoice_user_id'}
-              defaultValue={formValues.invoice_user_id}
-              disabled
-              variant="outlined"
-              fullWidth
-            />
-          </FormControlContainer>
-          <FormControlContainer>
-            <TextField
-              id={'invoice_customer_id'}
-              label={'Customer'}
-              name={'invoice_customer_id'}
-              defaultValue={formValues.invoice_customer_id}
-              disabled
-              variant="outlined"
-              fullWidth
-            />
-          </FormControlContainer>
-        </BasicInput>
-      </SubHeader>
-    </PaperContainer>
+            </FormControlContainer>
+            <FormControlContainer>
+              <TextField
+                id={'invoice_customer_id'}
+                label={'Customer'}
+                name={'invoice_customer_id'}
+                defaultValue={formValues.invoice_customer_id}
+                disabled
+                variant="outlined"
+                fullWidth
+              />
+            </FormControlContainer>
+          </BasicInput>
+        </SubHeader>
+      </PaperContainer>
+    </>
   );
 };
 

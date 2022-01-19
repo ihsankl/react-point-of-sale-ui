@@ -1,27 +1,18 @@
-/* eslint-disable */
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  Drawer, Toolbar, Box,
+  Drawer, Box,
   List,
-  AppBar,
-  Typography,
-  Paper,
-  Button,
-  TextField,
-  FormControl,
+  Backdrop,
+  CircularProgress,
 } from '@mui/material';
-import {
-  ShoppingCart,
-  Search,
-} from '@mui/icons-material';
-import {DataGrid} from '@mui/x-data-grid';
 import Header from './Components/Header';
 import SidebarMenu from './Components/SidebarMenu';
-import {styled} from '@mui/material/styles';
-import {Title} from './layout';
-import BasicTable from './Components/BasicTable';
-import BasicInput from './Components/BasicInput';
-import {BrowserRouter, Navigate, Route, Routes, useLocation} from 'react-router-dom';
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+} from 'react-router-dom';
 // Customer
 import Customer from './Components/Pages/Customer/';
 import CreateCustomer from './Components/Pages/Customer/Create';
@@ -59,13 +50,92 @@ import Sales from './Components/Pages/Sales/';
 import RequiredAuth from './Components/Pages/Required Auth/';
 import Login from './Components/Pages/Login';
 
-const APP_NAME = process.env.REACT_APP_NAME;
+// redux thing
+import {useDispatch, useSelector} from 'react-redux';
+import {getCustomers} from './Redux/Slicer/Customer';
+import {getAllCategory} from './Redux/Slicer/Category';
+import {getProductUnit} from './Redux/Slicer/Product Unit';
+import {getSupplier} from './Redux/Slicer/Supplier';
+import {getProduct} from './Redux/Slicer/Product';
+import {getInvoice} from './Redux/Slicer/Invoice';
+import {getPurchaseOrder} from './Redux/Slicer/Purchase Order';
+import {getReceiveProduct} from './Redux/Slicer/Receive Product';
+import ErrorNotif from './Components/ErrorNotif';
+import SuccessNotif from './Components/SuccessNotif';
+import Information from './Components/Information';
+import {getAllSales} from './Redux/Slicer/Sales';
+import ReportSales from './Components/Pages/Report Sales';
 
 const App = ()=> {
+  // eslint-disable-next-line no-unused-vars
   const [auth, setAuth] = useState(true);
+  const [mount, setMount] = useState(false);
+  const CustomerState = useSelector((state) => state.Customer);
+  const CategoryState = useSelector((state) => state.Category);
+  const ProductUnitState = useSelector((state) => state.ProductUnit);
+  const SupplierState = useSelector((state) => state.Supplier);
+  const ProductState = useSelector((state) => state.Product);
+  const InvoiceState = useSelector((state) => state.Invoice);
+  const PurchaseOrderState = useSelector((state) => state.PurchaseOrder);
+  const ReceiveProductState = useSelector((state) => state.ReceiveProduct);
+
+  const dispatch = useDispatch();
+
+  // fetch all data from server
+  useEffect(() => {
+    if (!mount) {
+      initAllData();
+      setMount(true);
+    }
+    return () => {
+
+    };
+  }, [
+    CustomerState,
+    CategoryState,
+    ProductUnitState,
+    SupplierState,
+    ProductState,
+    InvoiceState,
+    PurchaseOrderState,
+    ReceiveProductState,
+  ]);
+
+  const initAllData = async () => {
+    await dispatch(getCustomers()).unwrap();
+    await dispatch(getAllCategory()).unwrap();
+    await dispatch(getProductUnit()).unwrap();
+    await dispatch(getSupplier()).unwrap();
+    await dispatch(getProduct()).unwrap();
+    await dispatch(getInvoice()).unwrap();
+    await dispatch(getPurchaseOrder()).unwrap();
+    await dispatch(getReceiveProduct()).unwrap();
+    await dispatch(getAllSales()).unwrap();
+  };
+
+  const isLoading =
+  CustomerState.isLoading ||
+  CategoryState.isLoading ||
+  ProductUnitState.isLoading ||
+  SupplierState.isLoading ||
+  ProductState.isLoading ||
+  InvoiceState.isLoading ||
+  PurchaseOrderState.isLoading ||
+  ReceiveProductState.isLoading;
 
   return (
     <div style={{display: 'flex'}}>
+      {/* notification snackbar */}
+      <ErrorNotif/>
+      <SuccessNotif/>
+      {/* information snackbar on left corner */}
+      <Information/>
+      <Backdrop
+        sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 2}}
+        open={isLoading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <BrowserRouter>
         {auth &&<>
           <Header />
@@ -178,6 +248,11 @@ const App = ()=> {
             <Sales/>
           </RequiredAuth>}/>
 
+          {/* report sales routes */}
+          <Route path="/report_sales" element={<RequiredAuth>
+            <ReportSales/>
+          </RequiredAuth>}/>
+
           {/* login */}
           <Route path="/login" element={
             auth ? <Navigate replace to="/"/> : <Login />
@@ -186,7 +261,8 @@ const App = ()=> {
           {/* redirect unmatch route */}
           <Route path="*" element={<Navigate replace to="/sales" />}/>
 
-          {/* TODO: add sales UI. foreign key required: invoice_id, product_id */}
+          {/* TODO: add sales UI. foreign
+          key required: invoice_id, product_id */}
           {/* TODO: add reports UI */}
           {/* TODO: add 404 Not Found page */}
           {/* TODO: add keyboard shortcuts for actions:
@@ -196,8 +272,8 @@ const App = ()=> {
            */}
           {/* TODO: give documentation for keyboard shortcuts */}
           {/* TODO: create theme customization */}
-           {/* TODO: add validation for each form */}
-           {/* TODO: add loading and notifications */}
+          {/* TODO: add validation for each form */}
+          {/* TODO: user id is not yet implemented */}
         </Routes>
       </BrowserRouter>
     </div>

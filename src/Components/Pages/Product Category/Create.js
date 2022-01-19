@@ -33,15 +33,20 @@ const CreateProductCategory = () => {
       label: 'Name',
       onChange: handleInputChange,
       value: formValues.product_category_name,
+      error: !formValues.product_category_name,
+      helperText: !!formValues.product_category_name ?
+      '' : 'Please enter category name',
     },
   ];
   return (
-    <PaperContainer elevation={3} square>
-      <TitleWithDivider>Create Product Category</TitleWithDivider>
-      <SubHeader>
-        <BasicInput fields={fields} onSubmit={handleSubmit} />
-      </SubHeader>
-    </PaperContainer>
+    <>
+      <PaperContainer elevation={3} square>
+        <TitleWithDivider>Create Product Category</TitleWithDivider>
+        <SubHeader>
+          <BasicInput fields={fields} onSubmit={handleSubmit} />
+        </SubHeader>
+      </PaperContainer>
+    </>
   );
 };
 

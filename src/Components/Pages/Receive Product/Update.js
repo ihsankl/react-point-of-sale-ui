@@ -1,7 +1,13 @@
 import {DesktopDatePicker, LocalizationProvider} from '@mui/lab';
-import {InputLabel, MenuItem, Select, TextField} from '@mui/material';
+import {
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material';
 import DateAdapter from '@mui/lab/AdapterDayjs';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FormControlContainer,
   PaperContainer,
@@ -9,9 +15,10 @@ import {
   TitleWithDivider,
 } from '../../../layout';
 import BasicInput from '../../BasicInput';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {updatePurchaseOrder} from '../../../Redux/Slicer/Purchase Order';
+import {isNumber} from '../../../helper';
 
 const defaultValues = {
   receive_product_id: '',
@@ -75,18 +82,27 @@ const UpdateReceiveProduct = () => {
       label: 'Quantity',
       onChange: handleInputChange,
       value: formValues.receive_product_qty,
+      error: !isNumber(formValues.receive_product_qty),
+      helperText: !!formValues.receive_product_qty ?
+       '' : 'Quantity must be a number',
     },
     {
       id: 'receive_product_sub_total',
       label: 'Sub Total',
       onChange: handleInputChange,
       value: formValues.receive_product_sub_total,
+      error: !isNumber(formValues.receive_product_sub_total),
+      helperText: !!formValues.receive_product_sub_total ?
+      '' : 'Sub Total must be a number',
     },
     {
       id: 'receive_product_unit_price',
       label: 'Unit Price',
       onChange: handleInputChange,
       value: formValues.receive_product_unit_price,
+      error: !isNumber(formValues.receive_product_unit_price),
+      helperText: !!formValues.receive_product_unit_price ?
+      '' : 'Unit Price must be a number',
     },
   ];
 
@@ -105,81 +121,88 @@ const UpdateReceiveProduct = () => {
   };
 
   return (
-    <PaperContainer elevation={3} square>Supplier
-      <TitleWithDivider>Create Purchase Order</TitleWithDivider>
-      <SubHeader>
-        <BasicInput fields={fields} onSubmit={handleSubmit}>
-          <FormControlContainer>
-            <LocalizationProvider dateAdapter={DateAdapter}>
-              <DesktopDatePicker
-                label="Order Date"
-                labelId="receive_product_order_date_label"
-                inputFormat="YYYY-MM-DD"
-                mask='____-__-__'
-                name="receive_product_order_date"
-                id="receive_product_order_date"
-                value={formValues.receive_product_order_date}
-                onChange={handleDateChange}
-                renderInput={(params) => <TextField {...params} />}
-              />
-            </LocalizationProvider>
-          </FormControlContainer>
-          <FormControlContainer>
-            <InputLabel
-              id="receive_product_supplier_id_label"
-            >
+    <>
+      <PaperContainer elevation={3} square>
+        <TitleWithDivider>Update Receive Product</TitleWithDivider>
+        <SubHeader>
+          <BasicInput isUpdate fields={fields} onSubmit={handleSubmit}>
+            <FormControlContainer>
+              <LocalizationProvider dateAdapter={DateAdapter}>
+                <DesktopDatePicker
+                  label="Order Date"
+                  labelId="receive_product_order_date_label"
+                  inputFormat="YYYY-MM-DD"
+                  mask='____-__-__'
+                  name="receive_product_order_date"
+                  id="receive_product_order_date"
+                  value={formValues.receive_product_order_date}
+                  onChange={handleDateChange}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+            </FormControlContainer>
+            <FormControlContainer>
+              <InputLabel
+                id="receive_product_supplier_id_label"
+              >
                 Supplier
-            </InputLabel>
-            <Select
-              labelId="receive_product_supplier_id_label"
-              id="receive_product_supplier_id"
-              name="receive_product_supplier_id"
-              label="Supplier"
-              value={formValues.receive_product_supplier_id}
-              onChange={handleInputChange}
-            >
-              {SupplierData.map((value) => (
-                <MenuItem key={value.id} value={value.id}>
-                  {value.supplier_name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControlContainer>
-          <FormControlContainer>
-            <InputLabel
-              id="receive_product_product_id_label"
-            >
+              </InputLabel>
+              <Select
+                labelId="receive_product_supplier_id_label"
+                id="receive_product_supplier_id"
+                name="receive_product_supplier_id"
+                label="Supplier"
+                value={formValues.receive_product_supplier_id}
+                onChange={handleInputChange}
+              >
+                {SupplierData.map((value) => (
+                  <MenuItem key={value.id} value={value.id}>
+                    {value.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControlContainer>
+            <FormControlContainer>
+              <InputLabel
+                id="receive_product_product_id_label"
+              >
                 Product
-            </InputLabel>
-            <Select
-              labelId="receive_product_product_id_label"
-              id="receive_product_product_id"
-              name="receive_product_product_id"
-              label="Product"
-              value={formValues.receive_product_product_id}
-              onChange={handleInputChange}
-            >
-              {ProductData.map((value) => (
-                <MenuItem key={value.id} value={value.id}>
-                  {value.product_name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControlContainer>
-          <FormControlContainer>
-            <TextField
-              id={'receive_product_user_id'}
-              label={'User'}
-              name={'receive_product_user_id'}
-              defaultValue={formValues.receive_product_user_id}
-              disabled
-              variant="outlined"
-              fullWidth
-            />
-          </FormControlContainer>
-        </BasicInput>
-      </SubHeader>
-    </PaperContainer>
+              </InputLabel>
+              <Select
+                error={!formValues.receive_product_product_id}
+                labelId="receive_product_product_id_label"
+                id="receive_product_product_id"
+                name="receive_product_product_id"
+                label="Product"
+                value={formValues.receive_product_product_id}
+                onChange={handleInputChange}
+              >
+                {ProductData.map((value) => (
+                  <MenuItem key={value.id} value={value.id}>
+                    {value.name}
+                  </MenuItem>
+                ))}
+              </Select>
+              {!formValues.receive_product_product_id &&
+              <FormHelperText error={!!formValues.receive_product_product_id}>
+                Product is required
+              </FormHelperText>}
+            </FormControlContainer>
+            <FormControlContainer>
+              <TextField
+                id={'receive_product_user_id'}
+                label={'User'}
+                name={'receive_product_user_id'}
+                defaultValue={formValues.receive_product_user_id}
+                disabled
+                variant="outlined"
+                fullWidth
+              />
+            </FormControlContainer>
+          </BasicInput>
+        </SubHeader>
+      </PaperContainer>
+    </>
   );
 };
 

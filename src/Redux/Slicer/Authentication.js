@@ -60,7 +60,17 @@ export const checkToken = createAsyncThunk(
 const authenticationSlice = createSlice({
   name: 'authentication',
   initialState: {...initialState},
-  extraReducers: (builder) => {
+  reducers: {
+    clearError: (state) => {
+      state.error = {
+        state: false,
+        message: null,
+      };
+    },
+    clearSuccess: (state) => {
+      state.isSuccess = false;
+    },
+  }, extraReducers: (builder) => {
     // login
     builder.addCase(login.pending, (state) => {
       createBasicReducer(state, action, 'PENDING');
@@ -94,4 +104,5 @@ const authenticationSlice = createSlice({
   },
 });
 
+export const {clearError, clearSuccess} = authenticationSlice.actions;
 export default authenticationSlice.reducer;

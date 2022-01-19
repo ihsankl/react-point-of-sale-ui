@@ -48,10 +48,10 @@ export const createSupplier = createAsyncThunk(
     types.CREATE_SUPPLIER,
     async (data, thunkAPI) => {
       try {
-        const response = await Axios.post(`${BASE_URL}/supplier`, data, {
+        await Axios.post(`${BASE_URL}/supplier`, data, {
           ...headersBuilder(),
         });
-        return response.data;
+        return;
       } catch (error) {
         throw thunkAPI.rejectWithValue(error);
       }
@@ -63,11 +63,11 @@ export const updateSupplier = createAsyncThunk(
     types.UPDATE_SUPPLIER,
     async (data, thunkAPI) => {
       try {
-        const response = await Axios.put(
-            `${BASE_URL}/supplier${data.id}`, data, {
+        await Axios.put(
+            `${BASE_URL}/supplier/${data.id}`, data, {
               ...headersBuilder(),
             });
-        return response.data;
+        return;
       } catch (error) {
         throw thunkAPI.rejectWithValue(error);
       }
@@ -79,9 +79,9 @@ export const deleteSupplier = createAsyncThunk(
     types.DELETE_SUPPLIER,
     async (data, thunkAPI) => {
       try {
-        const response = await Axios.delete(`${BASE_URL}/supplier/${data.id}`, {
+        await Axios.delete(`${BASE_URL}/supplier/${data.id}`, {
           ...headersBuilder()});
-        return response.data;
+        return;
       } catch (error) {
         throw thunkAPI.rejectWithValue(error);
       }
@@ -92,7 +92,17 @@ export const deleteSupplier = createAsyncThunk(
 const supplierSlice = createSlice({
   name: 'supplier',
   initialState: {...initialState},
-  extraReducers: (builder) => {
+  reducers: {
+    clearError: (state) => {
+      state.error = {
+        state: false,
+        message: null,
+      };
+    },
+    clearSuccess: (state) => {
+      state.isSuccess = false;
+    },
+  }, extraReducers: (builder) => {
     //   get supplier
     builder.addCase(getSupplier.pending, (state, action) => {
       createBasicReducer(state, action, 'PENDING');
@@ -146,4 +156,5 @@ const supplierSlice = createSlice({
   },
 });
 
+export const {clearError, clearSuccess} = supplierSlice.actions;
 export default supplierSlice.reducer;

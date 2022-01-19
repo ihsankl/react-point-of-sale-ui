@@ -87,12 +87,14 @@ const UpdateSupplier = () => {
   ];
 
   return (
-    <PaperContainer elevation={3} square>
-      <TitleWithDivider>Update Supplier</TitleWithDivider>
-      <SubHeader>
-        <BasicInput isUpdate fields={fields} onSubmit={handleSubmit}/>
-      </SubHeader>
-    </PaperContainer>
+    <>
+      <PaperContainer elevation={3} square>
+        <TitleWithDivider>Update Supplier</TitleWithDivider>
+        <SubHeader>
+          <BasicInput isUpdate fields={fields} onSubmit={handleSubmit}/>
+        </SubHeader>
+      </PaperContainer>
+    </>
   );
 };
 

@@ -180,17 +180,17 @@ const SidebarMenu = () => {
       <ListSubheader>REPORT</ListSubheader>
       <ListItem
         button
-        sx={(theme)=> contrastButton(theme, '/sales_report')}
-        onClick={() => navigate('/sales_report')}
+        sx={(theme)=> contrastButton(theme, '/report_sales')}
+        onClick={() => navigate('/report_sales')}
       >
         <ListItemIcon>
           <Article
-            sx={(theme)=> contrastIcon(theme, '/sales_report')}
+            sx={(theme)=> contrastIcon(theme, '/report_sales')}
           />
         </ListItemIcon>
         <ListItemText
-          sx={(theme)=> contrastIcon(theme, '/sales_report')}
-          primary={capitalize('sales_report')} />
+          sx={(theme)=> contrastIcon(theme, '/report_sales')}
+          primary={capitalize('report_sales')} />
       </ListItem>
 
     </>

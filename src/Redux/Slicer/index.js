@@ -10,6 +10,7 @@ import ProductUnit from './Product Unit';
 import PurchaseOrder from './Purchase Order';
 import ReceiveProduct from './Receive Product';
 import Sales from './Sales';
+import ConfirmDialog from './ConfirmDialog';
 
 const appReducer = combineReducers({
   User,
@@ -23,6 +24,7 @@ const appReducer = combineReducers({
   ReceiveProduct,
   Sales,
   Supplier,
+  ConfirmDialog,
 });
 
 export default appReducer;
