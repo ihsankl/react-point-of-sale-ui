@@ -16,13 +16,17 @@ import ConfirmDialog from '../../ConfirmDialog';
 const ProductCategory = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [mount, setMount] = useState(false);
   const Category = useSelector((state) => state.Category);
   const CategoryData = Category.data?.data ?? [];
   let [whichData] = useState([]);
 
   useEffect(() => {
-    if (CategoryData.length === 0) {
-      initCategories();
+    if (!mount) {
+      if (CategoryData.length === 0) {
+        initCategories();
+      }
+      setMount(true);
     }
     return () => {
 

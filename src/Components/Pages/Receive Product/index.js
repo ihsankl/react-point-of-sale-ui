@@ -19,13 +19,17 @@ import ConfirmDialog from '../../ConfirmDialog';
 const ReceiveProduct = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [mount, setMount] = useState(false);
   const ReceiveProduct = useSelector((state) => state.ReceiveProduct);
   const ReceiveProductData = ReceiveProduct.data?.data ?? [];
   let [whichData] = useState([]);
 
   useEffect(() => {
-    if (ReceiveProductData.length === 0) {
-      initReceiveProduct();
+    if (!mount) {
+      if (ReceiveProductData.length === 0) {
+        initReceiveProduct();
+      }
+      setMount(true);
     }
     return () => {
 

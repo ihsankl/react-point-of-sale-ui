@@ -5,8 +5,6 @@ import {
   Backdrop,
   CircularProgress,
 } from '@mui/material';
-import Header from './Components/Header';
-import SidebarMenu from './Components/SidebarMenu';
 import {
   BrowserRouter,
   Navigate,
@@ -46,9 +44,21 @@ import ReceiveProduct from './Components/Pages/Receive Product/';
 import CreateReceiveProduct from './Components/Pages/Receive Product/Create';
 import UpdateReceiveProduct from './Components/Pages/Receive Product/Update';
 // Sales
-import Sales from './Components/Pages/Sales/';
+import Sales from './Components/Pages/Sales';
+import CreateSales from './Components/Pages/Sales/Create';
+import UpdateSales from './Components/Pages/Sales/Update';
+// Cashier
+import Cashier from './Components/Pages/Cashier';
+// Misc
 import RequiredAuth from './Components/Pages/Required Auth/';
 import Login from './Components/Pages/Login';
+import ErrorNotif from './Components/ErrorNotif';
+import SuccessNotif from './Components/SuccessNotif';
+import Information from './Components/Information';
+import Header from './Components/Header';
+import SidebarMenu from './Components/SidebarMenu';
+// Reports
+import ReportSales from './Components/Pages/Report Sales';
 
 // redux thing
 import {useDispatch, useSelector} from 'react-redux';
@@ -60,11 +70,7 @@ import {getProduct} from './Redux/Slicer/Product';
 import {getInvoice} from './Redux/Slicer/Invoice';
 import {getPurchaseOrder} from './Redux/Slicer/Purchase Order';
 import {getReceiveProduct} from './Redux/Slicer/Receive Product';
-import ErrorNotif from './Components/ErrorNotif';
-import SuccessNotif from './Components/SuccessNotif';
-import Information from './Components/Information';
 import {getAllSales} from './Redux/Slicer/Sales';
-import ReportSales from './Components/Pages/Report Sales';
 
 const App = ()=> {
   // eslint-disable-next-line no-unused-vars
@@ -78,6 +84,7 @@ const App = ()=> {
   const InvoiceState = useSelector((state) => state.Invoice);
   const PurchaseOrderState = useSelector((state) => state.PurchaseOrder);
   const ReceiveProductState = useSelector((state) => state.ReceiveProduct);
+  const SalesState = useSelector((state) => state.Sales);
 
   const dispatch = useDispatch();
 
@@ -99,6 +106,7 @@ const App = ()=> {
     InvoiceState,
     PurchaseOrderState,
     ReceiveProductState,
+    SalesState,
   ]);
 
   const initAllData = async () => {
@@ -121,7 +129,8 @@ const App = ()=> {
   ProductState.isLoading ||
   InvoiceState.isLoading ||
   PurchaseOrderState.isLoading ||
-  ReceiveProductState.isLoading;
+  ReceiveProductState.isLoading ||
+  SalesState.isLoading;
 
   return (
     <div style={{display: 'flex'}}>
@@ -155,7 +164,7 @@ const App = ()=> {
           </Drawer>
         </>}
         <Routes>
-          <Route path="/" element={<Navigate replace to="/sales" />}/>
+          <Route path="/" element={<Navigate replace to="/cashier" />}/>
           <Route path="/customer" element={<RequiredAuth>
             <Customer />
           </RequiredAuth>}/>
@@ -243,9 +252,20 @@ const App = ()=> {
             <UpdateReceiveProduct/>
           </RequiredAuth>}/>
 
+          {/* cashier routes */}
+          <Route path="/cashier" element={<RequiredAuth>
+            <Cashier/>
+          </RequiredAuth>}/>
+
           {/* sales routes */}
           <Route path="/sales" element={<RequiredAuth>
             <Sales/>
+          </RequiredAuth>}/>
+          <Route path="/sales/create" element={<RequiredAuth>
+            <CreateSales/>
+          </RequiredAuth>}/>
+          <Route path="/sales/update/:id" element={<RequiredAuth>
+            <UpdateSales/>
           </RequiredAuth>}/>
 
           {/* report sales routes */}
@@ -259,10 +279,8 @@ const App = ()=> {
           }/>
 
           {/* redirect unmatch route */}
-          <Route path="*" element={<Navigate replace to="/sales" />}/>
+          <Route path="*" element={<Navigate replace to="/cashier" />}/>
 
-          {/* TODO: add sales UI. foreign
-          key required: invoice_id, product_id */}
           {/* TODO: add reports UI */}
           {/* TODO: add 404 Not Found page */}
           {/* TODO: add keyboard shortcuts for actions:
@@ -272,8 +290,10 @@ const App = ()=> {
            */}
           {/* TODO: give documentation for keyboard shortcuts */}
           {/* TODO: create theme customization */}
-          {/* TODO: add validation for each form */}
           {/* TODO: user id is not yet implemented */}
+          {/* TODO: percent difference not yet working */}
+          {/* TODO: change all selection to autocomplete */}
+          {/* TODO: add 30,90 and a year selection in Latest Sales */}
         </Routes>
       </BrowserRouter>
     </div>

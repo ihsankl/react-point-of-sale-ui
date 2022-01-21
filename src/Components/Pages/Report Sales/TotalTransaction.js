@@ -1,10 +1,30 @@
-import {ArrowDownward, ArrowUpward, People} from '@mui/icons-material';
+import {People} from '@mui/icons-material';
 import {Avatar, Box, Card, CardContent, Typography} from '@mui/material';
-import React from 'react';
-import {isNumber, thousandFormatter} from '../../../helper';
-import PropTypes from 'prop-types';
+import React, {useEffect} from 'react';
+import {useSelector} from 'react-redux';
+import dayjs from 'dayjs';
+import {thousandFormatter} from '../../../helper';
 
-const TotalOrder = ({lastMonthOrderPercent, totalOrder, ...props}) => {
+const TotalTransaction = ({...props}) => {
+  const InvoiceState = useSelector((state) => state.Invoice);
+  const SalesState = useSelector((state) => state.Sales);
+  const InvoiceStateData = InvoiceState.data?.data ?? [];
+  const SalesStateData = SalesState.data?.data ?? [];
+
+  // get all invoice this month
+  const thisMonthInvoice = InvoiceStateData.filter(
+      (invoice) => dayjs(invoice.date_recorded).isSame(dayjs(), 'year'),
+  );
+
+  useEffect(() => {
+    return () => {
+
+    };
+  }, [
+    InvoiceStateData,
+    SalesStateData,
+  ]);
+
   return (
     <Card elevation={3} sx={{flex: 1}} {...props}>
       <CardContent>
@@ -15,13 +35,13 @@ const TotalOrder = ({lastMonthOrderPercent, totalOrder, ...props}) => {
               gutterBottom
               variant="overline"
             >
-              TOTAL SALES ORDER
+              TOTAL TRANSACTION
             </Typography>
             <Typography
               color="textPrimary"
               variant="h4"
             >
-              {thousandFormatter(totalOrder)}
+              {thousandFormatter(thisMonthInvoice)}
             </Typography>
           </Box>
           <Avatar
@@ -34,7 +54,7 @@ const TotalOrder = ({lastMonthOrderPercent, totalOrder, ...props}) => {
             <People />
           </Avatar>
         </Box>
-        {isNumber(lastMonthOrderPercent()) &&
+        {/* {isNumber(totalSalesDiffPercent) &&
           <Box
             sx={{
               alignItems: 'center',
@@ -42,16 +62,17 @@ const TotalOrder = ({lastMonthOrderPercent, totalOrder, ...props}) => {
               pt: 2,
             }}
           >
-            {lastMonthOrderPercent() > 0 ?
+            {totalSalesDiffPercent > 0 ?
           <ArrowUpward color="success" />:
-          <ArrowDownward color="error" />}
+          <ArrowDownward color="error" />
+            }
             <Typography
               variant="body2"
               sx={{
                 mr: 1,
               }}
             >
-              {lastMonthOrderPercent()}%
+              {totalSalesDiffPercent.toFixed(2)}%
             </Typography>
             <Typography
               color="textSecondary"
@@ -60,15 +81,12 @@ const TotalOrder = ({lastMonthOrderPercent, totalOrder, ...props}) => {
           Since last month
             </Typography>
           </Box>
-        }
+        } */}
       </CardContent>
     </Card>
   );
 };
 
-TotalOrder.propTypes = {
-  lastMonthOrderPercent: PropTypes.func,
-  totalOrder: PropTypes.number,
-};
+TotalTransaction.propTypes = {};
 
-export default TotalOrder;
+export default TotalTransaction;

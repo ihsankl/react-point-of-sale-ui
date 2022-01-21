@@ -9,116 +9,43 @@ import {
   Divider,
   useTheme,
 } from '@mui/material';
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {Bar} from 'react-chartjs-2';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import dayjs from 'dayjs';
-import { getInvoices, getSales } from '../../../helper';
 
 const LatestSales = ({...props}) => {
   const theme = useTheme();
-  const SalesState = useSelector((state) => state.Sales);
+  // const SalesState = useSelector((state) => state.Sales);
   const InvoiceState = useSelector((state) => state.Invoice);
-  const SalesStateData = SalesState.data?.data ?? [];
+  // const SalesStateData = SalesState.data?.data ?? [];
   const InvoiceStateData = InvoiceState.data?.data ?? [];
 
   // find all invoice between today and last 7 days with dayjs
-  const last7daysInvoice = getInvoices(7, InvoiceStateData);
-
-  // find all sales which has invoice_id in last7daysInvoice
-  const last7daysSales = getSales(last7daysInvoice, SalesStateData);
-
-  // find all invoice between today and last 30 days with dayjs
-  const last30daysInvoice = getInvoices(30, InvoiceStateData);
-
-  // find all sales which has invoice_id in last30daysInvoice
-  const last30daysSales = getSales(last30daysInvoice, SalesStateData);
-
-  // find all invoice between today and last 90 days with dayjs
-  const last90daysInvoice = getInvoices(90, InvoiceStateData);
-
-  // find all sales which has invoice_id in last90daysInvoice
-  const last90daysSales = getSales(last90daysInvoice, SalesStateData);
-
-  // find all invoice between today and last 365 days with dayjs
-  const last365daysInvoice = getInvoices(365, InvoiceStateData);
-
-  // find all sales which has invoice_id in last365daysInvoice
-  const last365daysSales = getSales(last365daysInvoice, SalesStateData);
-
-  // find all invoice with the same date_recorded last year
-  const lastYearInvoice7days = () => {
-    const today = dayjs();
-    const lastYear = today.subtract(1, 'year');
-    const lastYearInvoice = InvoiceStateData.filter(
-      (invoice) => dayjs(invoice.date_recorded).isSame(lastYear, 'year'),
-    );
-    return lastYearInvoice;
-  };
-
-  // find all sales which has invoice_id in lastYearInvoice7days
-  const lastYearSales7days = () => {
-    const invoice = lastYearInvoice7days();
-    const lastYearSales = SalesStateData.filter(
-      (sale) => invoice.some(
-        (invoice) => invoice.id === sale.invoice_id,
+  const thisMonthInvoice = InvoiceStateData.filter(
+      (invoice) => dayjs(invoice.date_recorded).isBetween(
+          dayjs().subtract(7, 'day'),
+          dayjs(),
       ),
-    );
-    return lastYearSales;
-  };
-
-  // find all invoice with the same date_recorded last year
-  const lastYearInvoice30days = () => {
-    const today = dayjs();
-    const lastYear = today.subtract(1, 'year');
-    const lastYearInvoice = InvoiceStateData.filter(
-      (invoice) => dayjs(invoice.date_recorded).isSame(lastYear, 'year'),
-    );
-    return lastYearInvoice;
-  };
-
-  // find all sales which has invoice_id in lastYearInvoice30days
-  const lastYearSales30days = () => {
-    const invoice = lastYearInvoice30days();
-    const lastYearSales = SalesStateData.filter(
-      (sale) => invoice.some(
-        (invoice) => invoice.id === sale.invoice_id,
+  );
+  // last year invoice with same month as today
+  const lastYearInvoice = InvoiceStateData.filter(
+      (invoice) => dayjs(invoice.date_recorded).isBetween(
+          dayjs().subtract(365, 'day'),
+          dayjs().subtract(365, 'day').add(1, 'month'),
       ),
-    );
-    return lastYearSales;
-  };
-
-  // find all invoice with the same date_recorded last year
-  const lastYearInvoice90days = () => {
-    const today = dayjs();
-    const lastYear = today.subtract(1, 'year');
-    const lastYearInvoice = InvoiceStateData.filter(
-      (invoice) => dayjs(invoice.date_recorded).isSame(lastYear, 'year'),
-    );
-    return lastYearInvoice;
-  };
-
-  // find all sales which has invoice_id in lastYearInvoice90days
-  const lastYearSales90days = () => {
-    const invoice = lastYearInvoice90days();
-    const lastYearSales = SalesStateData.filter(
-      (sale) => invoice.some(
-        (invoice) => invoice.id === sale.invoice_id,
-      ),
-    );
-    return lastYearSales;
-  };
-
-  // find all invoice with the same date_recorded last year
-  const lastYearInvoice365days = () => {
-    const today = dayjs();
-    const lastYear = today.subtract(1, 'year');
-    const lastYearInvoice = InvoiceStateData.filter(
-      (invoice) => dayjs(invoice.date_recorded).isSame(lastYear, 'year'),
-    );
-    return lastYearInvoice;
-  };
+  );
+  // sum all total_amount in thisMonthInvoice
+  const thisMonthTotalAmount = thisMonthInvoice.reduce(
+      (total, invoice) => total + invoice.total_amount,
+      0,
+  );
+  // sum all total_amount in lastYearInvoice
+  const lastYearTotalAmount = lastYearInvoice.reduce(
+      (total, invoice) => total + invoice.total_amount,
+      0,
+  );
 
   const data = {
     datasets: [
@@ -129,7 +56,9 @@ const LatestSales = ({...props}) => {
         borderRadius: 4,
         categoryPercentage: 0.5,
         // data sales from last 7 days
-        data: last7daysSales.map((sale) => sale.sub_total),
+        data: thisMonthInvoice.map((invoice, index) => {
+          if (index < 7 ) return invoice.total_amount;
+        }),
         label: 'This year',
         maxBarThickness: 10,
       },
@@ -140,14 +69,16 @@ const LatestSales = ({...props}) => {
         borderRadius: 4,
         categoryPercentage: 0.5,
         // data sales from last 7 days last year
-        data: lastYearSales7days().map((sale) => sale.sub_total),
+        data: lastYearInvoice.map((invoice, index) => {
+          if (index < 7 ) return invoice.total_amount;
+        }),
         label: 'Last year',
         maxBarThickness: 10,
       },
     ],
     // iterate 7 times to get 7 days from dayjs
-    labels: Array(7).fill('').map((_, index) => dayjs().subtract(index, 'day')),
-    // labels: ['1 Aug', '2 Aug', '3 Aug', '4 Aug', '5 Aug', '6 Aug', '7 aug'],
+    labels: Array(7).fill('').map((_, index) =>
+      dayjs().subtract(index, 'day').format('DD MMM')),
   };
 
   const options = {

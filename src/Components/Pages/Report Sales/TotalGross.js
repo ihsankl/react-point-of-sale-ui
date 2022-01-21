@@ -1,11 +1,24 @@
 import {AttachMoney} from '@mui/icons-material';
 import {Avatar, Card, CardContent, Typography} from '@mui/material';
 import {Box} from '@mui/system';
+import dayjs from 'dayjs';
 import React from 'react';
+import {useSelector} from 'react-redux';
 import {rupiahFormatter} from '../../../helper';
-import PropTypes from 'prop-types';
 
-const TotalProfit = ({lastMonthProfitPercent, totalProfit, ...props}) => {
+const TotalGross = ({...props}) => {
+  const InvoiceState = useSelector((state) => state.Invoice);
+  const InvoiceStateData = InvoiceState.data?.data ?? [];
+
+  // get all invoice this month
+  const thisMonthInvoice = InvoiceStateData.filter(
+      (invoice) => dayjs(invoice.date_recorded).isSame(dayjs(), 'month'),
+  );
+  // sum all total_amount in thisMonthInvoice
+  const totalGross = thisMonthInvoice.reduce((acc, invoice) => {
+    return acc + invoice.total_amount;
+  }, 0);
+
   return (
     <Card elevation={3} sx={{flex: 1}} {...props}>
       <CardContent>
@@ -16,7 +29,7 @@ const TotalProfit = ({lastMonthProfitPercent, totalProfit, ...props}) => {
               gutterBottom
               variant="overline"
             >
-                  TOTAL PROFIT
+                  TOTAL GROSS
             </Typography>
             <Typography
               color="textPrimary"
@@ -26,7 +39,7 @@ const TotalProfit = ({lastMonthProfitPercent, totalProfit, ...props}) => {
                 maxWidth: '250px',
               }}
             >
-              {rupiahFormatter(totalProfit)}
+              {rupiahFormatter(totalGross)}
             </Typography>
           </Box>
           <Avatar
@@ -44,9 +57,4 @@ const TotalProfit = ({lastMonthProfitPercent, totalProfit, ...props}) => {
   );
 };
 
-TotalProfit.propTypes = {
-  lastMonthProfitPercent: PropTypes.func,
-  totalProfit: PropTypes.number,
-};
-
-export default TotalProfit;
+export default TotalGross;

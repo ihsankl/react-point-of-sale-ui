@@ -47,15 +47,15 @@ const SidebarMenu = () => {
     <>
       <ListItem
         button
-        sx={(theme)=> contrastButton(theme, '/sales')}
-        onClick={() => navigate('/sales')}
+        sx={(theme)=> contrastButton(theme, '/cashier')}
+        onClick={() => navigate('/cashier')}
       >
         <ListItemIcon>
-          <Receipt sx={(theme)=> contrastIcon(theme, '/sales')} />
+          <Receipt sx={(theme)=> contrastIcon(theme, '/cashier')} />
         </ListItemIcon>
         <ListItemText
-          sx={(theme)=> contrastIcon(theme, '/sales')}
-          primary={capitalize('sales')}
+          sx={(theme)=> contrastIcon(theme, '/cashier')}
+          primary={capitalize('cashier')}
         />
       </ListItem>
 
@@ -87,6 +87,21 @@ const SidebarMenu = () => {
         <ListItemText
           sx={(theme)=> contrastIcon(theme, '/invoice')}
           primary={capitalize('invoice')} />
+      </ListItem>
+
+      <ListItem
+        button
+        sx={(theme)=> contrastButton(theme, '/sales')}
+        onClick={() => navigate('/sales')}
+      >
+        <ListItemIcon>
+          <ShoppingCart
+            sx={(theme)=> contrastIcon(theme, '/sales')}
+          />
+        </ListItemIcon>
+        <ListItemText
+          sx={(theme)=> contrastIcon(theme, '/sales')}
+          primary={capitalize('sales')} />
       </ListItem>
 
       <ListItem

@@ -1,6 +1,4 @@
 import React from 'react';
-// eslint-disable-next-line no-unused-vars
-import PropTypes from 'prop-types';
 import {
   Card,
   CardContent,
@@ -13,47 +11,66 @@ import {Box} from '@mui/system';
 import {Doughnut} from 'react-chartjs-2';
 import {useSelector} from 'react-redux';
 import {randomColor} from '../../../helper';
+import dayjs from 'dayjs';
 
 const Top5Sales = ({...props}) => {
   const theme = useTheme();
-  const SalesState = useSelector((state) => state.Sales);
+  const InvoiceState = useSelector((state) => state.Invoice);
   const ProductState = useSelector((state) => state.Product);
-  const SalesStateData = SalesState.data?.data ?? [];
+  const SalesState = useSelector((state) => state.Sales);
+  const InvoiceStateData = InvoiceState.data?.data ?? [];
   const ProductStateData = ProductState.data?.data ?? [];
+  const SalesStateData = SalesState.data?.data ?? [];
 
-  //   find 5 data with highest qty
-  const SalesStateDataCopy = [...SalesStateData];
-  const top5Sales = SalesStateDataCopy
-      .sort((a, b) => b.qty - a.qty).slice(0, 5);
-
-  //   find the product corresponding to the top5Sales
-  const top5SalesProduct = top5Sales.map((item) => {
-    const product = ProductStateData.find(
-        (product) => product.id === item.product_id,
+  //   find all invoice this month
+  const thisMonthInvoice = InvoiceStateData.filter(
+      (invoice) => dayjs(invoice.date_recorded).isSame(dayjs(), 'month'),
+  );
+  //   get all sales which has invoice_id in SalesStateData
+  const thisMonthSales = SalesStateData.filter(
+      (sales) => thisMonthInvoice.some((invoice) =>
+        invoice.id === sales.invoice_id),
+  );
+  //   get all products which has product_id in thisMonthSales
+  const thisMonthProducts = ProductStateData.filter(
+      (product) => thisMonthSales.some((sales) =>
+        sales.product_id === product.id),
+  );
+  //   sum all qty with same produt_id in thisMonthSales
+  const thisMonthSalesQty = thisMonthProducts.reduce((acc, cur) => {
+    const qty = thisMonthSales.filter((sales) =>
+      sales.product_id === cur.id).reduce(
+        (acc, cur) => acc + cur.qty,
+        0,
     );
-    return product;
-  });
+    return {...acc, [cur.name]: qty};
+  }, {});
+  // get top 5 product with max qty from thisMonthSalesQty
+  const top5Sales = () => {
+    const y = Object.keys(thisMonthSalesQty).sort((a, b) =>
+      thisMonthSalesQty[b] - thisMonthSalesQty[a]).slice(0, 5);
+    const x = y.map((v, i) => {
+      return {
+        label: v,
+        value: thisMonthSalesQty[v],
+        color: randomColor(i),
+      };
+    });
+    return x;
+  };
 
   const data = {
     datasets: [
       {
-        // assign qty from top5Sales to data
-        data: top5Sales.map((item) => item.qty),
-        backgroundColor: top5Sales.map(() => randomColor()),
+        // assign qty from top5Sales value to data
+        data: top5Sales().map((v) => v.value),
+        backgroundColor: top5Sales().map((v) => v.color),
         borderWidth: 8,
         borderColor: '#FFFFFF',
         hoverBorderColor: '#FFFFFF',
       },
     ],
-    // get product_id from top5Sales, then
-    // get name from top5SalesProduct which
-    // has the same id as product_id
-    labels: top5Sales.map((item) => {
-      const product = top5SalesProduct.find(
-          (product) => product.id === item.product_id,
-      );
-      return product.name;
-    }),
+    labels: top5Sales().map((v) => v.label),
   };
 
   const options = {
@@ -78,12 +95,10 @@ const Top5Sales = ({...props}) => {
     },
   };
 
-  const products = top5SalesProduct.map((item, index) => {
+  const products = top5Sales().map((item, index) => {
     return {
-      title: item.name,
-      // get qty from top5Sales which has same product_id as
-      // top5SalesProduct id
-      value: top5Sales.find((sales) => sales.product_id === item.id).qty,
+      title: item.label,
+      value: item.value,
       color: data.datasets[0].backgroundColor[index],
     };
   });
@@ -145,7 +160,5 @@ const Top5Sales = ({...props}) => {
     </Card>
   );
 };
-
-Top5Sales.propTypes = {};
 
 export default Top5Sales;

@@ -16,13 +16,17 @@ import {
 const Invoice = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [mount, setMount] = useState(false);
   const Invoice = useSelector((state) => state.Invoice);
   const InvoiceData = Invoice.data?.data ?? [];
-  let [whichData] = useState([]);
+  let whichData = [];
 
   useEffect(() => {
-    if (InvoiceData.length === 0) {
-      initInvoice();
+    if (!mount) {
+      if (InvoiceData.length === 0) {
+        initInvoice();
+      }
+      setMount(true);
     }
     return () => {
 

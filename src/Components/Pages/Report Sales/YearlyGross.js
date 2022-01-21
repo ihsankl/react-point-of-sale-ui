@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable */
+import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -7,17 +8,17 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
+  // TableHead,
   TableRow,
-  TableSortLabel,
-  Tooltip,
+  // TableSortLabel,
+  // Tooltip,
   Box,
 } from '@mui/material';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import {ArrowRight} from '@mui/icons-material';
 import {uuid} from '../../../helper';
-import dayjs from 'dayjs';
 import {styled} from '@mui/material/styles';
+import {useSelector} from 'react-redux';
+import dayjs from 'dayjs';
 
 const SeverityPillRoot = styled('span')(({theme, ownerState}) => {
   const backgroundColor = theme.palette[ownerState.color].main;
@@ -61,11 +62,75 @@ const SeverityPill = (props) => {
   );
 };
 
-const YearlyGross = ({...props}) => {
+const YearlyGross = ({tablePage, ...props}) => {
+  const InvoiceState = useSelector((state) => state.Invoice);
+  const InvoiceStateData = InvoiceState.data?.data ?? [];
+  // return 5 years before now as an array
+  const years = Array.from(Array(5).keys()).map((i) => {
+    return dayjs().subtract(i, 'year').format('YYYY');
+  });
+  // get invoice for each year
+  const yearlyInvoice = () => {
+    // example return value: 2020:[{},{},{}]
+    return years.reduce((acc, year) => {
+      const yearInvoice = InvoiceStateData.filter(
+        (invoice) => dayjs(invoice.date_recorded).isSame(year, 'year'),
+      );
+      return {...acc, [year]: yearInvoice};
+    }
+    , {});
+  };
+
+  // get invoice for each month in each year
+  const monthlyInvoice = () => {
+    // example return value: 2020:{1:[{},{}], 2:[{},{}], 3:[{},{}]}
+    return years.reduce((acc, year) => {
+      const yearInvoice = yearlyInvoice()[year];
+      const yearMonthlyInvoice = yearInvoice.reduce((acc, invoice) => {
+        const month = dayjs(invoice.date_recorded).month();
+        return {
+          ...acc,
+          [month]: [...(acc[month] ?? []), invoice],
+        };
+      }, {});
+      return {...acc, [year]: yearMonthlyInvoice};
+    }, {});
+  };
+
+  // sum up all invoice for each month in each year
+  // first loop through monthlyInvoice object
+  // then loop through each month in each year
+  // then sum up all invoice in each month
+  const monthlyInvoiceSum = () => {
+    // example return value: 2020:{1:1000, 2:2000, 3:3000}
+    return years.reduce((acc, year) => {
+      // cannot reduce monthlyInvoice directly
+      // because it is an object
+      // so we need to convert it to array first
+      const yearMonthlyInvoice = Object.entries(monthlyInvoice()[year]);
+      const yearMonthlyInvoiceSum = yearMonthlyInvoice.reduce((acc, [month, invoice]) => {
+        const monthInvoiceSum = invoice.reduce((acc, invoice) => {
+          return acc + invoice.total_amount;
+        }, 0);
+        return {...acc, [month]: monthInvoiceSum};
+      }, {});
+      return {...acc, [year]: yearMonthlyInvoiceSum};
+    }, {});
+  };
+
+
+  useEffect(() => {
+    console.log('monthlyInvoiceSum >>>', monthlyInvoiceSum());
+
+    return () => {
+
+    };
+  }, [InvoiceStateData]);
+
   const orders = [
     {
       id: uuid(),
-      ref: 'CDD1049',
+      ref: 'January',
       amount: 30.5,
       customer: {
         name: 'Ekaterina Tankova',
@@ -75,7 +140,7 @@ const YearlyGross = ({...props}) => {
     },
     {
       id: uuid(),
-      ref: 'CDD1048',
+      ref: 'February',
       amount: 25.1,
       customer: {
         name: 'Cao Yu',
@@ -85,7 +150,7 @@ const YearlyGross = ({...props}) => {
     },
     {
       id: uuid(),
-      ref: 'CDD1047',
+      ref: 'March',
       amount: 10.99,
       customer: {
         name: 'Alexa Richardson',
@@ -95,7 +160,7 @@ const YearlyGross = ({...props}) => {
     },
     {
       id: uuid(),
-      ref: 'CDD1046',
+      ref: 'April',
       amount: 96.43,
       customer: {
         name: 'Anje Keizer',
@@ -105,7 +170,7 @@ const YearlyGross = ({...props}) => {
     },
     {
       id: uuid(),
-      ref: 'CDD1045',
+      ref: 'May',
       amount: 32.54,
       customer: {
         name: 'Clarke Gillebert',
@@ -115,7 +180,7 @@ const YearlyGross = ({...props}) => {
     },
     {
       id: uuid(),
-      ref: 'CDD1044',
+      ref: 'June',
       amount: 16.76,
       customer: {
         name: 'Adam Denisov',
@@ -125,68 +190,46 @@ const YearlyGross = ({...props}) => {
     },
   ];
 
+  // const years = [2021, 2022];
+
   return (
-    <Card elevation={3} {...props}>
+    <Card sx={{width: '100%'}} elevation={3} {...props}>
       <CardHeader title="Yearly Gross" />
-      <PerfectScrollbar>
-        <Box sx={{minWidth: 800}}>
-          <Table>
-            <TableHead>
-              <TableRow>
+      <Box
+        sx={{
+          width: '100%',
+        }}
+      >
+        <Table>
+          <TableBody>
+            {orders.map((order) => (
+              <TableRow
+                hover
+                key={order.id}
+              >
                 <TableCell>
-                      Order Ref
+                  {order.ref}
                 </TableCell>
-                <TableCell>
-                      Customer
-                </TableCell>
-                <TableCell sortDirection="desc">
-                  <Tooltip
-                    enterDelay={300}
-                    title="Sort"
-                  >
-                    <TableSortLabel
-                      active
-                      direction="desc"
-                    >
-                          Date
-                    </TableSortLabel>
-                  </Tooltip>
-                </TableCell>
-                <TableCell>
-                      Status
+                <TableCell align="right">
+                  {order.customer.name}
                 </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {orders.map((order) => (
-                <TableRow
-                  hover
-                  key={order.id}
-                >
-                  <TableCell>
-                    {order.ref}
-                  </TableCell>
-                  <TableCell>
-                    {order.customer.name}
-                  </TableCell>
-                  <TableCell>
-                    {dayjs(order.createdAt).format('MMM DD, YYYY')}
-                  </TableCell>
-                  <TableCell>
-                    <SeverityPill
-                      color={(order.status === 'delivered' && 'success') ||
-                          (order.status === 'refunded' && 'error') ||
-                          'warning'}
-                    >
-                      {order.status}
-                    </SeverityPill>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Box>
-      </PerfectScrollbar>
+            ))}
+            <TableRow>
+              <TableCell/>
+              <TableCell
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }
+                }>
+                <Box>Total:</Box>
+                <Box>$1,234.56</Box>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </Box>
       <Box
         sx={{
           display: 'flex',
@@ -207,7 +250,9 @@ const YearlyGross = ({...props}) => {
   );
 };
 
-YearlyGross.propTypes = {};
+YearlyGross.propTypes = {
+  tablePage: PropTypes.number,
+};
 SeverityPill.propTypes = {
   color: PropTypes.oneOf(
       ['primary', 'secondary', 'error', 'warning', 'info', 'success'],

@@ -36,6 +36,7 @@ const ErrorNotif = () => {
   const Invoice = useSelector((state) => state.Invoice);
   const ReceiveProduct = useSelector((state) => state.ReceiveProduct);
   const Customer = useSelector((state) => state.Customer);
+  const SalesState = useSelector((state) => state.Sales);
 
   const isError =
   Product.error.state ||
@@ -45,7 +46,8 @@ const ErrorNotif = () => {
   ProductUnit.error.state ||
   Invoice.error.state ||
   ReceiveProduct.error.state ||
-  Customer.error.state;
+  Customer.error.state ||
+  SalesState.error.state;
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {

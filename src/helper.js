@@ -25,7 +25,7 @@ export const removeLastSlash = (str) => {
 
 // headers builder
 // eslint-disable-next-line max-len
-export const headersBuilder = (token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAxLCJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiIkMmEkMTAkbExVZjB6QnBQZENQdGdGekkwQTU3dVRZRGYvSnlYTkhnc1lpUGFQNngzNjRsRmFVY2hvYmkiLCJmdWxsbmFtZSI6bnVsbCwicm9sZSI6ImFkbWluIiwiY29udGFjdCI6bnVsbCwiaWF0IjoxNjQyNTAzNTQ4LCJleHAiOjE2NDI1ODk5NDh9.4lZDB1b3m3JewWFObxNpTyurgygs0PFJABgoqQSlonU') => {
+export const headersBuilder = (token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAxLCJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiIkMmEkMTAkbExVZjB6QnBQZENQdGdGekkwQTU3dVRZRGYvSnlYTkhnc1lpUGFQNngzNjRsRmFVY2hvYmkiLCJmdWxsbmFtZSI6bnVsbCwicm9sZSI6ImFkbWluIiwiY29udGFjdCI6bnVsbCwiaWF0IjoxNjQyNzMwNjE2LCJleHAiOjE2NDI4MTcwMTZ9.NT5ZnIXNI9-E7gsyZHCdw6xN2jgUHqLEhGx28wy6WnA') => {
   return {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -194,6 +194,7 @@ export const thousandFormatter = (value) => {
   if (value >= 1000000) {
     return `${(value / 1000000).toFixed(2)}M`;
   }
+  return 0;
 };
 
 // random color for each data
@@ -201,24 +202,4 @@ export const randomColor = () => {
   return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 };
 
-// this function is exclusive to Invoice State
-// will break if the data is not Invoice State
-export const getInvoices = (howLong, data) => {
-  const today = dayjs();
-  const subtractor = today.subtract(howLong, 'day');
-  const invoices = data.filter((item) => {
-    return dayjs(item.date_recorded).isBetween(subtractor, today);
-  });
-  return invoices;
-};
 
-// this function is exclusive to Sales State
-// will break if the data is not Sales State
-export const getSales = (invoice, data) => {
-  const sales = data.filter(
-      (sale) => invoice.some(
-          (invoiceData) => invoiceData.id === sale.invoice_id,
-      ),
-  );
-  return sales;
-};

@@ -19,13 +19,17 @@ import {
 const PurchaseOrder = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [mount, setMount] = useState(false);
   const PurchaseOrder = useSelector((state) => state.PurchaseOrder);
   const PurchaseOrderData = PurchaseOrder.data?.data ?? [];
   let [whichData] = useState([]);
 
   useEffect(() => {
-    if (PurchaseOrderData.length === 0) {
-      initPurchaseOrder();
+    if (!mount) {
+      if (PurchaseOrderData.length === 0) {
+        initPurchaseOrder();
+      }
+      setMount(true);
     }
     return () => {
 

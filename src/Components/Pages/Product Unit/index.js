@@ -20,13 +20,17 @@ import {
 const ProductUnit = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [mount, setMount] = useState(false);
   const ProductUnit = useSelector((state) => state.ProductUnit);
   const ProductUnitData = ProductUnit.data?.data ?? [];
   let [whichData] = useState([]);
 
   useEffect(() => {
-    if (ProductUnitData.length === 0) {
-      initProductUnit();
+    if (!mount) {
+      if (ProductUnitData.length === 0) {
+        initProductUnit();
+      }
+      setMount(true);
     }
     return () => {
 
