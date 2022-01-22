@@ -15,8 +15,11 @@ const TotalTransaction = ({...props}) => {
   const thisMonthInvoice = InvoiceStateData.filter(
       (invoice) => dayjs(invoice.date_recorded).isSame(dayjs(), 'year'),
   );
+  // count all invoice this month
+  const thisMonthInvoiceCount = thisMonthInvoice.length;
 
   useEffect(() => {
+    console.log('thisMonthInvoice >>> ', thisMonthInvoice);
     return () => {
 
     };
@@ -35,13 +38,13 @@ const TotalTransaction = ({...props}) => {
               gutterBottom
               variant="overline"
             >
-              TOTAL TRANSACTION
+              TOTAL TRANSACTION COUNT
             </Typography>
             <Typography
               color="textPrimary"
               variant="h4"
             >
-              {thousandFormatter(thisMonthInvoice)}
+              {thousandFormatter(thisMonthInvoiceCount)}
             </Typography>
           </Box>
           <Avatar

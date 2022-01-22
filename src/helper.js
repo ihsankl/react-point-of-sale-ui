@@ -25,7 +25,7 @@ export const removeLastSlash = (str) => {
 
 // headers builder
 // eslint-disable-next-line max-len
-export const headersBuilder = (token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAxLCJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiIkMmEkMTAkbExVZjB6QnBQZENQdGdGekkwQTU3dVRZRGYvSnlYTkhnc1lpUGFQNngzNjRsRmFVY2hvYmkiLCJmdWxsbmFtZSI6bnVsbCwicm9sZSI6ImFkbWluIiwiY29udGFjdCI6bnVsbCwiaWF0IjoxNjQyNzMwNjE2LCJleHAiOjE2NDI4MTcwMTZ9.NT5ZnIXNI9-E7gsyZHCdw6xN2jgUHqLEhGx28wy6WnA') => {
+export const headersBuilder = (token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAxLCJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiIkMmEkMTAkbExVZjB6QnBQZENQdGdGekkwQTU3dVRZRGYvSnlYTkhnc1lpUGFQNngzNjRsRmFVY2hvYmkiLCJmdWxsbmFtZSI6bnVsbCwicm9sZSI6ImFkbWluIiwiY29udGFjdCI6bnVsbCwiaWF0IjoxNjQyODI2MTM0LCJleHAiOjE2NDI5MTI1MzR9.1N8jYmhq6oaTaz4nQEQ0gcdbiV63ZAqCeUIcrHep9Y8') => {
   return {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -74,7 +74,7 @@ export const createBasicReducer = (state, action, asyncState) => {
     case 'REJECTED':
       state.isLoading = false;
       state.error = {
-        message: action.payload.response.data.message ?? '',
+        message: action.payload.response?.data?.message ?? '',
         state: true,
       };
       state.isSuccess = false;
@@ -156,9 +156,7 @@ export const columnsBuilder = (data, editCb, deleteCb) => {
 export const dateFormatter = (value) => {
   // example of date string = 2022-01-13T17:00:00.000Z
   const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
-  if (pattern.test(value)) {
-    return dayjs(value).format('YYYY-MM-DD');
-  }
+  if (pattern.test(value)) return dayjs(value).format('YYYY-MM-DD');
   return value;
 };
 
@@ -185,7 +183,7 @@ export const rupiahFormatter = (value) => {
   }).format(value);
 };
 
-// convert thounsand into K
+// convert thousand into K
 export const thousandFormatter = (value) => {
   if (value < 1000) return value;
   if (value >= 1000 && value < 1000000) {
@@ -202,4 +200,33 @@ export const randomColor = () => {
   return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 };
 
+// return month name based on number
+export const monthName = (month) => {
+  switch (month) {
+    case '0':
+      return 'January';
+    case '1':
+      return 'February';
+    case '2':
+      return 'March';
+    case '3':
+      return 'April';
+    case '4':
+      return 'May';
+    case '5':
+      return 'June';
+    case '6':
+      return 'July';
+    case '7':
+      return 'August';
+    case '8':
+      return 'September';
+    case '9':
+      return 'October';
+    case '10':
+      return 'Novemver';
+    case '11':
+      return 'December';
+  }
+};
 

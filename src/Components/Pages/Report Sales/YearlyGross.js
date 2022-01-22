@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -12,10 +11,12 @@ import {
   TableRow,
   // TableSortLabel,
   // Tooltip,
+  Divider,
   Box,
+  Typography,
 } from '@mui/material';
 import {ArrowRight} from '@mui/icons-material';
-import {uuid} from '../../../helper';
+import {monthName, rupiahFormatter, uuid} from '../../../helper';
 import {styled} from '@mui/material/styles';
 import {useSelector} from 'react-redux';
 import dayjs from 'dayjs';
@@ -66,7 +67,7 @@ const YearlyGross = ({tablePage, ...props}) => {
   const InvoiceState = useSelector((state) => state.Invoice);
   const InvoiceStateData = InvoiceState.data?.data ?? [];
   // return 5 years before now as an array
-  const years = Array.from(Array(5).keys()).map((i) => {
+  const years = Array.from(Array(6).keys()).map((i) => {
     return dayjs().subtract(i, 'year').format('YYYY');
   });
   // get invoice for each year
@@ -74,7 +75,7 @@ const YearlyGross = ({tablePage, ...props}) => {
     // example return value: 2020:[{},{},{}]
     return years.reduce((acc, year) => {
       const yearInvoice = InvoiceStateData.filter(
-        (invoice) => dayjs(invoice.date_recorded).isSame(year, 'year'),
+          (invoice) => dayjs(invoice.date_recorded).isSame(year, 'year'),
       );
       return {...acc, [year]: yearInvoice};
     }
@@ -108,127 +109,145 @@ const YearlyGross = ({tablePage, ...props}) => {
       // because it is an object
       // so we need to convert it to array first
       const yearMonthlyInvoice = Object.entries(monthlyInvoice()[year]);
-      const yearMonthlyInvoiceSum = yearMonthlyInvoice.reduce((acc, [month, invoice]) => {
-        const monthInvoiceSum = invoice.reduce((acc, invoice) => {
-          return acc + invoice.total_amount;
-        }, 0);
-        return {...acc, [month]: monthInvoiceSum};
-      }, {});
+      const yearMonthlyInvoiceSum = yearMonthlyInvoice
+          .reduce((acc, [month, invoice]) => {
+            const monthInvoiceSum = invoice.reduce((acc, invoice) => {
+              return acc + invoice.total_amount;
+            }, 0);
+            return {...acc, [month]: monthInvoiceSum};
+          }, {});
       return {...acc, [year]: yearMonthlyInvoiceSum};
     }, {});
   };
-
+  // convert monthlyInvoiceSum to array
+  const monthlyInvoiceSumArray =
+  Object.entries(monthlyInvoiceSum()).map(([year, invoice]) => {
+    return {year, invoice};
+  });
+  // sum total for each year
+  // eslint-disable-next-line no-unused-vars
+  const yearlyInvoiceSum = () => {
+    // example return value: 2020:1000
+    return years.reduce((acc, year) => {
+      const yearInvoice = yearlyInvoice()[year];
+      const yearInvoiceSum = yearInvoice.reduce((acc, invoice) => {
+        return acc + invoice.total_amount;
+      }, 0);
+      return {...acc, [year]: yearInvoiceSum};
+    }, {});
+  };
 
   useEffect(() => {
-    console.log('monthlyInvoiceSum >>>', monthlyInvoiceSum());
+    console.log('yearlyInvoiceSum >>>', yearlyInvoiceSum());
 
     return () => {
 
     };
   }, [InvoiceStateData]);
 
-  const orders = [
-    {
-      id: uuid(),
-      ref: 'January',
-      amount: 30.5,
-      customer: {
-        name: 'Ekaterina Tankova',
-      },
-      createdAt: 1555016400000,
-      status: 'pending',
-    },
-    {
-      id: uuid(),
-      ref: 'February',
-      amount: 25.1,
-      customer: {
-        name: 'Cao Yu',
-      },
-      createdAt: 1555016400000,
-      status: 'delivered',
-    },
-    {
-      id: uuid(),
-      ref: 'March',
-      amount: 10.99,
-      customer: {
-        name: 'Alexa Richardson',
-      },
-      createdAt: 1554930000000,
-      status: 'refunded',
-    },
-    {
-      id: uuid(),
-      ref: 'April',
-      amount: 96.43,
-      customer: {
-        name: 'Anje Keizer',
-      },
-      createdAt: 1554757200000,
-      status: 'pending',
-    },
-    {
-      id: uuid(),
-      ref: 'May',
-      amount: 32.54,
-      customer: {
-        name: 'Clarke Gillebert',
-      },
-      createdAt: 1554670800000,
-      status: 'delivered',
-    },
-    {
-      id: uuid(),
-      ref: 'June',
-      amount: 16.76,
-      customer: {
-        name: 'Adam Denisov',
-      },
-      createdAt: 1554670800000,
-      status: 'delivered',
-    },
-  ];
-
-  // const years = [2021, 2022];
+  const renderMonthly = (data) => {
+    const comps = [];
+    for ( const property in data.invoice ) {
+      if (Object.prototype.hasOwnProperty.call(data.invoice, property)) {
+        comps.push(
+            <TableRow
+              hover
+              key={uuid()}
+            >
+              <TableCell>
+                <Typography variant='h5'>
+                  {`${monthName(property)}: `}
+                </Typography>
+              </TableCell>
+              <TableCell align="right">
+                <Typography variant='h5'>
+                  {`${rupiahFormatter(data.invoice[property])}`}
+                </Typography>
+              </TableCell>
+            </TableRow>,
+        );
+      }
+    }
+    return comps;
+  };
 
   return (
     <Card sx={{width: '100%'}} elevation={3} {...props}>
       <CardHeader title="Yearly Gross" />
+      <Divider/>
       <Box
         sx={{
           width: '100%',
         }}
       >
-        <Table>
-          <TableBody>
-            {orders.map((order) => (
-              <TableRow
-                hover
-                key={order.id}
-              >
-                <TableCell>
-                  {order.ref}
-                </TableCell>
-                <TableCell align="right">
-                  {order.customer.name}
-                </TableCell>
-              </TableRow>
-            ))}
-            <TableRow>
-              <TableCell/>
-              <TableCell
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                }
-                }>
-                <Box>Total:</Box>
-                <Box>$1,234.56</Box>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+        {/* loop for each year */}
+        {/* oldest year first */}
+        {monthlyInvoiceSumArray.map((item, index) => {
+          if (tablePage === 1 && index <= 2) {
+            return (
+              <Table key={uuid()}>
+                <TableBody>
+                  <TableRow>
+                    <TableCell align='left'>
+                      <Typography variant='button' sx={{fontSize: '25px'}}>
+                        {item.year}
+                      </Typography>
+                    </TableCell>
+                    <TableCell/>
+                  </TableRow>
+                  {renderMonthly(item).map((val) => val)}
+                  <TableRow>
+                    <TableCell/>
+                    <TableCell align='right' >
+                      <Box>
+                        <Typography variant='button' sx={{fontSize: '25px'}}>
+                          {/* the total of total_amount from item.year */}
+                          {`TOTAL:   ${rupiahFormatter(
+                              Object.values(
+                                  item.invoice,
+                              ).reduce((acc, val) => acc + val, 0),
+                          )}`}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            );
+          }
+          if (tablePage === 2 && index > 2) {
+            return (
+              <Table key={uuid()}>
+                <TableBody>
+                  <TableRow>
+                    <TableCell align='left'>
+                      <Typography variant='button' sx={{fontSize: '25px'}}>
+                        {item.year}
+                      </Typography>
+                    </TableCell>
+                    <TableCell/>
+                  </TableRow>
+                  {renderMonthly(item).map((val) => val)}
+                  <TableRow>
+                    <TableCell/>
+                    <TableCell align='right' >
+                      <Box>
+                        <Typography variant='button' sx={{fontSize: '25px'}}>
+                          {/* the total of total_amount from item.year */}
+                          {`TOTAL:   ${rupiahFormatter(
+                              Object.values(
+                                  item.invoice,
+                              ).reduce((acc, val) => acc + val, 0),
+                          )}`}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            );
+          }
+        })}
       </Box>
       <Box
         sx={{
