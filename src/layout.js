@@ -40,8 +40,6 @@ export const FormContainer = styled('form')(({theme}) => ({
 
 export const FormControlContainer = styled(FormControl)(({theme}) => ({
   ...theme.typography.body1,
-  minWidth: '35em',
-  maxWidth: '50%',
   display: 'flex',
   flexDirection: 'column',
   gap: '.5em',

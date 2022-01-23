@@ -19,19 +19,17 @@ const Supplier = () => {
   const [mount, setMount] = useState(false);
   const Supplier = useSelector((state) => state.Supplier);
   const SupplierData = Supplier.data?.data ?? [];
-  let [whichData] = useState([]);
+  let whichData = [];
 
   useEffect(() => {
     if (!mount) {
-      if (SupplierData.length === 0) {
-        initSupplier();
-      }
+      initSupplier();
       setMount(true);
     }
     return () => {
 
     };
-  }, [Supplier]);
+  }, [Supplier, mount]);
 
   const initSupplier = async () => {
     await dispatch(getSupplier()).unwrap();
@@ -82,6 +80,7 @@ const Supplier = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deleteSupplier(whichData));
+          setMount(false);
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {
@@ -92,4 +91,4 @@ const Supplier = () => {
   );
 };
 
-export default Supplier;
+export default React.memo(Supplier);

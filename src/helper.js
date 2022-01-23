@@ -74,7 +74,8 @@ export const createBasicReducer = (state, action, asyncState) => {
     case 'REJECTED':
       state.isLoading = false;
       state.error = {
-        message: action.payload.response?.data?.message ?? '',
+        message: action.payload.response?.data?.message ??
+        'Something went wrong',
         state: true,
       };
       state.isSuccess = false;

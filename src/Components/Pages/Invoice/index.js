@@ -23,15 +23,13 @@ const Invoice = () => {
 
   useEffect(() => {
     if (!mount) {
-      if (InvoiceData.length === 0) {
-        initInvoice();
-      }
+      initInvoice();
       setMount(true);
     }
     return () => {
 
     };
-  }, [Invoice]);
+  }, [Invoice, mount]);
 
   const initInvoice = async () => {
     await dispatch(getInvoice()).unwrap();
@@ -82,6 +80,7 @@ const Invoice = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deleteInvoice(whichData));
+          setMount(false);
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {
@@ -92,4 +91,4 @@ const Invoice = () => {
   );
 };
 
-export default Invoice;
+export default React.memo(Invoice);

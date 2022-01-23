@@ -140,7 +140,7 @@ const App = ()=> {
       {/* information snackbar on left corner */}
       <Information/>
       <Backdrop
-        sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 2}}
+        sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 3}}
         open={isLoading}
       >
         <CircularProgress color="inherit" />
@@ -281,7 +281,6 @@ const App = ()=> {
           {/* redirect unmatch route */}
           <Route path="*" element={<Navigate replace to="/cashier" />}/>
 
-          {/* TODO: add reports UI */}
           {/* TODO: add 404 Not Found page */}
           {/* TODO: add keyboard shortcuts for actions:
             2. quick add/remove item
@@ -294,6 +293,9 @@ const App = ()=> {
           {/* TODO: percent difference not yet working */}
           {/* TODO: change all selection to autocomplete */}
           {/* TODO: add 30,90 and a year selection in Latest Sales */}
+          {/* TODO: register UI */}
+          {/* TODO: optimizing all components */}
+          {/* TODO: latest sales still doesn't work */}
         </Routes>
       </BrowserRouter>
     </div>

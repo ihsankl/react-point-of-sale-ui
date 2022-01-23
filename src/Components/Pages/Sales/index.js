@@ -23,15 +23,13 @@ const Sales = () => {
 
   useEffect(() => {
     if (!mount) {
-      if (SalesData.length === 0) {
-        initSales();
-      }
+      initSales();
       setMount(true);
     }
     return () => {
 
     };
-  }, []);
+  }, [SalesData, mount]);
 
   const initSales = async () => {
     await dispatch(getSales()).unwrap();
@@ -82,6 +80,7 @@ const Sales = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deleteSales(whichData));
+          setMount(false);
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {
@@ -92,4 +91,4 @@ const Sales = () => {
   );
 };
 
-export default Sales;
+export default React.memo(Sales);

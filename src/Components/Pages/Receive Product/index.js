@@ -22,19 +22,17 @@ const ReceiveProduct = () => {
   const [mount, setMount] = useState(false);
   const ReceiveProduct = useSelector((state) => state.ReceiveProduct);
   const ReceiveProductData = ReceiveProduct.data?.data ?? [];
-  let [whichData] = useState([]);
+  let whichData = [];
 
   useEffect(() => {
     if (!mount) {
-      if (ReceiveProductData.length === 0) {
-        initReceiveProduct();
-      }
+      initReceiveProduct();
       setMount(true);
     }
     return () => {
 
     };
-  }, [ReceiveProduct]);
+  }, [ReceiveProduct, mount]);
 
   const initReceiveProduct = async () => {
     await dispatch(getReceiveProduct()).unwrap();
@@ -84,6 +82,7 @@ const ReceiveProduct = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deleteReceiveProduct(whichData));
+          setMount(false);
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {
@@ -94,4 +93,4 @@ const ReceiveProduct = () => {
   );
 };
 
-export default ReceiveProduct;
+export default React.memo(ReceiveProduct);

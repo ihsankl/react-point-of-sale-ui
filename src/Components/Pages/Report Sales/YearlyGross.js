@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -137,14 +137,6 @@ const YearlyGross = ({tablePage, ...props}) => {
     }, {});
   };
 
-  useEffect(() => {
-    console.log('yearlyInvoiceSum >>>', yearlyInvoiceSum());
-
-    return () => {
-
-    };
-  }, [InvoiceStateData]);
-
   const renderMonthly = (data) => {
     const comps = [];
     for ( const property in data.invoice ) {
@@ -279,4 +271,4 @@ SeverityPill.propTypes = {
   children: PropTypes.node,
 };
 
-export default YearlyGross;
+export default React.memo(YearlyGross);

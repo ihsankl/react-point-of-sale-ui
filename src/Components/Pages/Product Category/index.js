@@ -19,19 +19,17 @@ const ProductCategory = () => {
   const [mount, setMount] = useState(false);
   const Category = useSelector((state) => state.Category);
   const CategoryData = Category.data?.data ?? [];
-  let [whichData] = useState([]);
+  let whichData = [];
 
   useEffect(() => {
     if (!mount) {
-      if (CategoryData.length === 0) {
-        initCategories();
-      }
+      initCategories();
       setMount(true);
     }
     return () => {
 
     };
-  }, [Category]);
+  }, [Category, mount]);
 
   const initCategories = async () => {
     await dispatch(getAllCategory()).unwrap();
@@ -81,6 +79,7 @@ const ProductCategory = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deleteCategory(whichData));
+          setMount(false);
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {
@@ -91,4 +90,4 @@ const ProductCategory = () => {
   );
 };
 
-export default ProductCategory;
+export default React.memo(ProductCategory);

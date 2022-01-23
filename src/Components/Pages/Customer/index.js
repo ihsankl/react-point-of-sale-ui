@@ -15,21 +15,23 @@ import {
 // import { openConfirmDialog } from '../../../Redux/Slicer/ConfirmDialog';
 
 const Customer = () => {
+  const [mount, setMount] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const Customer = useSelector((state) => state.Customer);
   const CustomerData = Customer.data?.data ?? [];
-  let [whichData] = useState([]);
+  let whichData = [];
 
   useEffect(() => {
     // only init if data is empty
-    if (CustomerData.length === 0) {
+    if (!mount) {
       initCustomers();
+      setMount(true);
     }
     return () => {
 
     };
-  }, [Customer]);
+  }, [Customer, mount]);
 
   const initCustomers = async () => {
     await dispatch(getCustomers()).unwrap();
@@ -80,6 +82,7 @@ const Customer = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deleteCustomer(whichData));
+          setMount(false);
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {
@@ -90,4 +93,4 @@ const Customer = () => {
   );
 };
 
-export default Customer;
+export default React.memo(Customer);

@@ -1,7 +1,7 @@
 import {Money} from '@mui/icons-material';
 import {Avatar, Card, CardContent, Typography} from '@mui/material';
 import {Box} from '@mui/system';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {rupiahFormatter} from '../../../helper';
 import {useSelector} from 'react-redux';
 import dayjs from 'dayjs';
@@ -11,16 +11,20 @@ const Budget = ({...props}) => {
   const PurchaseOrderStateData = PurchaseOrderState.data?.data ?? [];
 
   // get purchase order data this month with dayjs
-  const thisMonthPurchaseOrder = PurchaseOrderStateData.filter(
-      (item) =>
-        dayjs(item.order_date).isSame(dayjs(), 'month') &&
+  const thisMonthPurchaseOrder = useMemo(() => {
+    return PurchaseOrderStateData.filter(
+        (item) =>
+          dayjs(item.order_date).isSame(dayjs(), 'month') &&
         dayjs(item.order_date).isSame(dayjs(), 'year'),
-  );
+    );
+  }, [PurchaseOrderStateData]);
   // count sub_total of this month purchase order
-  const thisMonthPurchaseOrderSubTotal = thisMonthPurchaseOrder.reduce(
-      (acc, item) => acc + item.sub_total,
-      0,
-  );
+  const thisMonthPurchaseOrderSubTotal = useMemo(() => {
+    return thisMonthPurchaseOrder.reduce(
+        (acc, item) => acc + item.sub_total,
+        0,
+    );
+  }, [thisMonthPurchaseOrder]);
 
   return (
     <Card
@@ -95,4 +99,4 @@ const Budget = ({...props}) => {
   );
 };
 
-export default Budget;
+export default React.memo(Budget);

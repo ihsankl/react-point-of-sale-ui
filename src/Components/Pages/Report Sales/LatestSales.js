@@ -45,7 +45,7 @@ const LatestSales = ({...props}) => {
   const lastYearTotalAmount = lastYearInvoice.reduce(
       (total, invoice) => total + invoice.total_amount,
       0,
-  );
+  );  
 
   const data = {
     datasets: [
@@ -56,9 +56,10 @@ const LatestSales = ({...props}) => {
         borderRadius: 4,
         categoryPercentage: 0.5,
         // data sales from last 7 days
-        data: thisMonthInvoice.map((invoice, index) => {
-          if (index < 7 ) return invoice.total_amount;
-        }),
+        // data: thisMonthInvoice.map((invoice, index) => {
+        //   if (index < 7 ) return invoice.total_amount;
+        // }),
+        data: [],
         label: 'This year',
         maxBarThickness: 10,
       },
@@ -69,9 +70,10 @@ const LatestSales = ({...props}) => {
         borderRadius: 4,
         categoryPercentage: 0.5,
         // data sales from last 7 days last year
-        data: lastYearInvoice.map((invoice, index) => {
-          if (index < 7 ) return invoice.total_amount;
-        }),
+        // data: lastYearInvoice.map((invoice, index) => {
+        //   if (index < 7 ) return invoice.total_amount;
+        // }),
+        data: [],
         label: 'Last year',
         maxBarThickness: 10,
       },
@@ -166,4 +168,4 @@ LatestSales.propTypes = {
   props: PropTypes.object,
 };
 
-export default LatestSales;
+export default React.memo(LatestSales);

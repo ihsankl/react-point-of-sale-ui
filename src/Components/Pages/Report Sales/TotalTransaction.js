@@ -1,32 +1,22 @@
 import {People} from '@mui/icons-material';
 import {Avatar, Box, Card, CardContent, Typography} from '@mui/material';
-import React, {useEffect} from 'react';
+import React, {useMemo} from 'react';
 import {useSelector} from 'react-redux';
 import dayjs from 'dayjs';
 import {thousandFormatter} from '../../../helper';
 
 const TotalTransaction = ({...props}) => {
   const InvoiceState = useSelector((state) => state.Invoice);
-  const SalesState = useSelector((state) => state.Sales);
   const InvoiceStateData = InvoiceState.data?.data ?? [];
-  const SalesStateData = SalesState.data?.data ?? [];
 
   // get all invoice this month
-  const thisMonthInvoice = InvoiceStateData.filter(
-      (invoice) => dayjs(invoice.date_recorded).isSame(dayjs(), 'year'),
-  );
+  const thisMonthInvoice = useMemo(() => {
+    return InvoiceStateData.filter(
+        (invoice) => dayjs(invoice.date_recorded).isSame(dayjs(), 'year'),
+    );
+  }, [InvoiceStateData]);
   // count all invoice this month
   const thisMonthInvoiceCount = thisMonthInvoice.length;
-
-  useEffect(() => {
-    console.log('thisMonthInvoice >>> ', thisMonthInvoice);
-    return () => {
-
-    };
-  }, [
-    InvoiceStateData,
-    SalesStateData,
-  ]);
 
   return (
     <Card elevation={3} sx={{flex: 1}} {...props}>
@@ -92,4 +82,4 @@ const TotalTransaction = ({...props}) => {
 
 TotalTransaction.propTypes = {};
 
-export default TotalTransaction;
+export default React.memo(TotalTransaction);

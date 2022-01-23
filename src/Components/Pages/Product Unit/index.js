@@ -23,19 +23,17 @@ const ProductUnit = () => {
   const [mount, setMount] = useState(false);
   const ProductUnit = useSelector((state) => state.ProductUnit);
   const ProductUnitData = ProductUnit.data?.data ?? [];
-  let [whichData] = useState([]);
+  let whichData = [];
 
   useEffect(() => {
     if (!mount) {
-      if (ProductUnitData.length === 0) {
-        initProductUnit();
-      }
+      initProductUnit();
       setMount(true);
     }
     return () => {
 
     };
-  }, [ProductUnit]);
+  }, [ProductUnit, mount]);
 
   const initProductUnit = async () => {
     await dispatch(getProductUnit()).unwrap();
@@ -86,6 +84,7 @@ const ProductUnit = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deleteProductUnit(whichData));
+          setMount(false);
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {
@@ -96,4 +95,4 @@ const ProductUnit = () => {
   );
 };
 
-export default ProductUnit;
+export default React.memo(ProductUnit);

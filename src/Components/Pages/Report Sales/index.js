@@ -16,6 +16,7 @@ import {getInvoice} from '../../../Redux/Slicer/Invoice';
 import {getPurchaseOrder} from '../../../Redux/Slicer/Purchase Order';
 import {getReceiveProduct} from '../../../Redux/Slicer/Receive Product';
 import {getAllSales} from '../../../Redux/Slicer/Sales';
+import TotalProfit from './TotalProfit';
 
 const ReportSales = () => {
   const [mount, setMount] = useState();
@@ -40,13 +41,13 @@ const ReportSales = () => {
     };
   }, []);
 
-
   return (
     <PaperContainer elevation={3} square>
       <Box sx={{display: 'flex', flexDirection: 'column', gap: '1em'}}>
         <Box sx={{display: 'flex', gap: '1em'}}>
           <Budget />
           <TotalTransaction />
+          <TotalProfit/>
           <TotalGross />
         </Box>
         <Divider />
@@ -68,4 +69,4 @@ const ReportSales = () => {
   );
 };
 
-export default ReportSales;
+export default React.memo(ReportSales);

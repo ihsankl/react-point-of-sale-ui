@@ -2,7 +2,7 @@ import {AttachMoney} from '@mui/icons-material';
 import {Avatar, Card, CardContent, Typography} from '@mui/material';
 import {Box} from '@mui/system';
 import dayjs from 'dayjs';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {useSelector} from 'react-redux';
 import {rupiahFormatter} from '../../../helper';
 
@@ -11,13 +11,17 @@ const TotalGross = ({...props}) => {
   const InvoiceStateData = InvoiceState.data?.data ?? [];
 
   // get all invoice this month
-  const thisMonthInvoice = InvoiceStateData.filter(
-      (invoice) => dayjs(invoice.date_recorded).isSame(dayjs(), 'month'),
-  );
+  const thisMonthInvoice = useMemo(() => {
+    return InvoiceStateData.filter(
+        (invoice) => dayjs(invoice.date_recorded).isSame(dayjs(), 'month'),
+    );
+  }, [InvoiceStateData]);
   // sum all total_amount in thisMonthInvoice
-  const totalGross = thisMonthInvoice.reduce((acc, invoice) => {
-    return acc + invoice.total_amount;
-  }, 0);
+  const totalGross = useMemo(() => {
+    return thisMonthInvoice.reduce((acc, invoice) => {
+      return acc + invoice.total_amount;
+    }, 0);
+  }, [InvoiceStateData]);
 
   return (
     <Card elevation={3} sx={{flex: 1}} {...props}>
@@ -57,4 +61,4 @@ const TotalGross = ({...props}) => {
   );
 };
 
-export default TotalGross;
+export default React.memo(TotalGross);

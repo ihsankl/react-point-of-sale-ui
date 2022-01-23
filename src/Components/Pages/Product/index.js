@@ -16,18 +16,20 @@ import {
 const Product = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [mount, setMount] = useState(false);
   const Product = useSelector((state) => state.Product);
   const ProductData = Product.data?.data ?? [];
-  let [whichData] = useState([]);
+  let whichData = [];
 
   useEffect(() => {
-    if (ProductData.length === 0) {
+    if (!mount) {
       initProduct();
+      setMount(true);
     }
     return () => {
 
     };
-  }, [Product]);
+  }, [Product, mount]);
 
   const initProduct = async () => {
     await dispatch(getProduct()).unwrap();
@@ -77,6 +79,7 @@ const Product = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deleteProduct(whichData));
+          setMount(false);
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {
@@ -87,4 +90,4 @@ const Product = () => {
   );
 };
 
-export default Product;
+export default React.memo(Product);

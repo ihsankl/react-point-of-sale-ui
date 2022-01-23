@@ -1,4 +1,4 @@
-import {DataGrid} from '@mui/x-data-grid';
+import {DataGrid, GridToolbar} from '@mui/x-data-grid';
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 
@@ -68,6 +68,8 @@ const BasicTable = ({dataRows = rows, dataColumns = columns}) => {
   return (
     <div style={{height: 'calc(100vh - 15.5em)'}}>
       <DataGrid
+        sx={{minWidth: '500px'}}
+        components={{Toolbar: GridToolbar}}
         rows={dataRows}
         columns={dataColumns}
         pageSize={pageSize}

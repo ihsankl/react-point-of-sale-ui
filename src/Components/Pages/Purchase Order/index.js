@@ -22,19 +22,17 @@ const PurchaseOrder = () => {
   const [mount, setMount] = useState(false);
   const PurchaseOrder = useSelector((state) => state.PurchaseOrder);
   const PurchaseOrderData = PurchaseOrder.data?.data ?? [];
-  let [whichData] = useState([]);
+  let whichData = [];
 
   useEffect(() => {
     if (!mount) {
-      if (PurchaseOrderData.length === 0) {
-        initPurchaseOrder();
-      }
+      initPurchaseOrder();
       setMount(true);
     }
     return () => {
 
     };
-  }, [PurchaseOrder]);
+  }, [PurchaseOrder, mount]);
 
   const initPurchaseOrder = async () => {
     await dispatch(getPurchaseOrder()).unwrap();
@@ -84,6 +82,7 @@ const PurchaseOrder = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deletePurchaseOrder(whichData));
+          setMount(false);
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {
@@ -94,4 +93,4 @@ const PurchaseOrder = () => {
   );
 };
 
-export default PurchaseOrder;
+export default React.memo(PurchaseOrder);
