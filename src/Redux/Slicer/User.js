@@ -97,7 +97,7 @@ const userSlice = createSlice({
     },
   }, extraReducers: (builder) => {
     // get users
-    builder.addCase(fetchUsers.pending, (state) => {
+    builder.addCase(fetchUsers.pending, (state, action) => {
       createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(fetchUsers.fulfilled, (state, action) => {
@@ -107,7 +107,7 @@ const userSlice = createSlice({
       createBasicReducer(state, action, 'REJECTED');
     });
     // get user by id
-    builder.addCase(fetchUserById.pending, (state) => {
+    builder.addCase(fetchUserById.pending, (state, action) => {
       createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(fetchUserById.fulfilled, (state, action) => {
@@ -117,7 +117,7 @@ const userSlice = createSlice({
       createBasicReducer(state, action, 'REJECTED');
     });
     // create user
-    builder.addCase(createUser.pending, (state) => {
+    builder.addCase(createUser.pending, (state, action) => {
       createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(createUser.fulfilled, (state, action) => {
@@ -127,7 +127,7 @@ const userSlice = createSlice({
       createBasicReducer(state, action, 'REJECTED');
     });
     // update user
-    builder.addCase(updateUser.pending, (state) => {
+    builder.addCase(updateUser.pending, (state, action) => {
       createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(updateUser.fulfilled, (state, action) => {
@@ -137,7 +137,7 @@ const userSlice = createSlice({
       createBasicReducer(state, action, 'REJECTED');
     });
     // delete user
-    builder.addCase(deleteUser.pending, (state) => {
+    builder.addCase(deleteUser.pending, (state, action) => {
       createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(deleteUser.fulfilled, (state, action) => {

@@ -71,10 +71,11 @@ import {getInvoice} from './Redux/Slicer/Invoice';
 import {getPurchaseOrder} from './Redux/Slicer/Purchase Order';
 import {getReceiveProduct} from './Redux/Slicer/Receive Product';
 import {getAllSales} from './Redux/Slicer/Sales';
+import Register from './Components/Pages/Register';
 
 const App = ()=> {
   // eslint-disable-next-line no-unused-vars
-  const [auth, setAuth] = useState(true);
+  const [auth, setAuth] = useState(false);
   const [mount, setMount] = useState(false);
   const CustomerState = useSelector((state) => state.Customer);
   const CategoryState = useSelector((state) => state.Category);
@@ -85,12 +86,14 @@ const App = ()=> {
   const PurchaseOrderState = useSelector((state) => state.PurchaseOrder);
   const ReceiveProductState = useSelector((state) => state.ReceiveProduct);
   const SalesState = useSelector((state) => state.Sales);
+  const AuthState = useSelector((state) => state.Authentication);
+  // const AuthData = AuthState.data;
 
   const dispatch = useDispatch();
 
   // fetch all data from server
   useEffect(() => {
-    if (!mount) {
+    if (!mount && auth) {
       initAllData();
       setMount(true);
     }
@@ -107,6 +110,9 @@ const App = ()=> {
     PurchaseOrderState,
     ReceiveProductState,
     SalesState,
+    AuthState,
+    mount,
+    auth,
   ]);
 
   const initAllData = async () => {
@@ -130,7 +136,9 @@ const App = ()=> {
   InvoiceState.isLoading ||
   PurchaseOrderState.isLoading ||
   ReceiveProductState.isLoading ||
-  SalesState.isLoading;
+  SalesState.isLoading ||
+  AuthState.isLoading;
+
 
   return (
     <div style={{display: 'flex'}}>
@@ -278,10 +286,14 @@ const App = ()=> {
             auth ? <Navigate replace to="/"/> : <Login />
           }/>
 
+          {/* register */}
+          <Route path="/register" element={
+            auth ? <Navigate replace to="/"/> : <Register />
+          }/>
+
           {/* redirect unmatch route */}
           <Route path="*" element={<Navigate replace to="/cashier" />}/>
 
-          {/* TODO: add 404 Not Found page */}
           {/* TODO: add keyboard shortcuts for actions:
             5. press edit > edit item price > enter to get out of edit mode
            */}

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Button,
   CssBaseline,
@@ -11,12 +11,13 @@ import {
 } from '@mui/material';
 import {styled} from '@mui/material/styles';
 import {useNavigate} from 'react-router-dom';
-import {login} from '../../../Redux/Slicer/Authentication';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {createUser} from '../../../Redux/Slicer/User';
 
 const defaultValues = {
   username: '',
   password: '',
+  rePassword: '',
 };
 
 const Creator = process.env.REACT_APP_CREATOR;
@@ -51,10 +52,12 @@ const Copyright = (props) => {
   );
 };
 
-const Login = () => {
+
+const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [formValues, setFormValues] = useState(defaultValues);
+  const UserState = useSelector((state) => state.User);
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -63,6 +66,16 @@ const Login = () => {
       [name]: value,
     });
   };
+
+  useEffect(() => {
+    if (UserState.isSuccess) {
+      navigate('/login');
+    }
+    return () => {
+
+    };
+  }, [UserState]);
+
 
   return (
     <Container component="main" maxWidth="xs">
@@ -76,7 +89,7 @@ const Login = () => {
         }}
       >
         <Typography component="h1" variant="h5">
-            Sign in
+            Register
         </Typography>
         <Box
           component="form"
@@ -86,6 +99,8 @@ const Login = () => {
           <TextField
             margin="normal"
             required
+            error={!formValues.username}
+            helperText={!formValues.username ? 'Username is required' : ''}
             fullWidth
             value={formValues.username}
             onChange={handleInputChange}
@@ -98,6 +113,8 @@ const Login = () => {
           <TextField
             margin="normal"
             required
+            error={!formValues.password}
+            helperText={!formValues.password ? 'Password is required' : ''}
             fullWidth
             value={formValues.password}
             onChange={handleInputChange}
@@ -107,20 +124,37 @@ const Login = () => {
             id="password"
             autoComplete="current-password"
           />
+          <TextField
+            margin="normal"
+            required
+            error={formValues.rePassword !== formValues.password}
+            helperText={formValues.rePassword !== formValues.password ?
+                'Password is not match' : ''}
+            fullWidth
+            value={formValues.rePassword}
+            onChange={handleInputChange}
+            name="rePassword"
+            label="re-Type Your Password"
+            type="password"
+            id="rePassword"
+          />
           <Button
-            onClick={() => {
-              const data = {
-                username: formValues.username,
-                password: formValues.password,
-              };
-              dispatch(login(data));
-            }}
             type="submit"
             fullWidth
             variant="contained"
             sx={{mt: 3, mb: 2}}
+            onClick={()=> {
+              const data = {
+                username: formValues.username,
+                password: formValues.password,
+                role: 'admin',
+              };
+              if (formValues.password === formValues.rePassword) {
+                dispatch(createUser(data));
+              }
+            }}
           >
-              Sign In
+              Sign Up
           </Button>
           <Grid container>
             <Grid item xs>
@@ -136,11 +170,13 @@ const Login = () => {
             </Grid>
             <Grid item>
               <Link
-                onClick={()=> navigate('/register')}
-                href="javascript:void(0)"
+                href="javasctipt:void(0);"
+                onClick={()=> {
+                  navigate('/login');
+                }}
                 variant="body2"
               >
-                {'Don\'t have an account? Sign Up'}
+                {'Already have an account? Sign In'}
               </Link>
             </Grid>
           </Grid>
@@ -151,4 +187,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

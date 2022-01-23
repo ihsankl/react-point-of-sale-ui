@@ -15,7 +15,8 @@ export const login = createAsyncThunk(
     types.LOGIN,
     async (data, thunkAPI) => {
       try {
-        const response = await Axios.post(`${BASE_URL}/login`, data);
+        const response = await Axios.post(
+            `${BASE_URL}/authentication/login`, data);
         return response.data;
       } catch (error) {
         throw thunkAPI.rejectWithValue(error);
@@ -28,7 +29,8 @@ export const logout = createAsyncThunk(
     types.LOGOUT,
     async (data = null, thunkAPI) => {
       try {
-        const response = await Axios.post(`${BASE_URL}/logout`,
+        const response = await Axios.post(
+            `${BASE_URL}/authentication/logout`,
             {
               ...headersBuilder(),
             },
@@ -45,7 +47,8 @@ export const checkToken = createAsyncThunk(
     types.CHECK_TOKEN,
     async (data = null, thunkAPI) => {
       try {
-        const response = await Axios.get(`${BASE_URL}/checkToken`,
+        const response = await Axios.get(
+            `${BASE_URL}/authentication/checkToken`,
             {
               ...headersBuilder(),
             },
@@ -72,33 +75,33 @@ const authenticationSlice = createSlice({
     },
   }, extraReducers: (builder) => {
     // login
-    builder.addCase(login.pending, (state) => {
+    builder.addCase(login.pending, (state, action) => {
       createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(login.fulfilled, (state, action) => {
       createBasicReducer(state, action, 'FULFILLED');
     });
-    builder.addCase(login.rejected, (state) => {
+    builder.addCase(login.rejected, (state, action) => {
       createBasicReducer(state, action, 'REJECTED');
     });
     // logout
-    builder.addCase(logout.pending, (state) => {
+    builder.addCase(logout.pending, (state, action) => {
       createBasicReducer(state, action, 'PENDING');
     });
-    builder.addCase(logout.fulfilled, (state) => {
+    builder.addCase(logout.fulfilled, (state, action) => {
       createBasicReducer(state, action, 'FULFILLED');
     });
-    builder.addCase(logout.rejected, (state) => {
+    builder.addCase(logout.rejected, (state, action) => {
       createBasicReducer(state, action, 'REJECTED');
     });
     // check token
-    builder.addCase(checkToken.pending, (state) => {
+    builder.addCase(checkToken.pending, (state, action) => {
       createBasicReducer(state, action, 'PENDING');
     });
     builder.addCase(checkToken.fulfilled, (state, action) => {
       createBasicReducer(state, action, 'FULFILLED');
     });
-    builder.addCase(checkToken.rejected, (state) => {
+    builder.addCase(checkToken.rejected, (state, action) => {
       createBasicReducer(state, action, 'REJECTED');
     });
   },

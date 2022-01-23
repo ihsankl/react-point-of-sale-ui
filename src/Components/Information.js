@@ -17,6 +17,8 @@ const Information = () => {
   const ReceiveProductErrorMessage = useSelector((state) => state.ReceiveProduct.error.message);
   const CustomerErrorMessage = useSelector((state) => state.Customer.error.message);
   const SalesErrorMessage = useSelector((state) => state.Sales.error.message);
+  const AuthErrorMessage = useSelector((state) => state.Authentication.error.message);
+  const UserErrorMessage = useSelector((state) => state.User.error.message);
 
   const errorMessage =
     ProductErrorMessage ||
@@ -27,7 +29,9 @@ const Information = () => {
     InvoiceErrorMessage ||
     ReceiveProductErrorMessage ||
     CustomerErrorMessage ||
-    SalesErrorMessage;
+    SalesErrorMessage ||
+    AuthErrorMessage ||
+    UserErrorMessage;
 
   useEffect(() => {
     return () => {

@@ -13,6 +13,7 @@ import {
 } from '../Redux/Slicer/Receive Product';
 import {clearError as clearSupplier} from '../Redux/Slicer/Supplier';
 import {clearError as clearSales} from '../Redux/Slicer/Sales';
+import {clearError as clearAuth} from '../Redux/Slicer/Authentication';
 
 const Alert = forwardRef(function Alert(props, ref) {
   return (
@@ -37,6 +38,8 @@ const ErrorNotif = () => {
   const ReceiveProduct = useSelector((state) => state.ReceiveProduct);
   const Customer = useSelector((state) => state.Customer);
   const SalesState = useSelector((state) => state.Sales);
+  const AuthState = useSelector((state) => state.Authentication);
+  const UserState = useSelector((state) => state.User);
 
   const isError =
   Product.error.state ||
@@ -47,7 +50,9 @@ const ErrorNotif = () => {
   Invoice.error.state ||
   ReceiveProduct.error.state ||
   Customer.error.state ||
-  SalesState.error.state;
+  SalesState.error.state ||
+  AuthState.error.state ||
+  UserState.error.state;
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -67,6 +72,7 @@ const ErrorNotif = () => {
     dispatch(clearReceiveProduct());
     dispatch(clearSupplier());
     dispatch(clearSales());
+    dispatch(clearAuth());
   };
 
   return (
