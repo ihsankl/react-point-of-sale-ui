@@ -283,8 +283,6 @@ const App = ()=> {
 
           {/* TODO: add 404 Not Found page */}
           {/* TODO: add keyboard shortcuts for actions:
-            2. quick add/remove item
-            3. print receipt
             5. press edit > edit item price > enter to get out of edit mode
            */}
           {/* TODO: give documentation for keyboard shortcuts */}
@@ -296,6 +294,7 @@ const App = ()=> {
           {/* TODO: register UI */}
           {/* TODO: optimizing all components */}
           {/* TODO: latest sales still doesn't work */}
+          {/* TODO: user login not yet implemented */}
         </Routes>
       </BrowserRouter>
     </div>

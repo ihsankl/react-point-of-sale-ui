@@ -78,9 +78,6 @@ const BasicTable = ({dataRows = rows, dataColumns = columns}) => {
         onPageSizeChange={(page) => {
           setPageSize(page);
         }}
-        onRowEditCommit={(row) => {
-          console.log(row); console.log('onRowEditCommit');
-        }}
       />
     </div>
   );
