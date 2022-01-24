@@ -7,7 +7,7 @@ import {
   TextField,
 } from '@mui/material';
 import DateAdapter from '@mui/lab/AdapterDayjs';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FormControlContainer,
   PaperContainer,
@@ -19,6 +19,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {createReceiveProduct} from '../../../Redux/Slicer/Receive Product';
 import dayjs from 'dayjs';
 import {isNumber} from '../../../helper';
+import {getProduct} from '../../../Redux/Slicer/Product';
+import {getSupplier} from '../../../Redux/Slicer/Supplier';
 
 const defaultValues = {
   receive_product_qty: '',
@@ -26,17 +28,34 @@ const defaultValues = {
   receive_product_receive_date: new Date(),
   receive_product_unit_price: '',
   receive_product_product_id: '',
-  receive_product_user_id: 1,
   receive_product_supplier_id: '',
 };
 
 const CreateReceiveProduct = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const [mount, setmount] = useState(false);
   const dispatch = useDispatch();
   const Supplier = useSelector((state) => state.Supplier);
+  const AppState = useSelector((state) => state.AppState);
   const SupplierData = Supplier.data?.data ?? [];
   const Product = useSelector((state) => state.Product);
   const ProductData = Product.data?.data ?? [];
+  const UserData = AppState.userData;
+
+  useEffect(() => {
+    if (!mount) {
+      getProductAndSupplier();
+      setmount(true);
+    }
+    return () => {
+
+    };
+  }, [mount]);
+
+  const getProductAndSupplier = async () => {
+    await dispatch(getProduct()).unwrap();
+    await dispatch(getSupplier()).unwrap();
+  };
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -60,7 +79,7 @@ const CreateReceiveProduct = () => {
       receive_date: dayjs(formValues.receive_product_receive_date).format('YYYY-MM-DD'),
       unit_price: formValues.receive_product_unit_price,
       product_id: formValues.receive_product_product_id,
-      user_id: formValues.receive_product_user_id,
+      user_id: UserData.id,
       supplier_id: formValues.receive_product_supplier_id,
     };
     dispatch(createReceiveProduct(data));
@@ -182,7 +201,7 @@ const CreateReceiveProduct = () => {
                 id={'receive_product_user_id'}
                 label={'User'}
                 name={'receive_product_user_id'}
-                defaultValue={formValues.receive_product_user_id}
+                defaultValue={UserData.username}
                 disabled
                 variant="outlined"
                 fullWidth

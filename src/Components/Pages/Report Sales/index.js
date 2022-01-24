@@ -39,7 +39,7 @@ const ReportSales = () => {
     return () => {
 
     };
-  }, []);
+  }, [mount]);
 
   return (
     <PaperContainer elevation={3} square>

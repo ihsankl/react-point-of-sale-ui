@@ -7,7 +7,7 @@ import {
   TextField,
 } from '@mui/material';
 import DateAdapter from '@mui/lab/AdapterDayjs';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FormControlContainer,
   PaperContainer,
@@ -19,6 +19,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {createPurchaseOrder} from '../../../Redux/Slicer/Purchase Order';
 import dayjs from 'dayjs';
 import {isNumber} from '../../../helper';
+import {getProduct} from '../../../Redux/Slicer/Product';
+import {getSupplier} from '../../../Redux/Slicer/Supplier';
 
 const defaultValues = {
   purchase_order_qty: '',
@@ -26,18 +28,35 @@ const defaultValues = {
   purchase_order_order_date: new Date(),
   purchase_order_unit_price: '',
   purchase_order_product_id: '',
-  purchase_order_user_id: 1,
   purchase_order_supplier_id: '',
 };
 
 const CreatePurchaseOrder = () => {
   const [formValues, setFormValues] = useState(defaultValues);
-
+  const [mount, setmount] = useState(false);
   const dispatch = useDispatch();
   const Supplier = useSelector((state) => state.Supplier);
+  const AppState = useSelector((state) => state.AppState);
   const SupplierData = Supplier.data?.data ?? [];
   const Product = useSelector((state) => state.Product);
   const ProductData = Product.data?.data ?? [];
+  const UserData = AppState.userData;
+
+  useEffect(() => {
+    if (!mount) {
+      getProductAndSupplier();
+      setmount(true);
+    }
+
+    return () => {
+
+    };
+  }, [mount]);
+
+  const getProductAndSupplier = async () => {
+    await dispatch(getProduct()).unwrap();
+    await dispatch(getSupplier()).unwrap();
+  };
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -61,7 +80,7 @@ const CreatePurchaseOrder = () => {
       order_date: dayjs(formValues.purchase_order_order_date).format('YYYY-MM-DD'),
       unit_price: formValues.purchase_order_unit_price,
       product_id: formValues.purchase_order_product_id,
-      user_id: formValues.purchase_order_user_id,
+      user_id: UserData.id,
       supplier_id: formValues.purchase_order_supplier_id,
     };
     dispatch(createPurchaseOrder(data));
@@ -177,7 +196,7 @@ const CreatePurchaseOrder = () => {
                 id={'purchase_order_user_id'}
                 label={'User'}
                 name={'purchase_order_user_id'}
-                defaultValue={formValues.purchase_order_user_id}
+                defaultValue={UserData.username}
                 disabled
                 variant="outlined"
                 fullWidth

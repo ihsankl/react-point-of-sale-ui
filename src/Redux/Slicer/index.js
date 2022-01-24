@@ -12,6 +12,7 @@ import ReceiveProduct from './Receive Product';
 import Sales from './Sales';
 import ConfirmDialog from './ConfirmDialog';
 import Cashier from './Cashier';
+import AppState from './AppState';
 
 const appReducer = combineReducers({
   User,
@@ -27,6 +28,7 @@ const appReducer = combineReducers({
   Supplier,
   ConfirmDialog,
   Cashier,
+  AppState,
 });
 
 export default appReducer;

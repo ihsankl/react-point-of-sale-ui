@@ -21,6 +21,8 @@ import BasicInput from '../../BasicInput';
 import {DesktopDatePicker, LocalizationProvider} from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterDayjs';
 import {isNumber} from '../../../helper';
+import {getAllCategory} from '../../../Redux/Slicer/Category';
+import {getProductUnit} from '../../../Redux/Slicer/Product Unit';
 
 const defaultValues = {
   product_id: '',
@@ -32,19 +34,21 @@ const defaultValues = {
   product_re_order_level: '',
   product_unit_id: '',
   product_category_id: '',
-  product_user_id: '',
   product_expired_date: new Date(),
 };
 
 const UpdateProduct = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const [mount, setMount] = useState(false);
   const dispatch = useDispatch();
   const {state} = useLocation();
   const navigate = useNavigate();
   const ProductUnit = useSelector((state) => state.ProductUnit);
+  const AppState = useSelector((state) => state.AppState);
   const ProductUnitData = ProductUnit.data?.data ?? [];
   const Category = useSelector((state) => state.Category);
   const CategoryData = Category.data?.data ?? [];
+  const UserData = AppState.userData;
 
   useEffect(() => {
     if (!!state) {
@@ -61,15 +65,23 @@ const UpdateProduct = () => {
         product_user_id: state.data[0].user_id,
         product_expired_date: state.data[0].expired_date,
       };
-      console.log(data);
       setFormValues(data);
     } else {
       navigate(-1);
+    }
+    if (!mount) {
+      getUnitAndCategory();
+      setMount(true);
     }
     return () => {
 
     };
   }, []);
+
+  const getUnitAndCategory = async () => {
+    await dispatch(getProductUnit()).unwrap();
+    await dispatch(getAllCategory()).unwrap();
+  };
 
   const handleSubmit = () => {
     const data = {
@@ -82,7 +94,7 @@ const UpdateProduct = () => {
       re_order_level: formValues.product_re_order_level,
       unit_id: formValues.product_unit_id,
       category_id: formValues.product_category_id,
-      user_id: formValues.product_user_id,
+      user_id: UserData.id,
       expired_date: dayjs(formValues.product_expired_date).format('YYYY-MM-DD'),
     };
     dispatch(updateProduct(data));
@@ -238,7 +250,7 @@ const UpdateProduct = () => {
                 id="product_user_id"
                 name="product_user_id"
                 label="Product Unit"
-                value={formValues.product_user_id}
+                value={UserData.id}
                 onChange={handleInputChange}
               >
                 {CategoryData.map((item) => (

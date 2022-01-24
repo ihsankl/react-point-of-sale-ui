@@ -25,7 +25,7 @@ export const removeLastSlash = (str) => {
 
 // headers builder
 // eslint-disable-next-line max-len
-export const headersBuilder = (token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAxLCJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiIkMmEkMTAkbExVZjB6QnBQZENQdGdGekkwQTU3dVRZRGYvSnlYTkhnc1lpUGFQNngzNjRsRmFVY2hvYmkiLCJmdWxsbmFtZSI6bnVsbCwicm9sZSI6ImFkbWluIiwiY29udGFjdCI6bnVsbCwiaWF0IjoxNjQyODI2MTM0LCJleHAiOjE2NDI5MTI1MzR9.1N8jYmhq6oaTaz4nQEQ0gcdbiV63ZAqCeUIcrHep9Y8') => {
+export const headersBuilder = (token = localStorage.getItem('token')) => {
   return {
     headers: {
       Authorization: `Bearer ${token}`,

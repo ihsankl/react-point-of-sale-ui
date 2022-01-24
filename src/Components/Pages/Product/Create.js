@@ -9,7 +9,7 @@ import {
 import {DesktopDatePicker, LocalizationProvider} from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterDayjs';
 import dayjs from 'dayjs';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import {
@@ -21,6 +21,8 @@ import {
 import {createProduct} from '../../../Redux/Slicer/Product';
 import BasicInput from '../../BasicInput';
 import {isNumber} from '../../../helper';
+import {getProductUnit} from '../../../Redux/Slicer/Product Unit';
+import {getAllCategory} from '../../../Redux/Slicer/Category';
 
 const defaultValues = {
   product_code: '',
@@ -31,7 +33,6 @@ const defaultValues = {
   product_re_order_level: '',
   product_unit_id: '',
   product_category_id: '',
-  product_user_id: 1,
   product_expired_date: new Date(),
 };
 
@@ -41,7 +42,25 @@ const CreateProduct = () => {
   const ProductUnitData = ProductUnit.data?.data ?? [];
   const Category = useSelector((state) => state.Category);
   const CategoryData = Category.data?.data ?? [];
+  const AppState = useSelector((state) => state.AppState);
+  const UserData = AppState.userData;
+  const [mount, setMount] = useState(false);
   const [formValues, setFormValues] = useState(defaultValues);
+
+  useEffect(() => {
+    if (!mount) {
+      getUnitAndCategory();
+      setMount(true);
+    }
+    return () => {
+
+    };
+  }, [mount]);
+
+  const getUnitAndCategory = async () => {
+    await dispatch(getProductUnit()).unwrap();
+    await dispatch(getAllCategory()).unwrap();
+  };
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -67,7 +86,7 @@ const CreateProduct = () => {
       re_order_level: formValues.product_re_order_level,
       unit_id: formValues.product_unit_id,
       category_id: formValues.product_category_id,
-      user_id: formValues.product_user_id,
+      user_id: UserData.id,
       expired_date: dayjs(formValues.product_expired_date).format('YYYY-MM-DD'),
     };
     dispatch(createProduct(data));
@@ -197,7 +216,7 @@ const CreateProduct = () => {
                 id={'product_user_id'}
                 label={'User'}
                 name={'product_user_id'}
-                defaultValue={formValues.product_user_id}
+                defaultValue={UserData.username}
                 disabled
                 variant="outlined"
                 fullWidth

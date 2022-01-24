@@ -1,21 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Button,
   Card,
   CardHeader,
   Table,
   TableBody,
   TableCell,
-  // TableHead,
   TableRow,
-  // TableSortLabel,
-  // Tooltip,
   Divider,
   Box,
   Typography,
 } from '@mui/material';
-import {ArrowRight} from '@mui/icons-material';
 import {monthName, rupiahFormatter, uuid} from '../../../helper';
 import {styled} from '@mui/material/styles';
 import {useSelector} from 'react-redux';
@@ -240,22 +235,6 @@ const YearlyGross = ({tablePage, ...props}) => {
             );
           }
         })}
-      </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          p: 2,
-        }}
-      >
-        <Button
-          color="primary"
-          endIcon={<ArrowRight fontSize="small" />}
-          size="small"
-          variant="text"
-        >
-              View all
-        </Button>
       </Box>
     </Card>
   );

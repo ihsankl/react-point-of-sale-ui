@@ -117,7 +117,6 @@ const Top5Sales = ({...props}) => {
       };
     });
   }, [ProductStateData, SalesStateData]);
-  console.log('top5Products >>> ', top5Products);
 
   return (
     <Card elevation={3} sx={{height: '100%'}} {...props}>

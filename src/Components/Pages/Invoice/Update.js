@@ -10,7 +10,7 @@ import {
 import BasicInput from '../../BasicInput';
 import DateAdapter from '@mui/lab/AdapterDayjs';
 import {useLocation, useNavigate} from 'react-router-dom';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {updateInvoice} from '../../../Redux/Slicer/Invoice';
 import dayjs from 'dayjs';
 import {isNumber} from '../../../helper';
@@ -20,13 +20,14 @@ const defaultValues = {
   invoice_total_amount: '',
   invoice_amount_tendered: 0,
   invoice_date_recorded: new Date(),
-  invoice_user_id: 1,
   invoice_customer_id: 1,
 };
 
 const UpdateInvoice = () => {
   const [formValues, setFormValues] = useState(defaultValues);
   const dispatch = useDispatch();
+  const AppState = useSelector((state) => state.AppState);
+  const UserData = AppState.userData;
   const {state} = useLocation();
   const navigate = useNavigate();
 
@@ -59,7 +60,7 @@ const UpdateInvoice = () => {
       amount_tendered: !!formValues.invoice_amount_tendered ?? 0,
       // eslint-disable-next-line max-len
       date_recorded: dayjs(formValues.invoice_date_recorded).format('YYYY-MM-DD'),
-      user_id: formValues.invoice_user_id,
+      user_id: UserData.id,
       customer_id: formValues.invoice_customer_id,
     };
     dispatch(updateInvoice(data));
@@ -123,7 +124,7 @@ const UpdateInvoice = () => {
                 id={'invoice_user_id'}
                 label={'User'}
                 name={'invoice_user_id'}
-                defaultValue={formValues.invoice_user_id}
+                defaultValue={UserData.username}
                 disabled
                 variant="outlined"
                 fullWidth

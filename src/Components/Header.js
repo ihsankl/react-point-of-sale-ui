@@ -7,11 +7,15 @@ import {
 } from '@mui/icons-material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PropTypes from 'prop-types';
+import {useDispatch} from 'react-redux';
+import {clearToken, logout} from '../Redux/Slicer/Authentication';
+import {unmountAppWithToken} from '../Redux/Slicer/AppState';
 
 const APP_NAME = process.env.REACT_APP_NAME;
 
 const Header = () => {
   const [anchorEl, setaAchorEl] = useState(null);
+  const dispatch = useDispatch();
 
   return (
     <AppBar position="fixed" sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}>
@@ -48,7 +52,12 @@ const Header = () => {
             <MenuItem onClick={() => console.log('hi')}>
               My Profile
             </MenuItem>
-            <MenuItem onClick={() => console.log('hi')}>
+            <MenuItem onClick={() => {
+              dispatch(logout());
+              dispatch(unmountAppWithToken());
+              dispatch(clearToken());
+              localStorage.removeItem('token');
+            }}>
               Logout
             </MenuItem>
           </Menu>

@@ -9,6 +9,7 @@ import {
   TitleWithDivider,
   FormControlContainer,
 } from '../../../layout';
+import {getProduct} from '../../../Redux/Slicer/Product';
 import {updateSales} from '../../../Redux/Slicer/Sales';
 import BasicInput from '../../BasicInput';
 
@@ -23,6 +24,7 @@ const defaultValues = {
 
 const UpdateSales = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const [mount, setmount] = useState(false);
   const dispatch = useDispatch();
   const {state} = useLocation();
   const navigate = useNavigate();
@@ -45,10 +47,18 @@ const UpdateSales = () => {
     } else {
       navigate(-1);
     }
+    if (!mount) {
+      initProduct();
+      setmount(true);
+    }
     return () => {
 
     };
   }, []);
+
+  const initProduct = async () => {
+    await dispatch(getProduct()).unwrap();
+  };
 
   const handleSubmit = () => {
     const data = {

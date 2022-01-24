@@ -1,5 +1,5 @@
-
-import {Add, Delete, Edit, Print, Remove} from '@mui/icons-material';
+/* eslint-disable camelcase */
+import {Delete, Print} from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -7,7 +7,7 @@ import {
   TextField,
 } from '@mui/material';
 import {DataGrid} from '@mui/x-data-grid';
-import React, {Fragment, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import useKeyboardShortcut from 'use-keyboard-shortcut';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -21,15 +21,19 @@ import {
 import {
   addItems,
   clearItems,
-  downItem,
+  editItem,
   removeItem,
   upItem,
 } from '../../../Redux/Slicer/Cashier';
 import {rupiahFormatter} from '../../../helper';
 import {createSales} from '../../../Redux/Slicer/Sales';
+import {getProduct} from '../../../Redux/Slicer/Product';
+import {fetchUserByName} from '../../../Redux/Slicer/User';
+import EditCart from './EditCart';
 
 const Cashier = () => {
   const [pageSize, setPageSize] = useState(20);
+  const [mountedWithToken, setMountedWithToken] = useState(false);
   const [paid, setPaid] = useState('');
   const [code, setCode] = useState('');
   const barcodeRef = useRef(null);
@@ -38,8 +42,12 @@ const Cashier = () => {
   const ProductState = useSelector((state) => state.Product);
   const CashierItems = useSelector((state) => state.Cashier);
   const SalesState = useSelector((state) => state.Sales);
+  const AuthState = useSelector((state) => state.Authentication);
+  const AppState = useSelector((state) => state.AppState);
   const CashierData = CashierItems.data;
   const ProductData = ProductState.data?.data ?? [];
+  const {username} = AppState;
+  const auth = AuthState.token;
 
   // quick move to scan field
   useKeyboardShortcut(['Control', 'S'],
@@ -52,21 +60,39 @@ const Cashier = () => {
       {overrideSystem: true});
 
   // print receipt
-  useKeyboardShortcut(['Control', 'P'],
+  useKeyboardShortcut(['Control', 'D'],
       () => handlePrint(),
       {overrideSystem: true});
 
   useEffect(() => {
     barcodeRef.current.focus();
+
     if (SalesState.isSuccess) {
       dispatch(clearItems());
       setPaid('');
       setCode('');
     }
+
+    if (!!auth && !mountedWithToken) {
+      localStorage.setItem('token', auth);
+      initProduct();
+      setMountedWithToken(true);
+      const data = {username};
+      dispatch(fetchUserByName(data));
+    }
+
     return () => {
       barcodeRef.current?.blur();
     };
-  }, [SalesState]);
+  }, [
+    SalesState,
+    auth,
+    mountedWithToken,
+  ]);
+
+  const initProduct = async () => {
+    await dispatch(getProduct()).unwrap();
+  };
 
   // handle scan
   const handleScan = (e) => {
@@ -95,9 +121,13 @@ const Cashier = () => {
             sub_total: product.unit_price,
             product_id: product.id,
             id: product.id,
-            product_name: product.name,
+            product_name: `${product.name} (${product.unit_name})`,
+            stock: product.unit_in_stock,
           };
-          dispatch(addItems(data));
+          // if out of stock, dont add to cart
+          if (product.unit_in_stock > 0) {
+            dispatch(addItems(data));
+          }
         }
       }
       setCode('');
@@ -121,57 +151,52 @@ const Cashier = () => {
       field: 'product_name',
       headerName: 'Product',
       width: 150,
-      editable: false,
     },
     {
       field: 'unit_price',
       headerName: 'Price',
       width: 150,
-      editable: false,
+      editable: true,
+      valueGetter: (params) => params.row.unit_price,
+      valueSetter: (params) => {
+        const [unit_price] = params.value.toString().split(' ');
+        // edit row data
+        const data = {
+          product_id: params.row.product_id,
+          qty: params.row.qty,
+          sub_total: params.row.sub_total,
+          unit_price,
+        };
+        dispatch(editItem(data));
+        return {...params.row, unit_price};
+      },
     },
     {
       field: 'qty',
       headerName: 'Quantity',
       type: 'number',
       width: 150,
-      editable: false,
-      renderCell: (params) => {
-        return (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <IconButton
-              onClick={() => {
-                const data = {
-                  qty: 1,
-                  unit_price: params.row.unit_price,
-                  product_id: params.row.product_id,
-                };
-                dispatch(upItem(data));
-              }}
-              color="inherit"
-            >
-              <Add />
-            </IconButton>
-            {params.value}
-            <IconButton
-              onClick={() => {
-                const data = {
-                  qty: 1,
-                  unit_price: params.row.unit_price,
-                  product_id: params.row.product_id,
-                };
-                dispatch(downItem(data));
-              }}
-              color="inherit"
-            >
-              <Remove />
-            </IconButton>
-          </div>
-        );
+      editable: true,
+      renderCell: (params) => <EditCart params={params} />,
+      valueGetter: (params) => params.row.qty,
+      valueSetter: (params) => {
+        const [qty] = params.value.toString().split(' ');
+        // cant below 0
+        if (qty <= 0) return {...params.row, qty: 1};
+        // get product stock from ProductData
+        const stock = ProductData.find((item) =>
+          item.id === params.row.product_id).unit_in_stock;
+        // cant exceed stock
+        if (qty > stock) return {...params.row, qty: stock};
+        // edit row data
+        const data = {
+          product_id: params.row.product_id,
+          qty,
+          sub_total: params.row.sub_total,
+          unit_price: params.row.unit_price,
+        };
+        dispatch(editItem(data));
+        return {...params.row, qty};
       },
     },
     {
@@ -179,30 +204,22 @@ const Cashier = () => {
       headerName: 'Sub Total',
       type: 'number',
       width: 110,
-      editable: false,
     },
     {
       field: 'action',
       headerName: 'Action',
       width: 120,
-      editable: false,
       disableSelectionOnClick: true,
       renderCell: (params) => {
         return (
-          <div style={{display: 'flex', justifyContent: 'space-between'}}>
+          <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
             <IconButton
               onClick={() => handleRemove(CashierData.indexOf(params.row))}
               color="inherit"
             >
               <Delete />
             </IconButton>
-            <IconButton
-              onClick={() => console.log(params.row)}
-              color="inherit"
-            >
-              <Edit />
-            </IconButton>
-          </div>
+          </Box>
         );
       },
     },
@@ -226,6 +243,7 @@ const Cashier = () => {
         amount_tendered: newPaid,
       };
       dispatch(createSales(data));
+      initProduct();
     }
   };
 
@@ -272,9 +290,6 @@ const Cashier = () => {
               disableSelectionOnClick
               onPageSizeChange={(page) => {
                 setPageSize(page);
-              }}
-              onRowEditCommit={(row) => {
-                console.log(row); console.log('onRowEditCommit');
               }}
             />
             <Box
@@ -333,56 +348,6 @@ const Cashier = () => {
             </Box>
           </Box>
           <Box sx={{flex: 1}}>
-            {/* <FormContainer onSubmit={(e) => e.preventDefault()}>
-              <FormControlContainer sx={{width: '100%'}}>
-                <Autocomplete
-                  onInputChange={(e)=> {
-                    setSearch(e.target.value);
-                    // find product by name
-                    const product = ProductData.find(item
-                      // => item.name === e.target.value);
-                    console.log('product >>> ',product);
-                    console.log(e.target.value);
-                    if (product) {
-                      const found = CashierData
-                      // .find(item => item.product_id === product.id);
-                      if (found) {
-                        const data = {
-                          qty: 1,
-                          unit_price: found.unit_price,
-                          product_id: product.id,
-                        };
-                        dispatch(upItem(data));
-                      } else {
-                        const data = {
-                          qty: 1,
-                          unit_price: product.price,
-                          product_id: product.id,
-                        };
-                        dispatch(addItems(data));
-                      }
-                    }
-                  }}
-                  // always show the suggestions list
-                  open={true}
-                  isOptionEqualToValue={(option, value) =>
-                    option.value === value.value}
-                  disablePortal
-                  id="combo-box-demo"
-                  options={optionsBuilder(ProductData)}
-                  // sx={{width: 300}}
-                  renderInput={
-                    (params) =>
-                      <TextField
-                        inputRef={searchRef}
-                        value={search}
-                        {...params}
-                        label="Name"
-                      />
-                  }
-                />
-              </FormControlContainer>
-            </FormContainer> */}
           </Box>
         </Box>
       </PaperContainer>

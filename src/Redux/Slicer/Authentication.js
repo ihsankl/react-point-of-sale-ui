@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import Axios from 'axios';
-import {headersBuilder, initialState, createBasicReducer} from '../../helper';
+import {headersBuilder, initialState} from '../../helper';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -48,7 +48,7 @@ export const checkToken = createAsyncThunk(
     async (data = null, thunkAPI) => {
       try {
         const response = await Axios.get(
-            `${BASE_URL}/authentication/checkToken`,
+            `${BASE_URL}/authentication/check`,
             {
               ...headersBuilder(),
             },
@@ -62,7 +62,7 @@ export const checkToken = createAsyncThunk(
 
 const authenticationSlice = createSlice({
   name: 'authentication',
-  initialState: {...initialState},
+  initialState: {...initialState, token: null},
   reducers: {
     clearError: (state) => {
       state.error = {
@@ -73,39 +73,101 @@ const authenticationSlice = createSlice({
     clearSuccess: (state) => {
       state.isSuccess = false;
     },
+    clearToken: (state) => {
+      state.token = null;
+    },
   }, extraReducers: (builder) => {
     // login
     builder.addCase(login.pending, (state, action) => {
-      createBasicReducer(state, action, 'PENDING');
+      state.isLoading = true;
+      state.error = {
+        message: null,
+        state: false,
+      };
+      state.token = null;
+      state.isSuccess = false;
     });
     builder.addCase(login.fulfilled, (state, action) => {
-      createBasicReducer(state, action, 'FULFILLED');
+      state.isLoading = false;
+      state.error = {
+        message: null,
+        state: false,
+      };
+      state.isSuccess = true;
+      state.data = action.payload;
+      state.token = action.payload.data;
     });
     builder.addCase(login.rejected, (state, action) => {
-      createBasicReducer(state, action, 'REJECTED');
+      state.isLoading = false;
+      state.error = {
+        message: action.payload.response?.data?.message ??
+        'Something went wrong',
+        state: true,
+      };
+      state.isSuccess = false;
     });
     // logout
     builder.addCase(logout.pending, (state, action) => {
-      createBasicReducer(state, action, 'PENDING');
+      state.isLoading = true;
+      state.error = {
+        message: null,
+        state: false,
+      };
+      state.isSuccess = false;
     });
     builder.addCase(logout.fulfilled, (state, action) => {
-      createBasicReducer(state, action, 'FULFILLED');
+      state.isLoading = false;
+      state.error = {
+        message: null,
+        state: false,
+      };
+      state.isSuccess = true;
+      state.data = {...initialState, token: null};
+      state.token = null;
     });
     builder.addCase(logout.rejected, (state, action) => {
-      createBasicReducer(state, action, 'REJECTED');
+      state.isLoading = false;
+      state.error = {
+        message: action.payload.response?.data?.message ??
+        'Something went wrong',
+        state: true,
+      };
+      state.isSuccess = false;
     });
     // check token
     builder.addCase(checkToken.pending, (state, action) => {
-      createBasicReducer(state, action, 'PENDING');
+      state.isLoading = true;
+      state.error = {
+        message: null,
+        state: false,
+      };
+      state.isSuccess = false;
     });
     builder.addCase(checkToken.fulfilled, (state, action) => {
-      createBasicReducer(state, action, 'FULFILLED');
+      state.isLoading = false;
+      state.error = {
+        message: null,
+        state: false,
+      };
+      state.isSuccess = true;
+      state.data = action.payload;
+      state.token = action.payload.data;
     });
     builder.addCase(checkToken.rejected, (state, action) => {
-      createBasicReducer(state, action, 'REJECTED');
+      state.isLoading = false;
+      state.error = {
+        message: action.payload.response?.data?.message ??
+        'Something went wrong',
+        state: true,
+      };
+      state.isSuccess = false;
     });
   },
 });
 
-export const {clearError, clearSuccess} = authenticationSlice.actions;
+export const {
+  clearError,
+  clearSuccess,
+  clearToken,
+} = authenticationSlice.actions;
 export default authenticationSlice.reducer;

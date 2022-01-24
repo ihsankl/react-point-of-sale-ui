@@ -13,6 +13,7 @@ import {styled} from '@mui/material/styles';
 import {useNavigate} from 'react-router-dom';
 import {login} from '../../../Redux/Slicer/Authentication';
 import {useDispatch} from 'react-redux';
+import {setusername} from '../../../Redux/Slicer/AppState';
 
 const defaultValues = {
   username: '',
@@ -114,6 +115,7 @@ const Login = () => {
                 password: formValues.password,
               };
               dispatch(login(data));
+              dispatch(setusername(formValues.username));
             }}
             type="submit"
             fullWidth

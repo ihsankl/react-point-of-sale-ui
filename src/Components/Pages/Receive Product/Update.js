@@ -19,6 +19,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {updatePurchaseOrder} from '../../../Redux/Slicer/Purchase Order';
 import {isNumber} from '../../../helper';
+import {getProduct} from '../../../Redux/Slicer/Product';
+import {getSupplier} from '../../../Redux/Slicer/Supplier';
 
 const defaultValues = {
   receive_product_id: '',
@@ -33,13 +35,16 @@ const defaultValues = {
 
 const UpdateReceiveProduct = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const [mount, setmount] = useState(false);
   const dispatch = useDispatch();
   const {state} = useLocation();
   const navigate = useNavigate();
   const Supplier = useSelector((x) => x.Supplier);
   const Product = useSelector((x) => x.Product);
+  const AppState = useSelector((x) => x.AppState);
   const SupplierData = Supplier.data?.data ?? [];
   const ProductData = Product.data?.data ?? [];
+  const UserData = AppState.userData;
 
   useEffect(() => {
     if (!!state) {
@@ -57,10 +62,19 @@ const UpdateReceiveProduct = () => {
     } else {
       navigate(-1);
     }
+    if (!mount) {
+      getProductAndSupplier();
+      setmount(true);
+    }
     return () => {
 
     };
-  }, []);
+  }, [mount]);
+
+  const getProductAndSupplier = async () => {
+    await dispatch(getSupplier()).unwrap();
+    await dispatch(getProduct()).unwrap();
+  };
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -114,7 +128,7 @@ const UpdateReceiveProduct = () => {
       order_date: formValues.receive_product_order_date,
       unit_price: formValues.receive_product_unit_price,
       product_id: formValues.receive_product_product_id,
-      user_id: formValues.receive_product_user_id,
+      user_id: UserData.id,
       supplier_id: formValues.receive_product_supplier_id,
     };
     dispatch(updatePurchaseOrder(data));
@@ -193,7 +207,7 @@ const UpdateReceiveProduct = () => {
                 id={'receive_product_user_id'}
                 label={'User'}
                 name={'receive_product_user_id'}
-                defaultValue={formValues.receive_product_user_id}
+                defaultValue={UserData.name}
                 disabled
                 variant="outlined"
                 fullWidth

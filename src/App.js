@@ -62,21 +62,12 @@ import ReportSales from './Components/Pages/Report Sales';
 
 // redux thing
 import {useDispatch, useSelector} from 'react-redux';
-import {getCustomers} from './Redux/Slicer/Customer';
-import {getAllCategory} from './Redux/Slicer/Category';
-import {getProductUnit} from './Redux/Slicer/Product Unit';
-import {getSupplier} from './Redux/Slicer/Supplier';
-import {getProduct} from './Redux/Slicer/Product';
-import {getInvoice} from './Redux/Slicer/Invoice';
-import {getPurchaseOrder} from './Redux/Slicer/Purchase Order';
-import {getReceiveProduct} from './Redux/Slicer/Receive Product';
-import {getAllSales} from './Redux/Slicer/Sales';
 import Register from './Components/Pages/Register';
+import {checkToken, clearToken} from './Redux/Slicer/Authentication';
+import {setUserData} from './Redux/Slicer/AppState';
 
 const App = ()=> {
-  // eslint-disable-next-line no-unused-vars
-  const [auth, setAuth] = useState(false);
-  const [mount, setMount] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const CustomerState = useSelector((state) => state.Customer);
   const CategoryState = useSelector((state) => state.Category);
   const ProductUnitState = useSelector((state) => state.ProductUnit);
@@ -87,45 +78,35 @@ const App = ()=> {
   const ReceiveProductState = useSelector((state) => state.ReceiveProduct);
   const SalesState = useSelector((state) => state.Sales);
   const AuthState = useSelector((state) => state.Authentication);
-  // const AuthData = AuthState.data;
+  const UserState = useSelector((state) => state.User);
+  const UserData = UserState.data?.data ?? [];
+  const auth = AuthState.token;
 
   const dispatch = useDispatch();
 
   // fetch all data from server
   useEffect(() => {
-    if (!mount && auth) {
-      initAllData();
-      setMount(true);
+    if (!mounted) {
+      dispatch(checkToken());
+      setMounted(true);
     }
-    return () => {
 
+    if (AuthState.error.state) {
+      dispatch(clearToken());
+      localStorage.removeItem('token');
+    }
+
+    if (!!UserData) {
+      dispatch(setUserData(UserData[0]));
+    }
+
+    return () => {
     };
   }, [
-    CustomerState,
-    CategoryState,
-    ProductUnitState,
-    SupplierState,
-    ProductState,
-    InvoiceState,
-    PurchaseOrderState,
-    ReceiveProductState,
-    SalesState,
     AuthState,
-    mount,
-    auth,
+    mounted,
+    UserData,
   ]);
-
-  const initAllData = async () => {
-    await dispatch(getCustomers()).unwrap();
-    await dispatch(getAllCategory()).unwrap();
-    await dispatch(getProductUnit()).unwrap();
-    await dispatch(getSupplier()).unwrap();
-    await dispatch(getProduct()).unwrap();
-    await dispatch(getInvoice()).unwrap();
-    await dispatch(getPurchaseOrder()).unwrap();
-    await dispatch(getReceiveProduct()).unwrap();
-    await dispatch(getAllSales()).unwrap();
-  };
 
   const isLoading =
   CustomerState.isLoading ||
@@ -138,7 +119,6 @@ const App = ()=> {
   ReceiveProductState.isLoading ||
   SalesState.isLoading ||
   AuthState.isLoading;
-
 
   return (
     <div style={{display: 'flex'}}>
@@ -154,7 +134,7 @@ const App = ()=> {
         <CircularProgress color="inherit" />
       </Backdrop>
       <BrowserRouter>
-        {auth &&<>
+        {!!auth &&<>
           <Header />
           <Drawer
             sx={{width: '15em'}}
@@ -283,12 +263,12 @@ const App = ()=> {
 
           {/* login */}
           <Route path="/login" element={
-            auth ? <Navigate replace to="/"/> : <Login />
+            !!auth ? <Navigate replace to="/"/> : <Login />
           }/>
 
           {/* register */}
           <Route path="/register" element={
-            auth ? <Navigate replace to="/"/> : <Register />
+            !!auth ? <Navigate replace to="/"/> : <Register />
           }/>
 
           {/* redirect unmatch route */}
@@ -299,14 +279,15 @@ const App = ()=> {
            */}
           {/* TODO: give documentation for keyboard shortcuts */}
           {/* TODO: create theme customization */}
-          {/* TODO: user id is not yet implemented */}
           {/* TODO: percent difference not yet working */}
           {/* TODO: change all selection to autocomplete */}
           {/* TODO: add 30,90 and a year selection in Latest Sales */}
-          {/* TODO: register UI */}
           {/* TODO: optimizing all components */}
           {/* TODO: latest sales still doesn't work */}
-          {/* TODO: user login not yet implemented */}
+          {/* TODO: get data from dropdown when it's clicked */}
+          {/* TODO: show products and its besides cashier menu */}
+          {/* TODO: add daily reports */}
+          {/* TODO: move all computation to backend */}
         </Routes>
       </BrowserRouter>
     </div>

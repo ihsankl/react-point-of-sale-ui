@@ -18,6 +18,8 @@ import BasicInput from '../../BasicInput';
 import {updatePurchaseOrder} from '../../../Redux/Slicer/Purchase Order';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useNavigate} from 'react-router-dom';
+import {getSupplier} from '../../../Redux/Slicer/Supplier';
+import {getProduct} from '../../../Redux/Slicer/Product';
 
 const defaultValues = {
   purchase_order_id: '',
@@ -26,19 +28,21 @@ const defaultValues = {
   purchase_order_order_date: new Date(),
   purchase_order_unit_price: '',
   purchase_order_product_id: '',
-  purchase_order_user_id: 1,
   purchase_order_supplier_id: '',
 };
 
 const UpdatePurchaseOrder = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const [mount, setmount] = useState(false);
   const dispatch = useDispatch();
   const {state} = useLocation();
   const navigate = useNavigate();
   const Supplier = useSelector((x) => x.Supplier);
+  const AppState = useSelector((x) => x.AppState);
   const Product = useSelector((x) => x.Product);
   const SupplierData = Supplier.data?.data ?? [];
   const ProductData = Product.data?.data ?? [];
+  const UserData = AppState.userData;
 
   useEffect(() => {
     if (!!state) {
@@ -56,10 +60,19 @@ const UpdatePurchaseOrder = () => {
     } else {
       navigate(-1);
     }
+    if (!mount) {
+      getProductAndSupplier();
+      setmount(true);
+    }
     return () => {
 
     };
-  }, []);
+  }, [mount]);
+
+  const getProductAndSupplier = async () => {
+    await dispatch(getSupplier()).unwrap();
+    await dispatch(getProduct()).unwrap();
+  };
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -112,7 +125,7 @@ const UpdatePurchaseOrder = () => {
       order_date: formValues.purchase_order_order_date,
       unit_price: formValues.purchase_order_unit_price,
       product_id: formValues.purchase_order_product_id,
-      user_id: formValues.purchase_order_user_id,
+      user_id: UserData.id,
       supplier_id: formValues.purchase_order_supplier_id,
     };
     dispatch(updatePurchaseOrder(data));
@@ -198,7 +211,7 @@ const UpdatePurchaseOrder = () => {
                 id={'purchase_order_user_id'}
                 label={'User'}
                 name={'purchase_order_user_id'}
-                defaultValue={formValues.purchase_order_user_id}
+                defaultValue={UserData.username}
                 disabled
                 variant="outlined"
                 fullWidth

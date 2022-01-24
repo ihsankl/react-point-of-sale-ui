@@ -6,7 +6,7 @@ const BASE_URL = process.env.REACT_APP_API_URL;
 
 const types = {
   GET_USERS: 'getUsers',
-  GET_USER_BY_ID: 'getUserById',
+  GET_USER_BY_NAME: 'getUserByName',
   CREATE_USER: 'createUser',
   UPDATE_USER: 'updateUser',
   DELETE_USER: 'deleteUser',
@@ -26,11 +26,11 @@ export const fetchUsers = createAsyncThunk(
 );
 
 // get user by id
-export const fetchUserById = createAsyncThunk(
-    types.GET_USER_BY_ID,
+export const fetchUserByName = createAsyncThunk(
+    types.GET_USER_BY_NAME,
     async (data, thunkAPI) => {
       try {
-        const response = await Axios.get(`${BASE_URL}/user/${data.id}`);
+        const response = await Axios.get(`${BASE_URL}/user/${data.username}`);
         return response.data;
       } catch (error) {
         throw thunkAPI.rejectWithValue(error);
@@ -107,13 +107,13 @@ const userSlice = createSlice({
       createBasicReducer(state, action, 'REJECTED');
     });
     // get user by id
-    builder.addCase(fetchUserById.pending, (state, action) => {
+    builder.addCase(fetchUserByName.pending, (state, action) => {
       createBasicReducer(state, action, 'PENDING');
     });
-    builder.addCase(fetchUserById.fulfilled, (state, action) => {
+    builder.addCase(fetchUserByName.fulfilled, (state, action) => {
       createBasicReducer(state, action, 'FULFILLED');
     });
-    builder.addCase(fetchUserById.rejected, (state, action) => {
+    builder.addCase(fetchUserByName.rejected, (state, action) => {
       createBasicReducer(state, action, 'REJECTED');
     });
     // create user

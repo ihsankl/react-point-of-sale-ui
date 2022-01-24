@@ -1,5 +1,5 @@
 import {FormHelperText, InputLabel, MenuItem, Select} from '@mui/material';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {isNumber} from '../../../helper';
 import {
@@ -8,6 +8,7 @@ import {
   TitleWithDivider,
   FormControlContainer,
 } from '../../../layout';
+import {getProduct} from '../../../Redux/Slicer/Product';
 import {createSales} from '../../../Redux/Slicer/Sales';
 import BasicInput from '../../BasicInput';
 
@@ -23,6 +24,22 @@ const CreateSales = () => {
   const ProductState = useSelector((state) => state.Product);
   const ProductStateData = ProductState.data?.data ?? [];
   const [formValues, setFormValues] = useState(defaultValues);
+  const [mount, setmount] = useState(false);
+
+  useEffect(() => {
+    if (!mount) {
+      initProduct();
+      setmount(true);
+    }
+
+    return () => {
+
+    };
+  }, [mount]);
+
+  const initProduct = async () => {
+    await dispatch(getProduct()).unwrap();
+  };
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;

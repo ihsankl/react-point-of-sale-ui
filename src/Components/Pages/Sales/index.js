@@ -11,7 +11,7 @@ import {
 } from '../../../Redux/Slicer/ConfirmDialog';
 import ConfirmDialog from '../../ConfirmDialog';
 import {columnsBuilder} from '../../../helper';
-import {deleteSales} from '../../../Redux/Slicer/Sales';
+import {deleteSales, getAllSales} from '../../../Redux/Slicer/Sales';
 
 const Sales = () => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const Sales = () => {
   }, [SalesData, mount]);
 
   const initSales = async () => {
-    await dispatch(getSales()).unwrap();
+    await dispatch(getAllSales()).unwrap();
   };
 
   const handleUpdate = (id) => {

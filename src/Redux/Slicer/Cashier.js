@@ -14,13 +14,27 @@ const cashierSlice = createSlice({
     upItem: (state, action) => {
       const {product_id, qty} = action.payload;
       const item = state.data.find((item) => item.product_id === product_id);
-      item.qty += qty;
+      // if stock is 0
+      if (item.stock === 0) {
+        return;
+      }
+      // cant be more than stock
+      if (item.qty + qty > item.stock) {
+        item.qty = item.stock;
+      } else {
+        item.qty += qty;
+      }
       item.sub_total = item.qty * item.unit_price;
     },
     downItem: (state, action) => {
       const {product_id, qty} = action.payload;
       const item = state.data.find((item) => item.product_id === product_id);
-      item.qty -= qty;
+      // cant be less than 1
+      if (item.qty - qty < 1) {
+        item.qty = 1;
+      } else {
+        item.qty -= qty;
+      }
       item.sub_total = item.qty * item.unit_price;
     },
     editItem: (state, action) => {
@@ -71,6 +85,7 @@ export const {
   upItem,
   downItem,
   clearItems,
+  editItem,
 } = cashierSlice.actions;
 export default cashierSlice.reducer;
 
