@@ -162,13 +162,11 @@ const Cashier = () => {
         const [unit_price] = params.value.toString().split(' ');
         // edit row data
         const data = {
-          product_id: params.row.product_id,
-          qty: params.row.qty,
-          sub_total: params.row.sub_total,
+          ...params.row,
           unit_price,
         };
         dispatch(editItem(data));
-        return {...params.row, unit_price};
+        return data;
       },
     },
     {
@@ -190,13 +188,11 @@ const Cashier = () => {
         if (qty > stock) return {...params.row, qty: stock};
         // edit row data
         const data = {
-          product_id: params.row.product_id,
+          ...params.row,
           qty,
-          sub_total: params.row.sub_total,
-          unit_price: params.row.unit_price,
         };
         dispatch(editItem(data));
-        return {...params.row, qty};
+        return data;
       },
     },
     {
@@ -204,6 +200,17 @@ const Cashier = () => {
       headerName: 'Sub Total',
       type: 'number',
       width: 110,
+      editable: true,
+      valueGetter: (params) => params.row.sub_total,
+      valueSetter: (params) => {
+        const [sub_total] = params.value.toString().split(' ');
+        const data = {
+          ...params.row,
+          sub_total,
+        };
+        dispatch(editItem(data));
+        return data;
+      },
     },
     {
       field: 'action',
@@ -226,8 +233,9 @@ const Cashier = () => {
   ];
 
   // sum up the total
+  // unit_price * sub_total
   const total = CashierData.reduce((acc, item) => {
-    return acc + item.sub_total;
+    return acc + (item.unit_price * item.sub_total);
   }, 0);
 
   // count change
