@@ -273,10 +273,6 @@ const App = ()=> {
 
           {/* redirect unmatch route */}
           <Route path="*" element={<Navigate replace to="/cashier" />}/>
-
-          {/* TODO: add keyboard shortcuts for actions:
-            5. press edit > edit item price > enter to get out of edit mode
-           */}
           {/* TODO: give documentation for keyboard shortcuts */}
           {/* TODO: create theme customization */}
           {/* TODO: percent difference not yet working */}
@@ -288,6 +284,9 @@ const App = ()=> {
           {/* TODO: show products and its besides cashier menu */}
           {/* TODO: add daily reports */}
           {/* TODO: move all computation to backend */}
+          {/* TODO: product CRUD is a mess */}
+          {/* TODO: remove alert when changes tab */}
+          {/* TODO: refining alert system */}
         </Routes>
       </BrowserRouter>
     </div>
