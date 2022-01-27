@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {
   Card,
@@ -10,11 +10,11 @@ import {
   Divider,
   Box,
   Typography,
+  CircularProgress,
 } from '@mui/material';
-import {monthName, rupiahFormatter, uuid} from '../../../helper';
+import {headersBuilder, rupiahFormatter, uuid} from '../../../helper';
 import {styled} from '@mui/material/styles';
-import {useSelector} from 'react-redux';
-import dayjs from 'dayjs';
+import axios from 'axios';
 
 const SeverityPillRoot = styled('span')(({theme, ownerState}) => {
   const backgroundColor = theme.palette[ownerState.color].main;
@@ -59,109 +59,75 @@ const SeverityPill = (props) => {
 };
 
 const YearlyGross = ({tablePage, ...props}) => {
-  const InvoiceState = useSelector((state) => state.Invoice);
-  const InvoiceStateData = InvoiceState.data?.data ?? [];
-  // return 5 years before now as an array
-  const years = Array.from(Array(6).keys()).map((i) => {
-    return dayjs().subtract(i, 'year').format('YYYY');
-  });
-  // get invoice for each year
-  const yearlyInvoice = () => {
-    // example return value: 2020:[{},{},{}]
-    return years.reduce((acc, year) => {
-      const yearInvoice = InvoiceStateData.filter(
-          (invoice) => dayjs(invoice.date_recorded).isSame(year, 'year'),
-      );
-      return {...acc, [year]: yearInvoice};
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getData();
+
+    return () => {
+
+    };
+  }, []);
+
+  const getData = async () => {
+    try {
+      setLoading(true);
+      const res = await axios
+          .get(`${process.env.REACT_APP_API_URL}/reports/yearly`,
+              {...headersBuilder()},
+          );
+      setData(res.data.data);
+      setLoading(false);
+    } catch (error) {
+      // TODO: show error alert
+      setData([]);
+      console.log(error.message);
     }
-    , {});
   };
 
-  // get invoice for each month in each year
-  const monthlyInvoice = () => {
-    // example return value: 2020:{1:[{},{}], 2:[{},{}], 3:[{},{}]}
-    return years.reduce((acc, year) => {
-      const yearInvoice = yearlyInvoice()[year];
-      const yearMonthlyInvoice = yearInvoice.reduce((acc, invoice) => {
-        const month = dayjs(invoice.date_recorded).month();
-        return {
-          ...acc,
-          [month]: [...(acc[month] ?? []), invoice],
-        };
-      }, {});
-      return {...acc, [year]: yearMonthlyInvoice};
-    }, {});
-  };
-
-  // sum up all invoice for each month in each year
-  // first loop through monthlyInvoice object
-  // then loop through each month in each year
-  // then sum up all invoice in each month
-  const monthlyInvoiceSum = () => {
-    // example return value: 2020:{1:1000, 2:2000, 3:3000}
-    return years.reduce((acc, year) => {
-      // cannot reduce monthlyInvoice directly
-      // because it is an object
-      // so we need to convert it to array first
-      const yearMonthlyInvoice = Object.entries(monthlyInvoice()[year]);
-      const yearMonthlyInvoiceSum = yearMonthlyInvoice
-          .reduce((acc, [month, invoice]) => {
-            const monthInvoiceSum = invoice.reduce((acc, invoice) => {
-              return acc + invoice.total_amount;
-            }, 0);
-            return {...acc, [month]: monthInvoiceSum};
-          }, {});
-      return {...acc, [year]: yearMonthlyInvoiceSum};
-    }, {});
-  };
-  // convert monthlyInvoiceSum to array
-  const monthlyInvoiceSumArray =
-  Object.entries(monthlyInvoiceSum()).map(([year, invoice]) => {
-    return {year, invoice};
-  });
-  // sum total for each year
-  // eslint-disable-next-line no-unused-vars
-  const yearlyInvoiceSum = () => {
-    // example return value: 2020:1000
-    return years.reduce((acc, year) => {
-      const yearInvoice = yearlyInvoice()[year];
-      const yearInvoiceSum = yearInvoice.reduce((acc, invoice) => {
-        return acc + invoice.total_amount;
-      }, 0);
-      return {...acc, [year]: yearInvoiceSum};
-    }, {});
-  };
-
-  const renderMonthly = (data) => {
-    const comps = [];
-    for ( const property in data.invoice ) {
-      if (Object.prototype.hasOwnProperty.call(data.invoice, property)) {
-        comps.push(
+  const renderCell = (data) => {
+    const x = [];
+    for (const key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        x.push(
             <TableRow
-              hover
               key={uuid()}
+              hover
             >
               <TableCell>
                 <Typography variant='h5'>
-                  {`${monthName(property)}: `}
+                  {key}
                 </Typography>
               </TableCell>
               <TableCell align="right">
                 <Typography variant='h5'>
-                  {`${rupiahFormatter(data.invoice[property])}`}
+                  {`${rupiahFormatter(data[key])}`}
                 </Typography>
               </TableCell>
             </TableRow>,
         );
       }
     }
-    return comps;
+    return x;
   };
 
   return (
     <Card sx={{width: '100%'}} elevation={3} {...props}>
       <CardHeader title="Yearly Gross" />
       <Divider/>
+      {loading ?
+      <Box
+        sx={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress />
+      </Box> :
       <Box
         sx={{
           width: '100%',
@@ -169,7 +135,7 @@ const YearlyGross = ({tablePage, ...props}) => {
       >
         {/* loop for each year */}
         {/* oldest year first */}
-        {monthlyInvoiceSumArray.map((item, index) => {
+        {data.map((item, index) => {
           if (tablePage === 1 && index <= 2) {
             return (
               <Table key={uuid()}>
@@ -177,23 +143,25 @@ const YearlyGross = ({tablePage, ...props}) => {
                   <TableRow>
                     <TableCell align='left'>
                       <Typography variant='button' sx={{fontSize: '25px'}}>
-                        {item.year}
+                        {Object.keys(item)[0]}
                       </Typography>
                     </TableCell>
                     <TableCell/>
                   </TableRow>
-                  {renderMonthly(item).map((val) => val)}
+                  {/* loop for each month */}
+                  {renderCell(Object.values(item)[0]).map((val) => val)}
+                  {/*  */}
+
+                  {/*  */}
                   <TableRow>
                     <TableCell/>
                     <TableCell align='right' >
                       <Box>
                         <Typography variant='button' sx={{fontSize: '25px'}}>
                           {/* the total of total_amount from item.year */}
-                          {`TOTAL:   ${rupiahFormatter(
-                              Object.values(
-                                  item.invoice,
-                              ).reduce((acc, val) => acc + val, 0),
-                          )}`}
+                          {`TOTAL:${
+                            rupiahFormatter(Object.values(item)[1] ?? 0)
+                          }`}
                         </Typography>
                       </Box>
                     </TableCell>
@@ -202,30 +170,28 @@ const YearlyGross = ({tablePage, ...props}) => {
               </Table>
             );
           }
-          if (tablePage === 2 && index > 2) {
+          if (tablePage === 2 && index >= 3) {
             return (
               <Table key={uuid()}>
                 <TableBody>
                   <TableRow>
                     <TableCell align='left'>
                       <Typography variant='button' sx={{fontSize: '25px'}}>
-                        {item.year}
+                        {Object.keys(item)[0]}
                       </Typography>
                     </TableCell>
                     <TableCell/>
                   </TableRow>
-                  {renderMonthly(item).map((val) => val)}
+                  {renderCell(item[Object.values(item)[0]]).map((val) => val)}
                   <TableRow>
                     <TableCell/>
                     <TableCell align='right' >
                       <Box>
                         <Typography variant='button' sx={{fontSize: '25px'}}>
                           {/* the total of total_amount from item.year */}
-                          {`TOTAL:   ${rupiahFormatter(
-                              Object.values(
-                                  item.invoice,
-                              ).reduce((acc, val) => acc + val, 0),
-                          )}`}
+                          {`TOTAL:${
+                            rupiahFormatter(Object.values(item)[1] ?? 0)
+                          }`}
                         </Typography>
                       </Box>
                     </TableCell>
@@ -236,6 +202,7 @@ const YearlyGross = ({tablePage, ...props}) => {
           }
         })}
       </Box>
+      }
     </Card>
   );
 };

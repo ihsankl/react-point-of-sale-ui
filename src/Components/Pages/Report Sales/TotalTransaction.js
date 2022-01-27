@@ -1,25 +1,57 @@
-import {People} from '@mui/icons-material';
-import {Avatar, Box, Card, CardContent, Typography} from '@mui/material';
-import React, {useMemo} from 'react';
-import {useSelector} from 'react-redux';
-import dayjs from 'dayjs';
-import {thousandFormatter} from '../../../helper';
+import {ArrowDownward, ArrowUpward, People} from '@mui/icons-material';
+import {
+  Avatar,
+  Box,
+  Card,
+  CardContent,
+  CircularProgress,
+  Typography,
+} from '@mui/material';
+import axios from 'axios';
+import React, {useEffect, useState} from 'react';
+import {headersBuilder, thousandFormatter} from '../../../helper';
 
 const TotalTransaction = ({...props}) => {
-  const InvoiceState = useSelector((state) => state.Invoice);
-  const InvoiceStateData = InvoiceState.data?.data ?? [];
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // get all invoice this month
-  const thisMonthInvoice = useMemo(() => {
-    return InvoiceStateData.filter(
-        (invoice) => dayjs(invoice.date_recorded).isSame(dayjs(), 'year'),
-    );
-  }, [InvoiceStateData]);
-  // count all invoice this month
-  const thisMonthInvoiceCount = thisMonthInvoice.length;
+  useEffect(() => {
+    getData();
+    return () => {
+
+    };
+  }, []);
+
+  const getData = async () => {
+    try {
+      setLoading(true);
+      const res = await axios
+          .get(`${process.env.REACT_APP_API_URL}/reports/transaction`,
+              {...headersBuilder()},
+          );
+      setData(res.data.data);
+      setLoading(false);
+    } catch (error) {
+      // TODO: show error alert
+      setData([]);
+      console.log(error.message);
+    }
+  };
 
   return (
     <Card elevation={3} sx={{flex: 1}} {...props}>
+      {loading ?
+      <Box
+        sx={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress />
+      </Box> :
       <CardContent>
         <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
           <Box sx={{display: 'flex', flexDirection: 'column', gap: '1em'}}>
@@ -34,7 +66,7 @@ const TotalTransaction = ({...props}) => {
               color="textPrimary"
               variant="h4"
             >
-              {thousandFormatter(thisMonthInvoiceCount)}
+              {thousandFormatter(data?.totalTransaction)}
             </Typography>
           </Box>
           <Avatar
@@ -47,35 +79,35 @@ const TotalTransaction = ({...props}) => {
             <People />
           </Avatar>
         </Box>
-        {/* {isNumber(totalSalesDiffPercent) &&
-          <Box
-            sx={{
-              alignItems: 'center',
-              display: 'flex',
-              pt: 2,
-            }}
-          >
-            {totalSalesDiffPercent > 0 ?
+        <Box
+          sx={{
+            alignItems: 'center',
+            display: 'flex',
+            pt: 2,
+          }}
+        >
+          {data?.diffFromLastMonth > 0 ?
           <ArrowUpward color="success" />:
           <ArrowDownward color="error" />
-            }
-            <Typography
-              variant="body2"
-              sx={{
-                mr: 1,
-              }}
-            >
-              {totalSalesDiffPercent.toFixed(2)}%
-            </Typography>
-            <Typography
-              color="textSecondary"
-              variant="caption"
-            >
+          }
+          <Typography
+            variant="body2"
+            sx={{
+              mr: 1,
+            }}
+          >
+            {data?.diffFromLastMonth}%
+          </Typography>
+          <Typography
+            color="textSecondary"
+            variant="caption"
+          >
           Since last month
-            </Typography>
-          </Box>
-        } */}
+          </Typography>
+        </Box>
+
       </CardContent>
+      }
     </Card>
   );
 };

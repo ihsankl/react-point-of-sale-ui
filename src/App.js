@@ -80,7 +80,7 @@ const App = ()=> {
   const AuthState = useSelector((state) => state.Authentication);
   const UserState = useSelector((state) => state.User);
   const UserData = UserState.data?.data ?? [];
-  const auth = AuthState.token;
+  const auth = AuthState.isLoggedIn;
 
   const dispatch = useDispatch();
 
@@ -91,14 +91,9 @@ const App = ()=> {
       setMounted(true);
     }
 
-    if (AuthState.error.state) {
-      dispatch(clearToken());
-      localStorage.removeItem('token');
-    }
+    if (!!UserData) dispatch(setUserData(UserData[0]));
 
-    if (!!UserData) {
-      dispatch(setUserData(UserData[0]));
-    }
+    if (AuthState.error.state) dispatch(clearToken());
 
     return () => {
     };
@@ -106,6 +101,7 @@ const App = ()=> {
     AuthState,
     mounted,
     UserData,
+    auth,
   ]);
 
   const isLoading =

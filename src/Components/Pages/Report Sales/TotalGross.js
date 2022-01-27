@@ -1,30 +1,57 @@
-import {AttachMoney} from '@mui/icons-material';
-import {Avatar, Card, CardContent, Typography} from '@mui/material';
+import {ArrowDownward, ArrowUpward, AttachMoney} from '@mui/icons-material';
+import {
+  Avatar,
+  Card,
+  CardContent,
+  CircularProgress,
+  Typography,
+} from '@mui/material';
 import {Box} from '@mui/system';
-import dayjs from 'dayjs';
-import React, {useMemo} from 'react';
-import {useSelector} from 'react-redux';
-import {rupiahFormatter} from '../../../helper';
+import axios from 'axios';
+import React, {useEffect, useState} from 'react';
+import {headersBuilder, rupiahFormatter} from '../../../helper';
 
 const TotalGross = ({...props}) => {
-  const InvoiceState = useSelector((state) => state.Invoice);
-  const InvoiceStateData = InvoiceState.data?.data ?? [];
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // get all invoice this month
-  const thisMonthInvoice = useMemo(() => {
-    return InvoiceStateData.filter(
-        (invoice) => dayjs(invoice.date_recorded).isSame(dayjs(), 'month'),
-    );
-  }, [InvoiceStateData]);
-  // sum all total_amount in thisMonthInvoice
-  const totalGross = useMemo(() => {
-    return thisMonthInvoice.reduce((acc, invoice) => {
-      return acc + invoice.total_amount;
-    }, 0);
-  }, [InvoiceStateData]);
+  useEffect(() => {
+    getData();
+    return () => {
+
+    };
+  }, []);
+
+  const getData = async () => {
+    try {
+      setLoading(true);
+      const res = await axios
+          .get(`${process.env.REACT_APP_API_URL}/reports/gross`,
+              {...headersBuilder()},
+          );
+      setData(res.data.data);
+      setLoading(false);
+    } catch (error) {
+      // TODO: show error alert
+      setData([]);
+      console.log(error.message);
+    }
+  };
 
   return (
     <Card elevation={3} sx={{flex: 1}} {...props}>
+      {loading ?
+      <Box
+        sx={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress />
+      </Box> :
       <CardContent>
         <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
           <Box sx={{display: 'flex', flexDirection: 'column', gap: '1em'}}>
@@ -43,7 +70,7 @@ const TotalGross = ({...props}) => {
                 maxWidth: '250px',
               }}
             >
-              {rupiahFormatter(totalGross)}
+              {rupiahFormatter(data?.totalGross)}
             </Typography>
           </Box>
           <Avatar
@@ -56,7 +83,37 @@ const TotalGross = ({...props}) => {
             <AttachMoney />
           </Avatar>
         </Box>
+        <Box
+          sx={{
+            pt: 2,
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          {data?.diffFromLastMonth > 0 ?
+              <ArrowUpward color="success" />:
+            <ArrowDownward color="error" />
+          }
+          <Typography
+            color={data?.diffFromLastMonth > 0 ?
+                  'success' : 'error'
+            }
+            sx={{
+              mr: 1,
+            }}
+            variant="body2"
+          >
+            {data?.diffFromLastMonth}%
+          </Typography>
+          <Typography
+            color="textSecondary"
+            variant="caption"
+          >
+            Since last month
+          </Typography>
+        </Box>
       </CardContent>
+      }
     </Card>
   );
 };

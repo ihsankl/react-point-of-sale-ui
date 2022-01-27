@@ -10,29 +10,13 @@ import LatestSales from './LatestSales';
 import Top5Sales from './Top5Sales';
 import YearlyGross from './YearlyGross';
 import TotalTransaction from './TotalTransaction';
-import {useDispatch} from 'react-redux';
-import {getProduct} from '../../../Redux/Slicer/Product';
-import {getInvoice} from '../../../Redux/Slicer/Invoice';
-import {getPurchaseOrder} from '../../../Redux/Slicer/Purchase Order';
-import {getReceiveProduct} from '../../../Redux/Slicer/Receive Product';
-import {getAllSales} from '../../../Redux/Slicer/Sales';
 import TotalProfit from './TotalProfit';
 
 const ReportSales = () => {
   const [mount, setMount] = useState();
-  const dispatch = useDispatch();
-
-  const reInitAllData = async () => {
-    await dispatch(getProduct()).unwrap();
-    await dispatch(getInvoice()).unwrap();
-    await dispatch(getPurchaseOrder()).unwrap();
-    await dispatch(getReceiveProduct()).unwrap();
-    await dispatch(getAllSales()).unwrap();
-  };
 
   useEffect(() => {
     if (!mount) {
-      reInitAllData();
       setMount(true);
     }
 

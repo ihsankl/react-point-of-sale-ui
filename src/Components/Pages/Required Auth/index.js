@@ -5,7 +5,7 @@ import {useSelector} from 'react-redux';
 
 const RequiredAuth = ({children}) => {
   const AuthState = useSelector((state) => state.Authentication);
-  const auth = AuthState.token;
+  const auth = AuthState.isLoggedIn;
   const location = useLocation();
 
   if (!auth) {

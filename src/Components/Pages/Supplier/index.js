@@ -1,5 +1,4 @@
-import {Search} from '@mui/icons-material';
-import {Button, TextField} from '@mui/material';
+import {Button} from '@mui/material';
 import React, {useEffect, useState} from 'react';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import BasicTable from '../../BasicTable';
@@ -61,14 +60,7 @@ const Supplier = () => {
             variant="contained"
           >Create New
           </Button>
-          <div style={{display: 'flex', alignItems: 'flex-end'}}>
-            <Search sx={{color: 'action.active', mr: 1, my: 0.5}} />
-            <TextField
-              id="input-with-sx"
-              label="Search Item"
-              variant="standard"
-            />
-          </div>
+
         </SubHeader>
         <BasicTable
           dataRows={SupplierData}

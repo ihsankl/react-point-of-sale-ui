@@ -231,3 +231,9 @@ export const monthName = (month) => {
   }
 };
 
+// uncapitalize all letter of string
+// remove whitespace
+export const uncapitalize = (str) => {
+  // eslint-disable-next-line max-len
+  return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toLowerCase() + txt.substr(1).toLowerCase()).replace(/\s/g, '');
+};

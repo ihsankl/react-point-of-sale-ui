@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {
-  AppBar, Toolbar, IconButton, Menu, MenuItem, Typography,
+  AppBar, Toolbar, IconButton, Menu, MenuItem, Typography, Box,
 } from '@mui/material';
 import {
   ShoppingCart,
@@ -9,27 +9,26 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PropTypes from 'prop-types';
 import {useDispatch} from 'react-redux';
 import {clearToken, logout} from '../Redux/Slicer/Authentication';
-import {unmountAppWithToken} from '../Redux/Slicer/AppState';
 
 const APP_NAME = process.env.REACT_APP_NAME;
 
 const Header = () => {
-  const [anchorEl, setaAchorEl] = useState(null);
+  const [anchorEl, setAchorEl] = useState(null);
   const dispatch = useDispatch();
 
   return (
     <AppBar position="fixed" sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}>
-      <Toolbar style={{justifyContent: 'space-between'}}>
-        <div style={{display: 'flex'}}>
+      <Toolbar sx={{justifyContent: 'space-between'}}>
+        <Box sx={{display: 'flex'}}>
           <ShoppingCart sx={{marginRight: '1em'}} />
           <Typography variant='button' component="div">
             {APP_NAME}
           </Typography>
-        </div>
-        <div>
+        </Box>
+        <Box>
           <IconButton
             aria-haspopup="true"
-            onClick={(e) => setaAchorEl(e.currentTarget)}
+            onClick={(e) => setAchorEl(e.currentTarget)}
             color="inherit"
           >
             <AccountCircleIcon />
@@ -47,21 +46,19 @@ const Header = () => {
               horizontal: 'right',
             }}
             open={!!anchorEl}
-            onClose={() => setaAchorEl(null)}
+            onClose={() => setAchorEl(null)}
           >
             <MenuItem onClick={() => console.log('hi')}>
               My Profile
             </MenuItem>
             <MenuItem onClick={() => {
               dispatch(logout());
-              dispatch(unmountAppWithToken());
               dispatch(clearToken());
-              localStorage.removeItem('token');
             }}>
               Logout
             </MenuItem>
           </Menu>
-        </div>
+        </Box>
       </Toolbar>
     </AppBar>
   );

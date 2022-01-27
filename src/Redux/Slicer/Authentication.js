@@ -62,7 +62,7 @@ export const checkToken = createAsyncThunk(
 
 const authenticationSlice = createSlice({
   name: 'authentication',
-  initialState: {...initialState, token: null},
+  initialState: {...initialState, isLoggedIn: false},
   reducers: {
     clearError: (state) => {
       state.error = {
@@ -74,7 +74,8 @@ const authenticationSlice = createSlice({
       state.isSuccess = false;
     },
     clearToken: (state) => {
-      state.token = null;
+      localStorage.removeItem('token');
+      state.isLoggedIn = false;
     },
   }, extraReducers: (builder) => {
     // login
@@ -94,13 +95,13 @@ const authenticationSlice = createSlice({
         state: false,
       };
       state.isSuccess = true;
-      state.data = action.payload;
-      state.token = action.payload.data;
+      state.isLoggedIn = true;
+      localStorage.setItem('token', action.payload.data);
     });
     builder.addCase(login.rejected, (state, action) => {
       state.isLoading = false;
       state.error = {
-        message: action.payload.response?.data?.message ??
+        message: action.payload?.response?.data?.message ??
         'Something went wrong',
         state: true,
       };
@@ -122,13 +123,13 @@ const authenticationSlice = createSlice({
         state: false,
       };
       state.isSuccess = true;
-      state.data = {...initialState, token: null};
-      state.token = null;
+      state.isLoggedIn = false;
+      localStorage.removeItem('token');
     });
     builder.addCase(logout.rejected, (state, action) => {
       state.isLoading = false;
       state.error = {
-        message: action.payload.response?.data?.message ??
+        message: action.payload?.response?.data?.message ??
         'Something went wrong',
         state: true,
       };
@@ -142,6 +143,7 @@ const authenticationSlice = createSlice({
         state: false,
       };
       state.isSuccess = false;
+      state.isLoggedIn = true;
     });
     builder.addCase(checkToken.fulfilled, (state, action) => {
       state.isLoading = false;
@@ -150,13 +152,13 @@ const authenticationSlice = createSlice({
         state: false,
       };
       state.isSuccess = true;
-      state.data = action.payload;
-      state.token = action.payload.data;
+      state.isLoggedIn = true;
+      localStorage.setItem('token', action.payload.data);
     });
     builder.addCase(checkToken.rejected, (state, action) => {
       state.isLoading = false;
       state.error = {
-        message: action.payload.response?.data?.message ??
+        message: action.payload?.response?.data?.message ??
         'Something went wrong',
         state: true,
       };

@@ -1,4 +1,3 @@
-/* eslint-disable */
 import {ArrowDropDown} from '@mui/icons-material';
 import {
   Box,
@@ -6,48 +5,59 @@ import {
   Card,
   CardContent,
   CardHeader,
+  CircularProgress,
   Divider,
+  Menu,
+  MenuItem,
   useTheme,
 } from '@mui/material';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Bar} from 'react-chartjs-2';
 import PropTypes from 'prop-types';
-import {useSelector} from 'react-redux';
-import dayjs from 'dayjs';
+import axios from 'axios';
+import {headersBuilder, uncapitalize} from '../../../helper';
 
 const LatestSales = ({...props}) => {
   const theme = useTheme();
-  // const SalesState = useSelector((state) => state.Sales);
-  const InvoiceState = useSelector((state) => state.Invoice);
-  // const SalesStateData = SalesState.data?.data ?? [];
-  const InvoiceStateData = InvoiceState.data?.data ?? [];
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [anchorEl, setAchorEl] = useState(null);
+  const [toggle, setToggle] = useState('7 Days');
+  const open = Boolean(anchorEl);
 
-  // find all invoice between today and last 7 days with dayjs
-  const thisMonthInvoice = InvoiceStateData.filter(
-      (invoice) => dayjs(invoice.date_recorded).isBetween(
-          dayjs().subtract(7, 'day'),
-          dayjs(),
-      ),
-  );
-  // last year invoice with same month as today
-  const lastYearInvoice = InvoiceStateData.filter(
-      (invoice) => dayjs(invoice.date_recorded).isBetween(
-          dayjs().subtract(365, 'day'),
-          dayjs().subtract(365, 'day').add(1, 'month'),
-      ),
-  );
-  // sum all total_amount in thisMonthInvoice
-  const thisMonthTotalAmount = thisMonthInvoice.reduce(
-      (total, invoice) => total + invoice.total_amount,
-      0,
-  );
-  // sum all total_amount in lastYearInvoice
-  const lastYearTotalAmount = lastYearInvoice.reduce(
-      (total, invoice) => total + invoice.total_amount,
-      0,
-  );  
+  const getData = async () => {
+    try {
+      setLoading(true);
+      const res = await axios
+          // eslint-disable-next-line max-len
+          .get(`${process.env.REACT_APP_API_URL}/reports/last${uncapitalize(toggle)}`,
+              {...headersBuilder()},
+          );
+      setData(res.data.data);
+      setLoading(false);
+    } catch (error) {
+      // TODO: show error alert
+      setData([]);
+      console.log(error.message);
+    }
+  };
 
-  const data = {
+  useEffect(() => {
+    getData();
+    return () => {
+
+    };
+  }, [toggle]);
+
+  const handleClick = (event) => {
+    setAchorEl(event.currentTarget);
+  };
+  const handleToggle = (toggle) => {
+    setToggle(toggle);
+    setAchorEl(null);
+  };
+
+  const dataTable = {
     datasets: [
       {
         backgroundColor: '#3F51B5',
@@ -55,11 +65,7 @@ const LatestSales = ({...props}) => {
         barThickness: 12,
         borderRadius: 4,
         categoryPercentage: 0.5,
-        // data sales from last 7 days
-        // data: thisMonthInvoice.map((invoice, index) => {
-        //   if (index < 7 ) return invoice.total_amount;
-        // }),
-        data: [],
+        data: data.map((invoice) => Object.values(invoice)?.[0]),
         label: 'This year',
         maxBarThickness: 10,
       },
@@ -69,18 +75,12 @@ const LatestSales = ({...props}) => {
         barThickness: 12,
         borderRadius: 4,
         categoryPercentage: 0.5,
-        // data sales from last 7 days last year
-        // data: lastYearInvoice.map((invoice, index) => {
-        //   if (index < 7 ) return invoice.total_amount;
-        // }),
-        data: [],
+        data: data.map((invoice) => Object.values(invoice)?.[1]),
         label: 'Last year',
         maxBarThickness: 10,
       },
     ],
-    // iterate 7 times to get 7 days from dayjs
-    labels: Array(7).fill('').map((_, index) =>
-      dayjs().subtract(index, 'day').format('DD MMM')),
+    labels: data.map((invoice) => Object.keys(invoice)?.[0]),
   };
 
   const options = {
@@ -136,16 +136,51 @@ const LatestSales = ({...props}) => {
     <Card sx={{height: '100%'}} elevation={3} {...props}>
       <CardHeader
         action={(
-          <Button
-            endIcon={<ArrowDropDown fontSize="small" />}
-            size="small"
-          >
-              Last 7 days
-          </Button>
+          <>
+            <Button
+              disabled={loading}
+              endIcon={<ArrowDropDown fontSize="small" />}
+              size="small"
+              onClick={handleClick}
+            >
+                  Last {toggle}
+            </Button>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleToggle}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+              }}
+            >
+              <MenuItem onClick={()=> handleToggle('7 Days')}>
+                    Last 7 days
+              </MenuItem>
+              <MenuItem onClick={()=> handleToggle('30 Days')}>
+                    Last 30 days
+              </MenuItem>
+              <MenuItem onClick={()=> handleToggle('90 Days')}>
+                    Last 90 days
+              </MenuItem>
+            </Menu>
+          </>
         )}
         title="Latest Sales"
       />
       <Divider />
+      {loading ?
+       <Box
+         sx={{
+           minHeight: 400,
+           width: '100%',
+           display: 'flex',
+           justifyContent: 'center',
+           alignItems: 'center',
+         }}
+       >
+         <CircularProgress />
+       </Box> :
       <CardContent>
         <Box
           sx={{
@@ -154,11 +189,12 @@ const LatestSales = ({...props}) => {
           }}
         >
           <Bar
-            data={data}
+            data={dataTable}
             options={options}
           />
         </Box>
       </CardContent>
+      }
       <Divider />
     </Card>
   );
