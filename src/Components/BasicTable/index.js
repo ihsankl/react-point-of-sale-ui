@@ -10,10 +10,8 @@ import {
   Menu,
   MenuItem,
   NativeSelect,
-  Switch,
   TablePagination,
   TextField,
-  Typography,
 } from '@mui/material';
 import {HotTable} from '@handsontable/react';
 import {
@@ -22,16 +20,16 @@ import {
   FilterList,
   Loop,
   TableRows,
-  ViewColumn,
   ViewHeadline,
   ViewStream,
 } from '@mui/icons-material';
-import {FormContainer} from '../layout';
-import {uuid} from '../helper';
+import {FormContainer} from '../../layout';
+import {uuid} from '../../helper';
+import ShowHideColumns from './ShowHideColumns';
 
 const defaultData = [
   // eslint-disable-next-line max-len
-  {name: 'Ted Right', a: 'a', b: 'b', c: 'c', d: 'd', e: 'e', f: 'f', g: 'g', h: 'h', i: 'i', j: 'j', k: 'k', l: 'l', m: 'm', n: 'n', o: 'o', p: 'p', q: 'q', r: 'r', s: 's', t: 't', u: 'u', v: 'v', w: 'w', x: 'x', y: 'y', z: 'z'},
+  {name: 'Ted Right', a: 'a'},
   {name: 'Frank Honest', a: 'a'},
   {name: 'Joan Well', a: 'a'},
   {name: 'Gail Polite', a: 'a'},
@@ -42,21 +40,16 @@ const defaultData = [
 
 const BasicTable = ({data = defaultData}) => {
   // const [pageSize, setPageSize] = useState(20);
-  const [anchorCol, setAnchorCol] = React.useState(null);
   const [anchorFil, setAnchorFil] = React.useState(null);
   const [anchorDen, setAnchorDen] = React.useState(null);
-  // eslint-disable-next-line no-unused-vars
-  const [hiddenCol, setHiddenCol] = React.useState([]);
+  const [filOperator, setFilOperator] = React.useState('contains');
+  const [filColum, setFilColum] = React.useState('name');
   const [filter, setFilter] = React.useState('');
-  const openCol = Boolean(anchorCol);
+  const [filterLoading, setFilterLoading] = React.useState(false);
+  const [hiddenCol, setHiddenCol] = React.useState([]);
   const openFil = Boolean(anchorFil);
   const openDen = Boolean(anchorDen);
-  const handleClickCol = (event) => {
-    setAnchorCol(event.currentTarget);
-  };
-  const handleCloseCol = () => {
-    setAnchorCol(null);
-  };
+
   const handleClickFil = (event) => {
     setAnchorFil(event.currentTarget);
   };
@@ -70,16 +63,28 @@ const BasicTable = ({data = defaultData}) => {
     setAnchorDen(null);
   };
 
-  const buildColHeaders = (data) => {
-    // find the first keys in the data
-    const keys = Object.keys(data[0]);
+  const buildColHeaders = (param) => {
+    const keys = Object.keys(param[0]);
     return keys;
   };
 
-  const filteredColHeaders = (data) => {
-    const filteredData = buildColHeaders(data).filter((item) => item
-        .toLowerCase().includes(filter.toLowerCase()));
-    return filteredData;
+  const filteredData = (param) => {
+    switch (filOperator) {
+      case 'contains':
+        return param.filter((item) => item[filColum]
+            ?.toLowerCase().includes(filter?.toLowerCase()));
+      case 'equals':
+        return param.filter((item) => item[filColum]
+            ?.toLowerCase() === filter?.toLowerCase());
+      case 'startsWith':
+        return param.filter((item) => item[filColum]
+            ?.toLowerCase().startsWith(filter?.toLowerCase()));
+      case 'endsWith':
+        return param.filter((item) => item[filColum]
+            ?.toLowerCase().endsWith(filter?.toLowerCase()));
+      default:
+        return param;
+    }
   };
 
   return (
@@ -92,92 +97,12 @@ const BasicTable = ({data = defaultData}) => {
       padding: '.5em',
     }}>
       <Box sx={{display: 'flex', gap: '1em', pb: 1}}>
-        <Button
-          variant="text"
-          startIcon={<ViewColumn/>}
-          onClick={handleClickCol}
-        >
-          Columns
-        </Button>
-        <Menu
-          id="basic-menu"
-          anchorEl={anchorCol}
-          open={openCol}
-          onClose={handleCloseCol}
-          MenuListProps={{
-            'aria-labelledby': 'basic-button',
-          }}
-        >
-          <Box
-            sx={{px: '8px', paddingBottom: '8px'}}
-          >
-            <TextField
-              label="Find Column"
-              variant="standard"
-              size="small"
-              fullWidth
-              // onChange = filter buildColHeaders(data)
-              onChange={(e)=> {
-                setFilter(e.target.value);
-              }}
-            />
-          </Box>
-          {filteredColHeaders(data).map((item, index) => {
-            return (
-              <Box
-                key={uuid()}
-                sx={{
-                  display: 'flex',
-                  gap: '3px',
-                  alignItems: 'center',
-                  minWidth: '300px',
-                }}
-              >
-                {/* switch checked if hiddenCol contains the same index */}
-                <Switch checked={!hiddenCol.includes(index)} onChange={() => {
-                  // if hiddenCol contains the same index, remove it
-                  if (hiddenCol.includes(index)) {
-                    const newHiddenCol = [...hiddenCol];
-                    newHiddenCol.splice(hiddenCol.indexOf(index), 1);
-                    setHiddenCol(newHiddenCol);
-                    return;
-                  }
-                  const newHiddenCol = [...hiddenCol];
-                  newHiddenCol.push(index);
-                  setHiddenCol(newHiddenCol);
-                }} />
-                <Typography> {item} </Typography>
-              </Box>
-            );
-          })}
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              px: '8px',
-            }}
-          >
-            <Button
-              variant="text"
-              onClick={()=> {
-                const x = [];
-                buildColHeaders(data).map((item, index) => {
-                  x.push(index);
-                });
-                setHiddenCol(x);
-              }}
-            >
-              Hide All
-            </Button>
-            <Button
-              variant="text"
-              onClick={()=> setHiddenCol([])}
-            >
-              Show All
-            </Button>
-          </Box>
-        </Menu>
+        <ShowHideColumns
+          hiddenCol={hiddenCol}
+          setHiddenCol={setHiddenCol}
+          buildColHeaders={buildColHeaders}
+          data={data}
+        />
         <Button
           variant="text"
           startIcon={<FilterList/>}
@@ -209,6 +134,10 @@ const BasicTable = ({data = defaultData}) => {
               Columns
               </InputLabel>
               <NativeSelect
+                value={filColum}
+                onChange={(e) => {
+                  setFilColum(e.target.value);
+                }}
                 inputProps={{
                   name: 'age',
                   id: 'uncontrolled-native',
@@ -228,8 +157,9 @@ const BasicTable = ({data = defaultData}) => {
               Operator
               </InputLabel>
               <NativeSelect
+                onChange={(e) => setFilOperator(e.target.value)}
                 inputProps={{
-                  name: 'age',
+                  name: 'operator',
                   id: 'uncontrolled-native',
                 }}
               >
@@ -250,7 +180,17 @@ const BasicTable = ({data = defaultData}) => {
                 variant="standard"
                 InputProps={{
                   endAdornment:
-                  <InputAdornment position="end"> <Loop/> </InputAdornment>,
+                  filterLoading &&
+                  <InputAdornment position="end">
+                    <Loop color='action' />
+                  </InputAdornment>,
+                }}
+                onChange={(e) => {
+                  setFilterLoading(true);
+                  setTimeout(() => {
+                    setFilter(e.target.value);
+                    setFilterLoading(false);
+                  }, 1000);
                 }}
               />
             </FormControl>
@@ -296,7 +236,7 @@ const BasicTable = ({data = defaultData}) => {
         style={{
           width: '100%',
         }}
-        data={data}
+        data={filteredData(data)}
         colHeaders={buildColHeaders(data)}
         rowHeaders={true}
         manualColumnResize={true}
