@@ -56,6 +56,96 @@ const Filter = ({
           'aria-labelledby': 'basic-button',
         }}
       >
+        <FormContainer
+          key={uuid()}
+          onSubmit={(e) => e.preventDefault()}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: 0,
+          }}
+        >
+          <IconButton
+            onClick={() => {
+              setFilOperator('contains');
+              setFilColum(buildColHeaders(data)[0]);
+              setFilter('');
+            }}
+          >
+            <Close/>
+          </IconButton>
+          <FormControl sx={{minWidth: 150}}>
+          <InputLabel variant="standard" htmlFor="filColumn">
+          &#8288;Columns
+          </InputLabel>
+            <NativeSelect
+              inputProps={{
+                name: 'filColumn',
+                id: 'filColumn',
+              }}
+              value={filColum}
+              onChange={(e) => {
+                setFilColum(e.target.value);
+              }}
+            >
+              {buildColHeaders(data).map((item, index) => 
+                (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                )
+              )}
+            </NativeSelect>
+          </FormControl>
+          <FormControl sx={{minWidth: 150}}>
+            <InputLabel variant="standard" htmlFor="operator">
+              Operator
+            </InputLabel>
+            <NativeSelect
+              onChange={(e) => setFilOperator(e.target.value)}
+              value={filOperator}
+              inputProps={{
+                name: 'operator',
+                id: 'operator',
+              }}
+            >
+              <option value="contains">contains</option>
+              <option value="equals">equals</option>
+              <option value="startsWith">starts with</option>
+              <option value="endsWith">ends with</option>
+              <option value="isEmpty">is empty</option>
+              <option value="isNotEmpty">is not empty</option>
+            </NativeSelect>
+          </FormControl>
+          <FormControl
+            sx={{
+              minWidth: 150,
+              marginRight: '8px',
+            }}
+          >
+            <TextField
+              variant="standard"
+              autoFocus
+              value={filter}
+              label="Value"
+              placeholder='Filter value'
+              InputProps={{
+                endAdornment:
+                  filterLoading &&
+                  <InputAdornment position="end">
+                    <Loop color='action' />
+                  </InputAdornment>,
+              }}
+              onChange={(e) => {
+                setFilterLoading(true);
+                setFilter(e.target.value);
+                setTimeout(() => {
+                  setFilterLoading(false);
+                }, 1000);
+              }}
+            />
+          </FormControl>
+        </FormContainer>
       </Menu>
     </>
   );
