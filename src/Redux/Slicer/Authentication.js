@@ -30,7 +30,7 @@ export const logout = createAsyncThunk(
     async (data = null, thunkAPI) => {
       try {
         const response = await Axios.post(
-            `${BASE_URL}/authentication/logout`,
+            `${BASE_URL}/authentication/logout`, data,
             {
               ...headersBuilder(),
             },

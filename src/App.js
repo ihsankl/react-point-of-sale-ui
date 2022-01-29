@@ -52,6 +52,7 @@ import Cashier from './Components/Pages/Cashier';
 // Misc
 import RequiredAuth from './Components/Pages/Required Auth/';
 import Login from './Components/Pages/Login';
+import Register from './Components/Pages/Register';
 import ErrorNotif from './Components/ErrorNotif';
 import SuccessNotif from './Components/SuccessNotif';
 import Information from './Components/Information';
@@ -62,9 +63,9 @@ import ReportSales from './Components/Pages/Report Sales';
 
 // redux thing
 import {useDispatch, useSelector} from 'react-redux';
-import Register from './Components/Pages/Register';
 import {checkToken, clearToken} from './Redux/Slicer/Authentication';
-import {setUserData} from './Redux/Slicer/AppState';
+import {setSuccess, setUserData} from './Redux/Slicer/AppState';
+import {clearSuccess as clearAuth} from './Redux/Slicer/Authentication';
 
 const App = ()=> {
   const [mounted, setMounted] = useState(false);
@@ -94,6 +95,13 @@ const App = ()=> {
     if (!!UserData) dispatch(setUserData(UserData[0]));
 
     if (AuthState.error.state) dispatch(clearToken());
+
+    if (AuthState.isSuccess) {
+      dispatch(setSuccess());
+      setTimeout(() => {
+        dispatch(clearAuth());
+      }, 5000);
+    }
 
     return () => {
     };
@@ -271,15 +279,11 @@ const App = ()=> {
           <Route path="*" element={<Navigate replace to="/cashier" />}/>
           {/* TODO: give documentation for keyboard shortcuts */}
           {/* TODO: create theme customization */}
-          {/* TODO: percent difference not yet working */}
           {/* TODO: change all selection to autocomplete */}
-          {/* TODO: add 30,90 and a year selection in Latest Sales */}
           {/* TODO: optimizing all components */}
-          {/* TODO: latest sales still doesn't work */}
           {/* TODO: get data from dropdown when it's clicked */}
           {/* TODO: show products and its besides cashier menu */}
           {/* TODO: add daily reports */}
-          {/* TODO: move all computation to backend */}
           {/* TODO: product CRUD is a mess */}
           {/* TODO: remove alert when changes tab */}
           {/* TODO: refining alert system */}

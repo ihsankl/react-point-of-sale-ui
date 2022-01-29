@@ -13,9 +13,11 @@ import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import storage from './Redux/Store';
 import {registerAllModules} from 'handsontable/registry';
+import {registerPlugin, ExportFile, BasePlugin} from 'handsontable/plugins';
 
 // register Handsontable's modules
 registerAllModules();
+registerPlugin(ExportFile, BasePlugin);
 
 const {Store, Persistor} = storage();
 

@@ -7,6 +7,7 @@ const appStateSlice = createSlice({
     mountedWithToken: false,
     username: null,
     userData: null,
+    isSuccess: false,
   },
   reducers: {
     mountApp: (state, action) => {
@@ -33,6 +34,12 @@ const appStateSlice = createSlice({
     unsetUserData: (state, action) => {
       state.userData = null;
     },
+    setSuccess: (state, action) => {
+      state.isSuccess = true;
+    },
+    unsetSuccess: (state, action) => {
+      state.isSuccess = false;
+    },
 
   },
 });
@@ -45,5 +52,8 @@ export const {
   setusername,
   unsetUsername,
   setUserData,
+  unsetUserData,
+  setSuccess,
+  unsetSuccess,
 } = appStateSlice.actions;
 export default appStateSlice.reducer;

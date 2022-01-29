@@ -8,7 +8,7 @@ import {
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PropTypes from 'prop-types';
 import {useDispatch} from 'react-redux';
-import {clearToken, logout} from '../Redux/Slicer/Authentication';
+import {logout} from '../Redux/Slicer/Authentication';
 
 const APP_NAME = process.env.REACT_APP_NAME;
 

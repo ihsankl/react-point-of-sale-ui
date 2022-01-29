@@ -5,7 +5,13 @@ import React, {useState} from 'react';
 import {uuid} from '../../helper';
 import PropTypes from 'prop-types';
 
-const ShowHideColumns = ({hiddenCol, setHiddenCol, buildColHeaders, data}) => {
+const ShowHideColumns = ({
+  hiddenCol,
+  setHiddenCol,
+  buildColHeaders,
+  data,
+  ...props
+}) => {
   const [anchorCol, setAnchorCol] = useState(null);
   const [filter, setFilter] = useState('');
 
@@ -30,6 +36,7 @@ const ShowHideColumns = ({hiddenCol, setHiddenCol, buildColHeaders, data}) => {
         variant="text"
         startIcon={<ViewColumn/>}
         onClick={handleClickCol}
+        {...props}
       >
           Columns
       </Button>
