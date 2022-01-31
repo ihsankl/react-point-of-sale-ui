@@ -5,6 +5,7 @@ import {useNavigate} from 'react-router-dom';
 import BasicTable from '../../BasicTable';
 import {useDispatch, useSelector} from 'react-redux';
 import {
+  clearSuccess,
   deletePurchaseOrder,
   getPurchaseOrder,
 } from '../../../Redux/Slicer/Purchase Order';
@@ -28,6 +29,7 @@ const PurchaseOrder = () => {
       initPurchaseOrder();
       setMount(true);
     }
+    if (PurchaseOrder.isSuccess) dispatch(clearSuccess());
     return () => {
 
     };

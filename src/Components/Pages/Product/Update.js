@@ -16,13 +16,14 @@ import {
   SubHeader,
   TitleWithDivider,
 } from '../../../layout';
-import {updateProduct} from '../../../Redux/Slicer/Product';
+import {clearSuccess, updateProduct} from '../../../Redux/Slicer/Product';
 import BasicInput from '../../BasicInput';
 import {DesktopDatePicker, LocalizationProvider} from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterDayjs';
 import {isNumber} from '../../../helper';
 import {getAllCategory} from '../../../Redux/Slicer/Category';
 import {getProductUnit} from '../../../Redux/Slicer/Product Unit';
+import {setSuccess} from '../../../Redux/Slicer/AppState';
 
 const defaultValues = {
   product_id: '',
@@ -45,6 +46,7 @@ const UpdateProduct = () => {
   const navigate = useNavigate();
   const ProductUnit = useSelector((state) => state.ProductUnit);
   const AppState = useSelector((state) => state.AppState);
+  const ProductState = useSelector((state) => state.Product);
   const ProductUnitData = ProductUnit.data?.data ?? [];
   const Category = useSelector((state) => state.Category);
   const CategoryData = Category.data?.data ?? [];
@@ -113,6 +115,19 @@ const UpdateProduct = () => {
     value.product_expired_date = newValue;
     setFormValues(value);
   };
+
+  useEffect(() => {
+    if (ProductState.isSuccess) {
+      dispatch(setSuccess());
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [ProductState]);
 
   const fields = [
     {
@@ -200,7 +215,7 @@ const UpdateProduct = () => {
             <FormControlContainer>
               <LocalizationProvider dateAdapter={DateAdapter}>
                 <DesktopDatePicker
-                  label="Date Recorded"
+                  label="Expired Date"
                   labelId="product_expired_date_label"
                   inputFormat="YYYY-DD-MM"
                   name="product_expired_date"
@@ -243,17 +258,17 @@ const UpdateProduct = () => {
               <InputLabel
                 id="product_user_id_label"
               >
-                User
+                Product Uni
               </InputLabel>
               <Select
-                labelId="product_user_id_label"
-                id="product_user_id"
-                name="product_user_id"
+                labelId="product_unit_id_label"
+                id="product_unit_id"
+                name="product_unit_id"
                 label="Product Unit"
-                value={UserData.id}
+                value={formValues.product_unit_id}
                 onChange={handleInputChange}
               >
-                {CategoryData.map((item) => (
+                {ProductUnitData.map((item) => (
                   <MenuItem key={item.id} value={item.id}>
                     {item.name}
                   </MenuItem>

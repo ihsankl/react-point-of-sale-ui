@@ -4,7 +4,11 @@ import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import {useNavigate} from 'react-router-dom';
 import BasicTable from '../../BasicTable';
 import {useDispatch, useSelector} from 'react-redux';
-import {deleteProduct, getProduct} from '../../../Redux/Slicer/Product';
+import {
+  clearSuccess,
+  deleteProduct,
+  getProduct,
+} from '../../../Redux/Slicer/Product';
 import {columnsBuilder} from '../../../helper';
 import ConfirmDialog from '../../ConfirmDialog';
 import {
@@ -25,6 +29,9 @@ const Product = () => {
       initProduct();
       setMount(true);
     }
+
+    if (Product.isSuccess) dispatch(clearSuccess());
+
     return () => {
 
     };

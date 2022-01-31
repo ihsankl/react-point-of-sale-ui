@@ -119,6 +119,8 @@ const Filter = ({
                   <option value="equals">equals</option>
                   <option value="startsWith">starts with</option>
                   <option value="endsWith">ends with</option>
+                  <option value="isEmpty">is empty</option>
+                  <option value="isNotEmpty">is not empty</option>
                 </NativeSelect>
               </FormControl>
               <FormControl
@@ -127,27 +129,29 @@ const Filter = ({
                   marginRight: '8px',
                 }}
               >
-                <TextField
-                  variant="standard"
-                  autoFocus
-                  value={filter}
-                  label="Value"
-                  placeholder='Filter value'
-                  InputProps={{
-                    endAdornment:
+                {filOperator !== 'isEmpty' && filOperator !== 'isNotEmpty' && (
+                  <TextField
+                    variant="standard"
+                    autoFocus
+                    value={filter}
+                    label="Value"
+                    placeholder='Filter value'
+                    InputProps={{
+                      endAdornment:
                       filterLoading &&
                       <InputAdornment position="end">
                         <Loop color='action' />
                       </InputAdornment>,
-                  }}
-                  onChange={(e) => {
-                    setFilterLoading(true);
-                    setFilter(e.target.value);
-                    setTimeout(() => {
-                      setFilterLoading(false);
-                    }, 1000);
-                  }}
-                />
+                    }}
+                    onChange={(e) => {
+                      setFilterLoading(true);
+                      setFilter(e.target.value);
+                      setTimeout(() => {
+                        setFilterLoading(false);
+                      }, 1000);
+                    }}
+                  />
+                )}
               </FormControl>
             </FormContainer>
           </Menu>

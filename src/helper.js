@@ -2,6 +2,7 @@ import {DeleteOutline, Edit} from '@mui/icons-material';
 import {IconButton} from '@mui/material';
 import dayjs from 'dayjs';
 import React from 'react';
+import {renderCellExpand} from './Components/GridCellExpand';
 /**
  * replace _ with space
  * capitalize first letter for each word
@@ -109,11 +110,12 @@ export const columnsBuilder = (data, editCb, deleteCb) => {
         headerName: capitalize(property),
         sortable: true,
         editable: false,
-        // set width based on content length
-        width: 150,
+        minWidth: 100,
+        flex: 1,
         // hide every column containing id
         hide: property.includes('id') ? true : false,
         valueGetter: (params)=> dateFormatter(params.row[property]),
+        renderCell: renderCellExpand,
       });
     }
   }
@@ -123,7 +125,7 @@ export const columnsBuilder = (data, editCb, deleteCb) => {
     headerName: 'Actions',
     sortable: true,
     editable: false,
-    width: 150,
+    minWidth: 150,
     renderCell: (params) => {
       return (
         <div

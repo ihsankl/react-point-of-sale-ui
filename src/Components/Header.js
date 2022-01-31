@@ -53,7 +53,6 @@ const Header = () => {
             </MenuItem>
             <MenuItem onClick={() => {
               dispatch(logout());
-              dispatch(clearToken());
             }}>
               Logout
             </MenuItem>

@@ -16,11 +16,15 @@ import {
 } from '../../../layout';
 import BasicInput from '../../BasicInput';
 import {useDispatch, useSelector} from 'react-redux';
-import {createReceiveProduct} from '../../../Redux/Slicer/Receive Product';
+import {
+  clearSuccess,
+  createReceiveProduct,
+} from '../../../Redux/Slicer/Receive Product';
 import dayjs from 'dayjs';
 import {isNumber} from '../../../helper';
 import {getProduct} from '../../../Redux/Slicer/Product';
 import {getSupplier} from '../../../Redux/Slicer/Supplier';
+import {setSuccess} from '../../../Redux/Slicer/AppState';
 
 const defaultValues = {
   receive_product_qty: '',
@@ -36,6 +40,7 @@ const CreateReceiveProduct = () => {
   const [mount, setmount] = useState(false);
   const dispatch = useDispatch();
   const Supplier = useSelector((state) => state.Supplier);
+  const ReceiveProductState = useSelector((state) => state.ReceiveProduct);
   const AppState = useSelector((state) => state.AppState);
   const SupplierData = Supplier.data?.data ?? [];
   const Product = useSelector((state) => state.Product);
@@ -51,6 +56,19 @@ const CreateReceiveProduct = () => {
 
     };
   }, [mount]);
+
+  React.useEffect(() => {
+    if (ReceiveProductState.isSuccess) {
+      dispatch(setSuccess());
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [ReceiveProductState]);
 
   const getProductAndSupplier = async () => {
     await dispatch(getProduct()).unwrap();

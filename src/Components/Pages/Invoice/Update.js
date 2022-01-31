@@ -11,9 +11,10 @@ import BasicInput from '../../BasicInput';
 import DateAdapter from '@mui/lab/AdapterDayjs';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
-import {updateInvoice} from '../../../Redux/Slicer/Invoice';
+import {clearSuccess, updateInvoice} from '../../../Redux/Slicer/Invoice';
 import dayjs from 'dayjs';
 import {isNumber} from '../../../helper';
+import {setSuccess} from '../../../Redux/Slicer/AppState';
 
 const defaultValues = {
   invoice_id: '',
@@ -27,6 +28,7 @@ const UpdateInvoice = () => {
   const [formValues, setFormValues] = useState(defaultValues);
   const dispatch = useDispatch();
   const AppState = useSelector((state) => state.AppState);
+  const InvoiceState = useSelector((state) => state.Invoice);
   const UserData = AppState.userData;
   const {state} = useLocation();
   const navigate = useNavigate();
@@ -52,6 +54,19 @@ const UpdateInvoice = () => {
 
     };
   }, []);
+
+  useEffect(() => {
+    if (InvoiceState.isSuccess) {
+      dispatch(setSuccess());
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [InvoiceState]);
 
   const handleSubmit = () => {
     const data = {

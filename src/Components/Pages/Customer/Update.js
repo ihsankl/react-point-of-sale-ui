@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {isNumber} from '../../../helper';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
-import {updateCustomer} from '../../../Redux/Slicer/Customer';
+import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {clearSuccess, updateCustomer} from '../../../Redux/Slicer/Customer';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -16,6 +17,7 @@ const defaultValues = {
 
 const UpdateCustomer = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const CustomerState = useSelector((state) => state.Customer);
   const dispatch = useDispatch();
   const {state} = useLocation();
   const navigate = useNavigate();
@@ -33,10 +35,24 @@ const UpdateCustomer = () => {
     } else {
       navigate(-1);
     }
+
     return () => {
 
     };
   }, []);
+
+  useEffect(() => {
+    if (CustomerState.isSuccess) {
+      dispatch(setSuccess());
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [CustomerState]);
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;

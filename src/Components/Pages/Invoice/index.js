@@ -4,7 +4,11 @@ import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import {useNavigate} from 'react-router-dom';
 import BasicTable from '../../BasicTable';
 import {useDispatch, useSelector} from 'react-redux';
-import {deleteInvoice, getInvoice} from '../../../Redux/Slicer/Invoice';
+import {
+  clearSuccess,
+  deleteInvoice,
+  getInvoice,
+} from '../../../Redux/Slicer/Invoice';
 import {columnsBuilder} from '../../../helper';
 import ConfirmDialog from '../../ConfirmDialog';
 import {
@@ -25,6 +29,9 @@ const Invoice = () => {
       initInvoice();
       setMount(true);
     }
+
+    if (Invoice.isSuccess) dispatch(clearSuccess());
+
     return () => {
 
     };

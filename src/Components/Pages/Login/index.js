@@ -14,6 +14,7 @@ import {useNavigate} from 'react-router-dom';
 import {login} from '../../../Redux/Slicer/Authentication';
 import {useDispatch} from 'react-redux';
 import {setusername} from '../../../Redux/Slicer/AppState';
+import {fetchUserByName} from '../../../Redux/Slicer/User';
 
 const defaultValues = {
   username: '',
@@ -116,6 +117,9 @@ const Login = () => {
               };
               dispatch(login(data));
               dispatch(setusername(formValues.username));
+              const username = formValues.username;
+              const temp = {username};
+              dispatch(fetchUserByName(temp));
             }}
             type="submit"
             fullWidth

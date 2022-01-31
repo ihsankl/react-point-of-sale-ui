@@ -6,6 +6,7 @@ import {useNavigate} from 'react-router-dom';
 import {useDispatch} from 'react-redux';
 import {useSelector} from 'react-redux';
 import {
+  clearSuccess,
   deleteProductUnit,
   getProductUnit,
 } from '../../../Redux/Slicer/Product Unit';
@@ -29,6 +30,7 @@ const ProductUnit = () => {
       initProductUnit();
       setMount(true);
     }
+    if (ProductUnit.isSuccess) dispatch(clearSuccess());
     return () => {
 
     };

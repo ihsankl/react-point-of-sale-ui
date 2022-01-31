@@ -4,7 +4,12 @@ import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import BasicTable from '../../BasicTable';
 import {useNavigate} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
-import {deleteCustomer, getCustomers} from '../../../Redux/Slicer/Customer';
+import {
+  clearSuccess,
+  deleteCustomer,
+  getCustomers,
+} from '../../../Redux/Slicer/Customer';
+import {columnsBuilder} from '../../../helper';
 import ConfirmDialog from '../../ConfirmDialog';
 import {
   closeConfirmDialog,
@@ -26,6 +31,8 @@ const Customer = () => {
       initCustomers();
       setMount(true);
     }
+
+    if (Customer.isSuccess) dispatch(clearSuccess());
     return () => {
 
     };
@@ -35,13 +42,11 @@ const Customer = () => {
     await dispatch(getCustomers()).unwrap();
   };
 
-  // eslint-disable-next-line no-unused-vars
   const handleUpdate = (id) => {
     const data = CustomerData.filter((item) => item.id === id);
     navigate(`/customer/update/${id}`, {state: {data}});
   };
 
-  // eslint-disable-next-line no-unused-vars
   const handleDelete = (id) => {
     const newWhichData = CustomerData.filter((item) => item.id === id);
     whichData = newWhichData[0];
@@ -63,10 +68,12 @@ const Customer = () => {
             variant="contained"
           >Create New
           </Button>
-
         </SubHeader>
         <BasicTable
-          data={CustomerData}
+          dataRows={CustomerData}
+          dataColumns={
+            columnsBuilder(CustomerData[0], handleUpdate, handleDelete)
+          }
         />
       </PaperContainer>
       <ConfirmDialog

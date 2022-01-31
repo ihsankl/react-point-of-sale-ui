@@ -17,10 +17,14 @@ import {
 import BasicInput from '../../BasicInput';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useNavigate} from 'react-router-dom';
-import {updatePurchaseOrder} from '../../../Redux/Slicer/Purchase Order';
 import {isNumber} from '../../../helper';
 import {getProduct} from '../../../Redux/Slicer/Product';
 import {getSupplier} from '../../../Redux/Slicer/Supplier';
+import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {
+  clearSuccess,
+  updateReceiveProduct,
+} from '../../../Redux/Slicer/Receive Product';
 
 const defaultValues = {
   receive_product_id: '',
@@ -35,6 +39,7 @@ const defaultValues = {
 
 const UpdateReceiveProduct = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const ReceiveProductState = useSelector((x) => x.ReceiveProduct);
   const [mount, setmount] = useState(false);
   const dispatch = useDispatch();
   const {state} = useLocation();
@@ -70,6 +75,19 @@ const UpdateReceiveProduct = () => {
 
     };
   }, [mount]);
+
+  useEffect(() => {
+    if (ReceiveProductState.isSuccess) {
+      dispatch(setSuccess());
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [ReceiveProductState]);
 
   const getProductAndSupplier = async () => {
     await dispatch(getSupplier()).unwrap();
@@ -131,7 +149,7 @@ const UpdateReceiveProduct = () => {
       user_id: UserData.id,
       supplier_id: formValues.receive_product_supplier_id,
     };
-    dispatch(updatePurchaseOrder(data));
+    dispatch(updateReceiveProduct(data));
   };
 
   return (

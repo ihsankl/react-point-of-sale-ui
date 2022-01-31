@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
-import {createCategory} from '../../../Redux/Slicer/Category';
+import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {clearSuccess, createCategory} from '../../../Redux/Slicer/Category';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -10,6 +11,7 @@ const defaultValues = {
 
 const CreateProductCategory = () => {
   const dispatch = useDispatch();
+  const ProductCategoryState = useSelector((state) => state.Category);
   const [formValues, setFormValues] = useState(defaultValues);
 
   const handleInputChange = (e) => {
@@ -26,6 +28,19 @@ const CreateProductCategory = () => {
     };
     dispatch(createCategory(data));
   };
+
+  React.useEffect(() => {
+    if (ProductCategoryState.isSuccess) {
+      dispatch(setSuccess());
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [ProductCategoryState]);
 
   const fields = [
     {

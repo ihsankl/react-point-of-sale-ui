@@ -1,9 +1,10 @@
 /* eslint-disable camelcase */
 import React, {useState} from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {isNumber} from '../../../helper';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
-import {createCustomer} from '../../../Redux/Slicer/Customer';
+import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {clearSuccess, createCustomer} from '../../../Redux/Slicer/Customer';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -15,6 +16,7 @@ const defaultValues = {
 
 const CreateCustomer = () => {
   const dispatch = useDispatch();
+  const CustomerState = useSelector((state) => state.Customer);
   const [formValues, setFormValues] = useState(defaultValues);
 
   const handleInputChange = (e) => {
@@ -34,7 +36,20 @@ const CreateCustomer = () => {
     };
     dispatch(createCustomer(data));
   };
-  // form validation
+
+  React.useEffect(() => {
+    if (CustomerState.isSuccess) {
+      dispatch(setSuccess());
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [CustomerState]);
+
 
   const fieldsInitState = [
     {

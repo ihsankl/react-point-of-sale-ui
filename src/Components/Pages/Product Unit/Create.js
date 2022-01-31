@@ -1,7 +1,11 @@
 import React, {useState} from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
-import {createProductUnit} from '../../../Redux/Slicer/Product Unit';
+import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {
+  clearSuccess,
+  createProductUnit,
+} from '../../../Redux/Slicer/Product Unit';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -10,6 +14,7 @@ const defaultValues = {
 
 const CreateProductUnit = () => {
   const dispatch = useDispatch();
+  const ProductUnitState = useSelector((state) => state.ProductUnit);
   const [formValues, setFormValues] = useState(defaultValues);
 
   const handleInputChange = (e) => {
@@ -26,6 +31,19 @@ const CreateProductUnit = () => {
     };
     dispatch(createProductUnit(data));
   };
+
+  React.useEffect(() => {
+    if (ProductUnitState.isSuccess) {
+      dispatch(setSuccess());
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [ProductUnitState]);
 
   const fields = [
     {

@@ -10,9 +10,10 @@ import {
 import BasicInput from '../../BasicInput';
 import DateAdapter from '@mui/lab/AdapterDayjs';
 import {useDispatch, useSelector} from 'react-redux';
-import {createInvoice} from '../../../Redux/Slicer/Invoice';
+import {clearSuccess, createInvoice} from '../../../Redux/Slicer/Invoice';
 import dayjs from 'dayjs';
 import {isNumber} from '../../../helper';
+import {setSuccess} from '../../../Redux/Slicer/AppState';
 
 const defaultValues = {
   invoice_total_amount: '',
@@ -24,6 +25,7 @@ const defaultValues = {
 const CreateInvoice = () => {
   const dispatch = useDispatch();
   const AppState = useSelector((state) => state.AppState);
+  const InvoiceState = useSelector((state) => state.Invoice);
   const UserData = AppState.userData;
 
   const [formValues, setFormValues] = useState(defaultValues);
@@ -53,6 +55,19 @@ const CreateInvoice = () => {
     };
     dispatch(createInvoice(data));
   };
+
+  React.useEffect(() => {
+    if (InvoiceState.isSuccess) {
+      dispatch(setSuccess());
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [InvoiceState]);
 
   const fields = [
     {

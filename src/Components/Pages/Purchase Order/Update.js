@@ -15,11 +15,16 @@ import {
   TitleWithDivider,
 } from '../../../layout';
 import BasicInput from '../../BasicInput';
-import {updatePurchaseOrder} from '../../../Redux/Slicer/Purchase Order';
+import {
+  clearSuccess,
+  updatePurchaseOrder,
+} from '../../../Redux/Slicer/Purchase Order';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {getSupplier} from '../../../Redux/Slicer/Supplier';
 import {getProduct} from '../../../Redux/Slicer/Product';
+import {setSuccess} from '../../../Redux/Slicer/AppState';
+import dayjs from 'dayjs';
 
 const defaultValues = {
   purchase_order_id: '',
@@ -34,6 +39,7 @@ const defaultValues = {
 const UpdatePurchaseOrder = () => {
   const [formValues, setFormValues] = useState(defaultValues);
   const [mount, setmount] = useState(false);
+  const PurchaseOrderState = useSelector((state) => state.PurchaseOrder);
   const dispatch = useDispatch();
   const {state} = useLocation();
   const navigate = useNavigate();
@@ -68,6 +74,19 @@ const UpdatePurchaseOrder = () => {
 
     };
   }, [mount]);
+
+  useEffect(() => {
+    if (PurchaseOrderState.isSuccess) {
+      dispatch(setSuccess());
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [PurchaseOrderState]);
 
   const getProductAndSupplier = async () => {
     await dispatch(getSupplier()).unwrap();
@@ -122,7 +141,8 @@ const UpdatePurchaseOrder = () => {
       id: formValues.purchase_order_id,
       qty: formValues.purchase_order_qty,
       sub_total: formValues.purchase_order_sub_total,
-      order_date: formValues.purchase_order_order_date,
+      // eslint-disable-next-line max-len
+      order_date: dayjs(formValues.purchase_order_order_date).format('YYYY-MM-DD'),
       unit_price: formValues.purchase_order_unit_price,
       product_id: formValues.purchase_order_product_id,
       user_id: UserData.id,

@@ -16,11 +16,15 @@ import {
 } from '../../../layout';
 import BasicInput from '../../BasicInput';
 import {useDispatch, useSelector} from 'react-redux';
-import {createPurchaseOrder} from '../../../Redux/Slicer/Purchase Order';
+import {
+  clearSuccess,
+  createPurchaseOrder,
+} from '../../../Redux/Slicer/Purchase Order';
 import dayjs from 'dayjs';
 import {isNumber} from '../../../helper';
 import {getProduct} from '../../../Redux/Slicer/Product';
 import {getSupplier} from '../../../Redux/Slicer/Supplier';
+import {setSuccess} from '../../../Redux/Slicer/AppState';
 
 const defaultValues = {
   purchase_order_qty: '',
@@ -37,6 +41,7 @@ const CreatePurchaseOrder = () => {
   const dispatch = useDispatch();
   const Supplier = useSelector((state) => state.Supplier);
   const AppState = useSelector((state) => state.AppState);
+  const PurchaseOrderState = useSelector((state) => state.PurchaseOrder);
   const SupplierData = Supplier.data?.data ?? [];
   const Product = useSelector((state) => state.Product);
   const ProductData = Product.data?.data ?? [];
@@ -85,6 +90,19 @@ const CreatePurchaseOrder = () => {
     };
     dispatch(createPurchaseOrder(data));
   };
+
+  React.useEffect(() => {
+    if (PurchaseOrderState.isSuccess) {
+      dispatch(setSuccess());
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [PurchaseOrderState]);
 
   const fields = [
     {

@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
-import {updateCategory} from '../../../Redux/Slicer/Category';
+import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {clearSuccess, updateCategory} from '../../../Redux/Slicer/Category';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -12,6 +13,7 @@ const defaultValues = {
 
 const UpdateProductCategory = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const ProductCategoryState = useSelector((state) => state.Category);
 
   const dispatch = useDispatch();
   const {state} = useLocation();
@@ -31,6 +33,19 @@ const UpdateProductCategory = () => {
 
     };
   }, []);
+
+  useEffect(() => {
+    if (ProductCategoryState.isSuccess) {
+      dispatch(setSuccess());
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [ProductCategoryState]);
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;

@@ -5,6 +5,7 @@ import {useNavigate} from 'react-router-dom';
 import BasicTable from '../../BasicTable';
 import {useDispatch, useSelector} from 'react-redux';
 import {
+  clearSuccess,
   deleteReceiveProduct,
   getReceiveProduct}
   from '../../../Redux/Slicer/Receive Product';
@@ -28,6 +29,7 @@ const ReceiveProduct = () => {
       initReceiveProduct();
       setMount(true);
     }
+    if (ReceiveProduct.isSuccess) dispatch(clearSuccess());
     return () => {
 
     };

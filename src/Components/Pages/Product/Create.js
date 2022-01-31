@@ -18,11 +18,12 @@ import {
   SubHeader,
   TitleWithDivider,
 } from '../../../layout';
-import {createProduct} from '../../../Redux/Slicer/Product';
+import {clearSuccess, createProduct} from '../../../Redux/Slicer/Product';
 import BasicInput from '../../BasicInput';
 import {isNumber} from '../../../helper';
 import {getProductUnit} from '../../../Redux/Slicer/Product Unit';
 import {getAllCategory} from '../../../Redux/Slicer/Category';
+import {setSuccess} from '../../../Redux/Slicer/AppState';
 
 const defaultValues = {
   product_code: '',
@@ -39,6 +40,7 @@ const defaultValues = {
 const CreateProduct = () => {
   const dispatch = useDispatch();
   const ProductUnit = useSelector((state) => state.ProductUnit);
+  const ProductState = useSelector((state) => state.Product);
   const ProductUnitData = ProductUnit.data?.data ?? [];
   const Category = useSelector((state) => state.Category);
   const CategoryData = Category.data?.data ?? [];
@@ -91,6 +93,18 @@ const CreateProduct = () => {
     };
     dispatch(createProduct(data));
   };
+
+  React.useEffect(() => {
+    if (ProductState.isSuccess) {
+      dispatch(setSuccess());
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+    return () => {
+
+    };
+  }, [ProductState]);
 
   const fields = [
     {

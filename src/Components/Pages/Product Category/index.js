@@ -4,7 +4,11 @@ import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import BasicTable from '../../BasicTable';
 import {useNavigate} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
-import {deleteCategory, getAllCategory} from '../../../Redux/Slicer/Category';
+import {
+  clearSuccess,
+  deleteCategory,
+  getAllCategory,
+} from '../../../Redux/Slicer/Category';
 import {columnsBuilder} from '../../../helper';
 import {
   closeConfirmDialog,
@@ -25,6 +29,7 @@ const ProductCategory = () => {
       initCategories();
       setMount(true);
     }
+    if (Category.isSuccess) dispatch(clearSuccess());
     return () => {
 
     };
