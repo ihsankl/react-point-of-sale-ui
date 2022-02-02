@@ -17,6 +17,7 @@ const BasicInput = ({isUpdate, fields, onSubmit, children}) => {
           return (
             <TextField
               autoFocus={index === 0}
+              type={field.type ?? null}
               error={field.error}
               key={index}
               id={field.id}

@@ -98,6 +98,8 @@ const CreateProduct = () => {
     if (ProductState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('product'));
+      dispatch(unsetMountPage('purchase_order'));
+      dispatch(unsetMountPage('receive_product'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);

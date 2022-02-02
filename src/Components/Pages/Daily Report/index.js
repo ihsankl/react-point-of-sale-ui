@@ -81,7 +81,7 @@ const DailyReport = () => {
     <>
       <PaperContainer elevation={3} square>
         <TitleWithDivider>Daily Report</TitleWithDivider>
-        {loading && (
+        {loading ? (
           <Box
             sx ={{
               display: 'flex',
@@ -93,7 +93,7 @@ const DailyReport = () => {
           >
             <CircularProgress sx={{width: '100%', height: '100%'}} />
           </Box>
-        )}
+        ):(
         <Box
           sx={{
             minHeight: '800px',
@@ -117,6 +117,7 @@ const DailyReport = () => {
             }}
           />
         </Box>
+        )}
         <h2>Total: {rupiahFormatter(total)}</h2>
         {/* eslint-disable-next-line max-len */}
       </PaperContainer>

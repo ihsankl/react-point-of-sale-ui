@@ -40,6 +40,7 @@ const UpdateProductCategory = () => {
     if (ProductUnitState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('unit'));
+      dispatch(unsetMountPage('product'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);

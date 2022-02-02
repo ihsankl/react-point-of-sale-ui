@@ -78,7 +78,7 @@ const UpdateProduct = () => {
     return () => {
 
     };
-  }, []);
+  }, [mount]);
 
   const getUnitAndCategory = async () => {
     await dispatch(getProductUnit()).unwrap();
@@ -120,6 +120,8 @@ const UpdateProduct = () => {
     if (ProductState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('product'));
+      dispatch(unsetMountPage('purchase_order'));
+      dispatch(unsetMountPage('receive_product'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);
@@ -155,7 +157,9 @@ const UpdateProduct = () => {
       onChange: handleInputChange,
       value: formValues.product_unit_in_stock,
       error: !isNumber(formValues.product_unit_in_stock),
-      helperText: isNumber(formValues.product_unit_in_stock) ?
+      type: 'number',
+      // eslint-disable-next-line max-len
+      helperText: isNumber(formValues.product_unit_in_stock) || formValues.product_unit_in_stock === 0?
       '' : 'Unit in Stock must be a number',
     },
     {
@@ -164,7 +168,9 @@ const UpdateProduct = () => {
       onChange: handleInputChange,
       value: formValues.product_disc_percentage,
       error: !isNumber(formValues.product_disc_percentage),
-      helperText: isNumber(formValues.product_disc_percentage) ?
+      type: 'number',
+      // eslint-disable-next-line max-len
+      helperText: isNumber(formValues.product_disc_percentage) || formValues.product_disc_percentage === 0?
       '' : 'Disc Percentage must be a number',
     },
     {
@@ -173,7 +179,9 @@ const UpdateProduct = () => {
       onChange: handleInputChange,
       value: formValues.product_unit_price,
       error: !isNumber(formValues.product_unit_price),
-      helperText: isNumber(formValues.product_unit_price) ?
+      type: 'number',
+      // eslint-disable-next-line max-len
+      helperText: isNumber(formValues.product_unit_price) || formValues.product_unit_price === 0?
       '' : 'Unit Price must be a number',
     },
     {

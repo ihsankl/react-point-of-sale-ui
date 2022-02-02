@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
 import {clearSuccess, createSupplier} from '../../../Redux/Slicer/Supplier';
@@ -29,7 +29,9 @@ const CreateSupplier = () => {
   React.useEffect(() => {
     if (SupplierState.isSuccess) {
       dispatch(setSuccess());
+      dispatch(unsetMountPage('supplier'));
       dispatch(unsetMountPage('receive_product'));
+      dispatch(unsetMountPage('purchase_order'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);

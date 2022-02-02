@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import {updateSupplier} from '../../../Redux/Slicer/Supplier';
@@ -16,6 +16,8 @@ const defaultValues = {
 
 const UpdateSupplier = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const mount = useSelector((state) => state.AppState.pageMount.supplier);
+  const SupplierState = useSelector((state) => state.Supplier);
   const dispatch = useDispatch();
   const {state} = useLocation();
   const navigate = useNavigate();
@@ -37,7 +39,23 @@ const UpdateSupplier = () => {
     return () => {
 
     };
-  }, []);
+  }, [mount]);
+
+  useEffect(() => {
+    if (SupplierState.isSuccess) {
+      dispatch(setSuccess());
+      dispatch(unsetMountPage('supplier'));
+      dispatch(unsetMountPage('purchase_order'));
+      dispatch(unsetMountPage('receive_product'));
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [SupplierState]);
 
   const handleSubmit = () => {
     const data = {
