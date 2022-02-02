@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
@@ -29,7 +29,7 @@ const CreateProductCategory = () => {
     dispatch(createCategory(data));
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ProductCategoryState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('category'));

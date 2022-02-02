@@ -149,7 +149,7 @@ const CreateSales = () => {
     setFormValues(value);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (SalesState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('sales'));

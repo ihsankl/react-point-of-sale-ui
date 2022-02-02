@@ -9,7 +9,7 @@ import {
   NativeSelect,
   TextField,
 } from '@mui/material';
-import React from 'react';
+import React, {Fragment, useState} from 'react';
 import {uuid} from '../../helper';
 import {FormContainer} from '../../layout';
 import PropTypes from 'prop-types';
@@ -26,8 +26,8 @@ const Filter = ({
   filter,
   ...props
 }) => {
-  const [filterLoading, setFilterLoading] = React.useState(false);
-  const [mount, setMount] = React.useState(false);
+  const [filterLoading, setFilterLoading] = useState(false);
+  const [mount, setMount] = useState(false);
 
   return (
     <PopupState variant="popover" popupId="demo-popup-menu">
@@ -45,7 +45,7 @@ const Filter = ({
           setMount(false);
         }
 
-        return (<React.Fragment>
+        return (<Fragment>
           <Button
             {...props}
             variant="text"
@@ -155,7 +155,7 @@ const Filter = ({
               </FormControl>
             </FormContainer>
           </Menu>
-        </React.Fragment>);
+        </Fragment>);
       }}
     </PopupState>
   );

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
@@ -32,7 +32,7 @@ const CreateProductUnit = () => {
     dispatch(createProductUnit(data));
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ProductUnitState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('unit'));

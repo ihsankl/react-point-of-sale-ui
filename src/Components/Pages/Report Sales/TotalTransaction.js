@@ -92,6 +92,9 @@ const TotalTransaction = ({...props}) => {
           }
           <Typography
             variant="body2"
+            color={data?.diffFromLastMonth > 0 ?
+              'success' : 'error'
+            }
             sx={{
               mr: 1,
             }}

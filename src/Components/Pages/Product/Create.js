@@ -94,7 +94,7 @@ const CreateProduct = () => {
     dispatch(createProduct(data));
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ProductState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('product'));

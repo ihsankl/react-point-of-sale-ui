@@ -1,7 +1,7 @@
 import {ViewColumn} from '@mui/icons-material';
 import {Button, Menu, Switch, TextField, Typography} from '@mui/material';
 import {Box} from '@mui/system';
-import React, {useState} from 'react';
+import React, {Fragment, useState} from 'react';
 import {uuid} from '../../helper';
 import PropTypes from 'prop-types';
 import PopupState, {bindMenu, bindTrigger} from 'material-ui-popup-state';
@@ -25,7 +25,7 @@ const ShowHideColumns = ({
     <PopupState variant="popover" popupId="demo-popup-menu">
       {(popupState) => {
         return (
-          <React.Fragment>
+          <Fragment>
             <Button
               variant="text"
               startIcon={<ViewColumn/>}
@@ -111,7 +111,7 @@ const ShowHideColumns = ({
                 </Button>
               </Box>
             </Menu>
-          </React.Fragment>
+          </Fragment>
         );
       }}
     </PopupState>

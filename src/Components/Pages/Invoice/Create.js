@@ -1,6 +1,6 @@
 import {DesktopDatePicker, LocalizationProvider} from '@mui/lab';
 import {TextField} from '@mui/material';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FormControlContainer,
   PaperContainer,
@@ -56,7 +56,7 @@ const CreateInvoice = () => {
     dispatch(createInvoice(data));
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (InvoiceState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('invoice'));

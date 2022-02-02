@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {isNumber} from '../../../helper';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
@@ -37,7 +37,7 @@ const CreateCustomer = () => {
     dispatch(createCustomer(data));
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (CustomerState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('customer'));

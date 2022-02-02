@@ -228,7 +228,7 @@ const UpdateReceiveProduct = () => {
                 id={'receive_product_user_id'}
                 label={'User'}
                 name={'receive_product_user_id'}
-                defaultValue={UserData.name}
+                defaultValue={UserData.username}
                 disabled
                 variant="outlined"
                 fullWidth

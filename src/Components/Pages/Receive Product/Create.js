@@ -29,7 +29,7 @@ import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
 const defaultValues = {
   receive_product_qty: '',
   receive_product_sub_total: '',
-  receive_product_receive_date: new Date(),
+  receive_product_received_date: new Date(),
   receive_product_unit_price: '',
   receive_product_product_id: '',
   receive_product_supplier_id: '',
@@ -48,7 +48,7 @@ const CreateReceiveProduct = () => {
   const UserData = AppState.userData;
 
   useEffect(() => {
-    if (!mount && !ReceiveProductState.data) {
+    if (!mount && !ProductData) {
       getProductAndSupplier();
       setmount(true);
     }
@@ -57,7 +57,7 @@ const CreateReceiveProduct = () => {
     };
   }, [mount]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ReceiveProductState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('receive_product'));
@@ -86,7 +86,7 @@ const CreateReceiveProduct = () => {
 
   const handleDateChange = (newValue) => {
     const value = {...formValues};
-    value.receive_product_receive_date = newValue;
+    value.receive_product_received_date = newValue;
     setFormValues(value);
   };
 
@@ -95,7 +95,7 @@ const CreateReceiveProduct = () => {
       qty: formValues.receive_product_qty,
       sub_total: formValues.receive_product_sub_total,
       // eslint-disable-next-line max-len
-      receive_date: dayjs(formValues.receive_product_receive_date).format('YYYY-MM-DD'),
+      received_date: dayjs(formValues.receive_product_received_date).format('YYYY-MM-DD'),
       unit_price: formValues.receive_product_unit_price,
       product_id: formValues.receive_product_product_id,
       user_id: UserData.id,
@@ -144,12 +144,12 @@ const CreateReceiveProduct = () => {
               <LocalizationProvider dateAdapter={DateAdapter}>
                 <DesktopDatePicker
                   label="Receive Date"
-                  labelId="receive_product_receive_date_label"
+                  labelId="receive_product_received_date_label"
                   inputFormat="YYYY-DD-MM"
-                  name="receive_product_receive_date"
+                  name="receive_product_received_date"
                   mask='____-__-__'
-                  id="receive_product_receive_date"
-                  value={formValues.receive_product_receive_date}
+                  id="receive_product_received_date"
+                  value={formValues.receive_product_received_date}
                   onChange={handleDateChange}
                   renderInput={(params) => <TextField {...params} />}
                 />

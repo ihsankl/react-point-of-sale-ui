@@ -2,7 +2,7 @@ import {CircularProgress} from '@mui/material';
 import {Box} from '@mui/system';
 import {DataGrid, GridToolbar} from '@mui/x-data-grid';
 import axios from 'axios';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {headersBuilder, rupiahFormatter} from '../../../helper';
 import {PaperContainer, TitleWithDivider} from '../../../layout';
 
@@ -33,14 +33,14 @@ const columns = [
 ];
 
 const DailyReport = () => {
-  const [data, setData] = React.useState([]);
-  const [pageSize, setPageSize] = React.useState(20);
+  const [data, setData] = useState([]);
+  const [pageSize, setPageSize] = useState(20);
   // eslint-disable-next-line no-unused-vars
-  const [loading, setLoading] = React.useState(false);
-  const [total, setTotal] = React.useState(0);
-  const [mounted, setMounted] = React.useState(false);
+  const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!mounted && data.length === 0) {
       getDailyReport();
       setMounted(true);

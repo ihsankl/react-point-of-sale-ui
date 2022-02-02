@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
@@ -26,7 +26,7 @@ const CreateSupplier = () => {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (SupplierState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('supplier'));

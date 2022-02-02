@@ -91,7 +91,7 @@ const CreatePurchaseOrder = () => {
     dispatch(createPurchaseOrder(data));
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (PurchaseOrderState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('purchase_order'));

@@ -114,7 +114,7 @@ export const columnsBuilder = (data, editCb, deleteCb) => {
         flex: 1,
         // hide every column containing id
         hide: property.includes('id') ? true : false,
-        valueGetter: (params)=> dateFormatter(params.row[property]),
+        valueGetter: (params)=> valueFormatter(params.row[property], property),
         renderCell: renderCellExpand,
       });
     }
@@ -154,12 +154,18 @@ export const columnsBuilder = (data, editCb, deleteCb) => {
   return columnsArr;
 };
 
-// look if the value string is following the date pattern
-// then change date value into YYYY-MM-DD format
-export const dateFormatter = (value) => {
+export const valueFormatter = (value, property) => {
+  // look if the value string is following the date pattern
+  // then change date value into YYYY-MM-DD format
   // example of date string = 2022-01-13T17:00:00.000Z
   const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
   if (pattern.test(value)) return dayjs(value).format('DD MMM, YYYY');
+  // if value is number, and is 4 digits or more, then format it using
+  // rupiah formatter
+  // if value starts with 08, then format it using phone number formatter
+  if (property === 'contact') return value;
+  // eslint-disable-next-line max-len
+  if (isNumber(value) && value.toString().length >= 4 && property !== 'code' && property !== 'contact') return rupiahFormatter(value);
   return value;
 };
 
