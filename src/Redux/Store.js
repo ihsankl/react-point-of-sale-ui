@@ -31,6 +31,7 @@ export default () => {
             ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
           },
         },
+        // if production remove logger
     ).concat(logger),
   });
 

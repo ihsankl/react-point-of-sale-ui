@@ -12,7 +12,7 @@ import ConfirmDialog from '../../ConfirmDialog';
 import {columnsBuilder} from '../../../helper';
 // eslint-disable-next-line max-len
 import {clearSuccess, deleteSales, getAllSales} from '../../../Redux/Slicer/Sales';
-import {unsetMountPage} from '../../../Redux/Slicer/AppState';
+import {setMountPage, unsetMountPage} from '../../../Redux/Slicer/AppState';
 
 const Sales = () => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const Sales = () => {
   const mount = useSelector((state) => state.AppState.pageMounted.sales);
   const SalesState = useSelector((state) => state.Sales);
   const SalesData = SalesState.data?.data ?? [];
-  const whichData = [];
+  let whichData = [];
 
   useEffect(() => {
     if (!mount && SalesData.length === 0) {

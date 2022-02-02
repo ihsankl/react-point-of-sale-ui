@@ -235,7 +235,7 @@ const Cashier = () => {
   // sum up the total
   // unit_price * sub_total
   const total = CashierData.reduce((acc, item) => {
-    return acc + (item.unit_price * item.sub_total);
+    return acc + (item.sub_total);
   }, 0);
 
   // count change

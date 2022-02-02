@@ -264,25 +264,15 @@ const UpdateProduct = () => {
               }
             </FormControlContainer>
             <FormControlContainer>
-              <InputLabel
-                id="product_user_id_label"
-              >
-                Product Uni
-              </InputLabel>
-              <Select
-                labelId="product_unit_id_label"
-                id="product_unit_id"
-                name="product_unit_id"
-                label="Product Unit"
-                value={formValues.product_unit_id}
-                onChange={handleInputChange}
-              >
-                {ProductUnitData.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {item.name}
-                  </MenuItem>
-                ))}
-              </Select>
+              <TextField
+                id={'product_user_id'}
+                label={'User'}
+                name={'product_user_id'}
+                defaultValue={UserData.username}
+                disabled
+                variant="outlined"
+                fullWidth
+              />
             </FormControlContainer>
           </BasicInput>
         </SubHeader>

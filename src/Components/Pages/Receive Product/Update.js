@@ -25,12 +25,13 @@ import {
   clearSuccess,
   updateReceiveProduct,
 } from '../../../Redux/Slicer/Receive Product';
+import dayjs from 'dayjs';
 
 const defaultValues = {
   receive_product_id: '',
   receive_product_qty: '',
   receive_product_sub_total: '',
-  receive_product_order_date: new Date(),
+  receive_product_received_date: new Date(),
   receive_product_unit_price: '',
   receive_product_product_id: '',
   receive_product_user_id: 1,
@@ -57,7 +58,7 @@ const UpdateReceiveProduct = () => {
         receive_product_id: state.data[0].id,
         receive_product_qty: state.data[0].qty,
         receive_product_sub_total: state.data[0].sub_total,
-        receive_product_order_date: state.data[0].order_date,
+        receive_product_received_date: state.data[0].received_date,
         receive_product_unit_price: state.data[0].unit_price,
         receive_product_product_id: state.data[0].product_id,
         receive_product_user_id: state.data[0].user_id,
@@ -105,7 +106,7 @@ const UpdateReceiveProduct = () => {
 
   const handleDateChange = (newValue) => {
     const value = {...formValues};
-    value.receive_product_order_date = newValue;
+    value.receive_product_received_date = newValue;
     setFormValues(value);
   };
 
@@ -144,7 +145,8 @@ const UpdateReceiveProduct = () => {
       id: formValues.receive_product_id,
       qty: formValues.receive_product_qty,
       sub_total: formValues.receive_product_sub_total,
-      order_date: formValues.receive_product_order_date,
+      // eslint-disable-next-line max-len
+      received_date: dayjs(formValues.receive_product_received_date).format('YYYY-MM-DD'),
       unit_price: formValues.receive_product_unit_price,
       product_id: formValues.receive_product_product_id,
       user_id: UserData.id,
@@ -163,12 +165,12 @@ const UpdateReceiveProduct = () => {
               <LocalizationProvider dateAdapter={DateAdapter}>
                 <DesktopDatePicker
                   label="Order Date"
-                  labelId="receive_product_order_date_label"
+                  labelId="receive_product_received_date_label"
                   inputFormat="YYYY-MM-DD"
                   mask='____-__-__'
-                  name="receive_product_order_date"
-                  id="receive_product_order_date"
-                  value={formValues.receive_product_order_date}
+                  name="receive_product_received_date"
+                  id="receive_product_received_date"
+                  value={formValues.receive_product_received_date}
                   onChange={handleDateChange}
                   renderInput={(params) => <TextField {...params} />}
                 />
