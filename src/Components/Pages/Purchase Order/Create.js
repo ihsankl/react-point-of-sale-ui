@@ -24,7 +24,7 @@ import dayjs from 'dayjs';
 import {isNumber} from '../../../helper';
 import {getProduct} from '../../../Redux/Slicer/Product';
 import {getSupplier} from '../../../Redux/Slicer/Supplier';
-import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
 
 const defaultValues = {
   purchase_order_qty: '',
@@ -48,7 +48,7 @@ const CreatePurchaseOrder = () => {
   const UserData = AppState.userData;
 
   useEffect(() => {
-    if (!mount) {
+    if (!mount && !PurchaseOrderState.data) {
       getProductAndSupplier();
       setmount(true);
     }
@@ -94,6 +94,7 @@ const CreatePurchaseOrder = () => {
   React.useEffect(() => {
     if (PurchaseOrderState.isSuccess) {
       dispatch(setSuccess());
+      dispatch(unsetMountPage('purchase_order'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);

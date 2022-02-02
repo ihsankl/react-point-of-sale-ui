@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import {Button} from '@mui/material';
 import BasicTable from '../../BasicTable';
@@ -10,25 +10,32 @@ import {
 } from '../../../Redux/Slicer/ConfirmDialog';
 import ConfirmDialog from '../../ConfirmDialog';
 import {columnsBuilder} from '../../../helper';
-import {deleteSales, getAllSales} from '../../../Redux/Slicer/Sales';
+// eslint-disable-next-line max-len
+import {clearSuccess, deleteSales, getAllSales} from '../../../Redux/Slicer/Sales';
+import {unsetMountPage} from '../../../Redux/Slicer/AppState';
 
 const Sales = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [mount, setMount] = useState(false);
+  const mount = useSelector((state) => state.AppState.pageMounted.sales);
   const SalesState = useSelector((state) => state.Sales);
   const SalesData = SalesState.data?.data ?? [];
   const whichData = [];
 
   useEffect(() => {
-    if (!mount) {
+    if (!mount && SalesData.length === 0) {
       initSales();
-      setMount(true);
+      dispatch(setMountPage('sales'));
     }
+
+    if (SalesState.isSuccess) {
+      dispatch(clearSuccess());
+    }
+
     return () => {
 
     };
-  }, [SalesData, mount]);
+  }, [SalesData, mount, SalesState]);
 
   const initSales = async () => {
     await dispatch(getAllSales()).unwrap();
@@ -72,7 +79,7 @@ const Sales = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deleteSales(whichData));
-          setMount(false);
+          dispatch(unsetMountPage('sales'));
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {

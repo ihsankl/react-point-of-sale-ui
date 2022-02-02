@@ -1,5 +1,5 @@
 import {Button} from '@mui/material';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import {useNavigate} from 'react-router-dom';
 import BasicTable from '../../BasicTable';
@@ -15,21 +15,27 @@ import {
   openConfirmDialog,
 } from '../../../Redux/Slicer/ConfirmDialog';
 import ConfirmDialog from '../../ConfirmDialog';
+import {setMountPage, unsetMountPage} from '../../../Redux/Slicer/AppState';
 
 const ReceiveProduct = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [mount, setMount] = useState(false);
+  // eslint-disable-next-line max-len
+  const mount = useSelector((state) => state.AppState.pageMounted.receive_product);
   const ReceiveProduct = useSelector((state) => state.ReceiveProduct);
   const ReceiveProductData = ReceiveProduct.data?.data ?? [];
   let whichData = [];
 
   useEffect(() => {
-    if (!mount) {
+    if (!mount && ReceiveProductData.length === 0) {
       initReceiveProduct();
-      setMount(true);
+      dispatch(setMountPage('receive_product'));
     }
-    if (ReceiveProduct.isSuccess) dispatch(clearSuccess());
+
+    if (ReceiveProduct.isSuccess) {
+      dispatch(clearSuccess());
+    }
+
     return () => {
 
     };
@@ -76,7 +82,7 @@ const ReceiveProduct = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deleteReceiveProduct(whichData));
-          setMount(false);
+          dispatch(unsetMountPage('receive_product'));
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {

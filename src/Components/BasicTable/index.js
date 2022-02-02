@@ -1,6 +1,7 @@
 import {DataGrid, GridToolbar} from '@mui/x-data-grid';
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
+import {Box} from '@mui/material';
 
 const columns = [
   {field: 'id', headerName: 'ID', width: 90},
@@ -66,7 +67,13 @@ const rows = [
 const BasicTable = ({dataRows = rows, dataColumns = columns}) => {
   const [pageSize, setPageSize] = useState(20);
   return (
-    <div style={{height: 'calc(100vh - 15.5em)'}}>
+    <Box
+      sx={{
+        minHeight: '800px',
+        maxHeight: '1000px',
+        height: 'calc(100vh - 200px)',
+      }}
+    >
       <DataGrid
         sx={{minWidth: '500px'}}
         components={{Toolbar: GridToolbar}}
@@ -82,7 +89,7 @@ const BasicTable = ({dataRows = rows, dataColumns = columns}) => {
           console.log(row); console.log('onRowEditCommit');
         }}
       />
-    </div>
+    </Box>
   );
 };
 

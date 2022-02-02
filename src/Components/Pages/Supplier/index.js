@@ -1,30 +1,37 @@
 import {Button} from '@mui/material';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import BasicTable from '../../BasicTable';
 import {useNavigate} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {columnsBuilder} from '../../../helper';
-import {deleteSupplier, getSupplier} from '../../../Redux/Slicer/Supplier';
+// eslint-disable-next-line max-len
+import {clearSuccess, deleteSupplier, getSupplier} from '../../../Redux/Slicer/Supplier';
 import {
   closeConfirmDialog,
   openConfirmDialog,
 } from '../../../Redux/Slicer/ConfirmDialog';
 import ConfirmDialog from '../../ConfirmDialog';
+import {setMountPage, unsetMountPage} from '../../../Redux/Slicer/AppState';
 
 const Supplier = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [mount, setMount] = useState(false);
+  const mount = useSelector((state) => state.AppState.pageMounted.supplier);
   const Supplier = useSelector((state) => state.Supplier);
   const SupplierData = Supplier.data?.data ?? [];
   let whichData = [];
 
   useEffect(() => {
-    if (!mount) {
+    if (!mount && SupplierData.length === 0) {
       initSupplier();
-      setMount(true);
+      dispatch(setMountPage('supplier'));
     }
+
+    if (Supplier.isSuccess) {
+      dispatch(clearSuccess());
+    }
+
     return () => {
 
     };
@@ -72,7 +79,7 @@ const Supplier = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deleteSupplier(whichData));
-          setMount(false);
+          dispatch(unsetMountPage('supplier'));
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {

@@ -16,6 +16,7 @@ const BasicInput = ({isUpdate, fields, onSubmit, children}) => {
         {fields.map((field, index) => {
           return (
             <TextField
+              autoFocus={index === 0}
               error={field.error}
               key={index}
               id={field.id}
@@ -26,6 +27,13 @@ const BasicInput = ({isUpdate, fields, onSubmit, children}) => {
               fullWidth
               onChange={field.onChange}
               helperText={field.helperText}
+              onKeyPress={(e) => {
+                if (field.id === 'product_code') {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                  }
+                }
+              }}
             />
           );
         })}

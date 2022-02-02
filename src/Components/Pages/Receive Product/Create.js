@@ -24,7 +24,7 @@ import dayjs from 'dayjs';
 import {isNumber} from '../../../helper';
 import {getProduct} from '../../../Redux/Slicer/Product';
 import {getSupplier} from '../../../Redux/Slicer/Supplier';
-import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
 
 const defaultValues = {
   receive_product_qty: '',
@@ -48,7 +48,7 @@ const CreateReceiveProduct = () => {
   const UserData = AppState.userData;
 
   useEffect(() => {
-    if (!mount) {
+    if (!mount && !ReceiveProductState.data) {
       getProductAndSupplier();
       setmount(true);
     }
@@ -60,6 +60,7 @@ const CreateReceiveProduct = () => {
   React.useEffect(() => {
     if (ReceiveProductState.isSuccess) {
       dispatch(setSuccess());
+      dispatch(unsetMountPage('receive_product'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);

@@ -12,6 +12,7 @@ import {
   Category,
   ListAlt,
   Article,
+  Summarize,
 } from '@mui/icons-material';
 import {capitalize} from '../helper';
 import {useLocation, useNavigate} from 'react-router-dom';
@@ -90,6 +91,7 @@ const SidebarMenu = () => {
       </ListItem>
 
       <ListItem
+        disabled
         button
         sx={(theme)=> contrastButton(theme, '/sales')}
         onClick={() => navigate('/sales')}
@@ -206,6 +208,21 @@ const SidebarMenu = () => {
         <ListItemText
           sx={(theme)=> contrastIcon(theme, '/report_sales')}
           primary={capitalize('report_sales')} />
+      </ListItem>
+
+      <ListItem
+        button
+        sx={(theme)=> contrastButton(theme, '/daily_report')}
+        onClick={() => navigate('/daily_report')}
+      >
+        <ListItemIcon>
+          <Summarize
+            sx={(theme)=> contrastIcon(theme, '/daily_report')}
+          />
+        </ListItemIcon>
+        <ListItemText
+          sx={(theme)=> contrastIcon(theme, '/daily_report')}
+          primary={capitalize('daily_report')} />
       </ListItem>
 
     </>

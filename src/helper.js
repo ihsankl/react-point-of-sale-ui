@@ -159,7 +159,7 @@ export const columnsBuilder = (data, editCb, deleteCb) => {
 export const dateFormatter = (value) => {
   // example of date string = 2022-01-13T17:00:00.000Z
   const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
-  if (pattern.test(value)) return dayjs(value).format('YYYY-MM-DD');
+  if (pattern.test(value)) return dayjs(value).format('DD MMM, YYYY');
   return value;
 };
 

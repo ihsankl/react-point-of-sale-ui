@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
-import {createSupplier} from '../../../Redux/Slicer/Supplier';
+import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
+import {clearSuccess, createSupplier} from '../../../Redux/Slicer/Supplier';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -15,6 +16,7 @@ const defaultValues = {
 const CreateSupplier = () => {
   const dispatch = useDispatch();
   const [formValues, setFormValues] = useState(defaultValues);
+  const SupplierState = useSelector((state) => state.Supplier);
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -23,6 +25,20 @@ const CreateSupplier = () => {
       [name]: value,
     });
   };
+
+  React.useEffect(() => {
+    if (SupplierState.isSuccess) {
+      dispatch(setSuccess());
+      dispatch(unsetMountPage('receive_product'));
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [SupplierState]);
 
   const fields = [
     {

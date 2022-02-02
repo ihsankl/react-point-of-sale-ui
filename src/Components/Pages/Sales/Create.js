@@ -8,8 +8,9 @@ import {
   TitleWithDivider,
   FormControlContainer,
 } from '../../../layout';
+import {unsetMountPage} from '../../../Redux/Slicer/AppState';
 import {getProduct} from '../../../Redux/Slicer/Product';
-import {createSales} from '../../../Redux/Slicer/Sales';
+import {clearSuccess, createSales} from '../../../Redux/Slicer/Sales';
 import BasicInput from '../../BasicInput';
 
 const defaultValues = {
@@ -22,12 +23,13 @@ const defaultValues = {
 const CreateSales = () => {
   const dispatch = useDispatch();
   const ProductState = useSelector((state) => state.Product);
+  const SalesState = useSelector((state) => state.Sales);
   const ProductStateData = ProductState.data?.data ?? [];
   const [formValues, setFormValues] = useState(defaultValues);
   const [mount, setmount] = useState(false);
 
   useEffect(() => {
-    if (!mount) {
+    if (!mount && !ProductStateData.length) {
       initProduct();
       setmount(true);
     }
@@ -48,6 +50,20 @@ const CreateSales = () => {
       [name]: value,
     });
   };
+
+  React.useEffect(() => {
+    if (SalesState.isSuccess) {
+      dispatch(setSuccess());
+      dispatch(unsetMountPage('sales'));
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [SalesState]);
 
   const fields = [
     {

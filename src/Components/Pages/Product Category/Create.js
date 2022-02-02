@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
-import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
 import {clearSuccess, createCategory} from '../../../Redux/Slicer/Category';
 import BasicInput from '../../BasicInput';
 
@@ -32,6 +32,7 @@ const CreateProductCategory = () => {
   React.useEffect(() => {
     if (ProductCategoryState.isSuccess) {
       dispatch(setSuccess());
+      dispatch(unsetMountPage('category'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);

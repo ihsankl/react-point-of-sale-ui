@@ -3,25 +3,21 @@ import {createSlice} from '@reduxjs/toolkit';
 const appStateSlice = createSlice({
   name: 'appState',
   initialState: {
-    mounted: false,
-    mountedWithToken: false,
     username: null,
     userData: null,
     isSuccess: false,
+    pageMounted: {
+      customer: false,
+      invoice: false,
+      product: false,
+      category: false,
+      unit: false,
+      purchase_order: false,
+      receive_product: false,
+      supplier: false,
+    },
   },
   reducers: {
-    mountApp: (state, action) => {
-      state.mounted = true;
-    },
-    unmountApp: (state, action) => {
-      state.mounted = false;
-    },
-    mountAppWithToken: (state, action) => {
-      state.mountedWithToken = true;
-    },
-    unmountAppWithToken: (state, action) => {
-      state.mountedWithToken = false;
-    },
     setusername: (state, action) => {
       state.username = action.payload;
     },
@@ -40,20 +36,23 @@ const appStateSlice = createSlice({
     unsetSuccess: (state, action) => {
       state.isSuccess = false;
     },
-
+    setMountPage: (state, action) => {
+      state.pageMounted[action.payload] = true;
+    },
+    unsetMountPage: (state, action) => {
+      state.pageMounted[action.payload] = false;
+    },
   },
 });
 
 export const {
-  mountApp,
-  unmountApp,
-  mountAppWithToken,
-  unmountAppWithToken,
   setusername,
   unsetUsername,
   setUserData,
   unsetUserData,
   setSuccess,
   unsetSuccess,
+  setMountPage,
+  unsetMountPage,
 } = appStateSlice.actions;
 export default appStateSlice.reducer;

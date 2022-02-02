@@ -6,18 +6,11 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import 'handsontable/dist/handsontable.full.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import storage from './Redux/Store';
-import {registerAllModules} from 'handsontable/registry';
-import {registerPlugin, ExportFile, BasePlugin} from 'handsontable/plugins';
-
-// register Handsontable's modules
-registerAllModules();
-registerPlugin(ExportFile, BasePlugin);
 
 const {Store, Persistor} = storage();
 

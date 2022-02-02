@@ -23,7 +23,7 @@ import DateAdapter from '@mui/lab/AdapterDayjs';
 import {isNumber} from '../../../helper';
 import {getAllCategory} from '../../../Redux/Slicer/Category';
 import {getProductUnit} from '../../../Redux/Slicer/Product Unit';
-import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
 
 const defaultValues = {
   product_id: '',
@@ -119,6 +119,7 @@ const UpdateProduct = () => {
   useEffect(() => {
     if (ProductState.isSuccess) {
       dispatch(setSuccess());
+      dispatch(unsetMountPage('product'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);

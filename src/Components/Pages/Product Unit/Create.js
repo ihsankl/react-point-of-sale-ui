@@ -35,6 +35,7 @@ const CreateProductUnit = () => {
   React.useEffect(() => {
     if (ProductUnitState.isSuccess) {
       dispatch(setSuccess());
+      dispatch(unsetMountPage('unit'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);

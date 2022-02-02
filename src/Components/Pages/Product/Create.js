@@ -23,7 +23,7 @@ import BasicInput from '../../BasicInput';
 import {isNumber} from '../../../helper';
 import {getProductUnit} from '../../../Redux/Slicer/Product Unit';
 import {getAllCategory} from '../../../Redux/Slicer/Category';
-import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
 
 const defaultValues = {
   product_code: '',
@@ -50,7 +50,7 @@ const CreateProduct = () => {
   const [formValues, setFormValues] = useState(defaultValues);
 
   useEffect(() => {
-    if (!mount) {
+    if (!mount && ProductUnitData.length === 0 && CategoryData.length === 0) {
       getUnitAndCategory();
       setMount(true);
     }
@@ -97,6 +97,7 @@ const CreateProduct = () => {
   React.useEffect(() => {
     if (ProductState.isSuccess) {
       dispatch(setSuccess());
+      dispatch(unsetMountPage('product'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);

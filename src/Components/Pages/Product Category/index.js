@@ -1,5 +1,5 @@
 import {Button} from '@mui/material';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import BasicTable from '../../BasicTable';
 import {useNavigate} from 'react-router-dom';
@@ -15,21 +15,25 @@ import {
   openConfirmDialog,
 } from '../../../Redux/Slicer/ConfirmDialog';
 import ConfirmDialog from '../../ConfirmDialog';
+import {setMountPage, unsetMountPage} from '../../../Redux/Slicer/AppState';
 
 const ProductCategory = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [mount, setMount] = useState(false);
+  const mount = useSelector((state) => state.AppState.pageMounted.category);
   const Category = useSelector((state) => state.Category);
   const CategoryData = Category.data?.data ?? [];
   let whichData = [];
 
   useEffect(() => {
-    if (!mount) {
+    if (!mount && CategoryData.length === 0) {
       initCategories();
-      setMount(true);
+      dispatch(setMountPage('category'));
     }
-    if (Category.isSuccess) dispatch(clearSuccess());
+    if (Category.isSuccess) {
+      dispatch(clearSuccess());
+    }
+
     return () => {
 
     };
@@ -76,7 +80,7 @@ const ProductCategory = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deleteCategory(whichData));
-          setMount(false);
+          dispatch(unsetMountPage('category'));
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {

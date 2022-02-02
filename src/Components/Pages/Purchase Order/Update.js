@@ -23,7 +23,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {getSupplier} from '../../../Redux/Slicer/Supplier';
 import {getProduct} from '../../../Redux/Slicer/Product';
-import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
 import dayjs from 'dayjs';
 
 const defaultValues = {
@@ -78,6 +78,7 @@ const UpdatePurchaseOrder = () => {
   useEffect(() => {
     if (PurchaseOrderState.isSuccess) {
       dispatch(setSuccess());
+      dispatch(unsetMountPage('purchase_order'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);

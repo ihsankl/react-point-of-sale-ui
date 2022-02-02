@@ -9,6 +9,7 @@ import {
   TitleWithDivider,
   FormControlContainer,
 } from '../../../layout';
+import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
 import {getProduct} from '../../../Redux/Slicer/Product';
 import {updateSales} from '../../../Redux/Slicer/Sales';
 import BasicInput from '../../BasicInput';
@@ -29,6 +30,7 @@ const UpdateSales = () => {
   const {state} = useLocation();
   const navigate = useNavigate();
   const InvoiceState = useSelector((state) => state.Invoice);
+  const SalesState = useSelector((state) => state.Sales);
   const ProductState = useSelector((state) => state.Product);
   const InvoiceStateData = InvoiceState.data?.data ?? [];
   const ProductStateData = ProductState.data?.data ?? [];
@@ -54,11 +56,25 @@ const UpdateSales = () => {
     return () => {
 
     };
-  }, []);
+  }, [mount]);
 
   const initProduct = async () => {
     await dispatch(getProduct()).unwrap();
   };
+
+  useEffect(() => {
+    if (SalesState.isSuccess) {
+      dispatch(setSuccess());
+      dispatch(unsetMountPage('sales'));
+      setTimeout(() => {
+        dispatch(clearSuccess());
+      }, 5000);
+    }
+
+    return () => {
+
+    };
+  }, [SalesState]);
 
   const handleSubmit = () => {
     const data = {

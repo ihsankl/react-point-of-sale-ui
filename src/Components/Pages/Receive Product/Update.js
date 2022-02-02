@@ -20,7 +20,7 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import {isNumber} from '../../../helper';
 import {getProduct} from '../../../Redux/Slicer/Product';
 import {getSupplier} from '../../../Redux/Slicer/Supplier';
-import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
 import {
   clearSuccess,
   updateReceiveProduct,
@@ -79,6 +79,7 @@ const UpdateReceiveProduct = () => {
   useEffect(() => {
     if (ReceiveProductState.isSuccess) {
       dispatch(setSuccess());
+      dispatch(unsetMountPage('receive_product'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);

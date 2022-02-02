@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {isNumber} from '../../../helper';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
-import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
 import {clearSuccess, createCustomer} from '../../../Redux/Slicer/Customer';
 import BasicInput from '../../BasicInput';
 
@@ -40,6 +40,7 @@ const CreateCustomer = () => {
   React.useEffect(() => {
     if (CustomerState.isSuccess) {
       dispatch(setSuccess());
+      dispatch(unsetMountPage('customer'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);

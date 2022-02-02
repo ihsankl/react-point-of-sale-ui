@@ -64,8 +64,14 @@ import ReportSales from './Components/Pages/Report Sales';
 // redux thing
 import {useDispatch, useSelector} from 'react-redux';
 import {checkToken, clearToken} from './Redux/Slicer/Authentication';
-import {setSuccess, setUserData} from './Redux/Slicer/AppState';
+import {
+  setSuccess,
+  setUserData,
+  unsetUserData,
+  unsetUsername,
+} from './Redux/Slicer/AppState';
 import {clearSuccess as clearAuth} from './Redux/Slicer/Authentication';
+import DailyReport from './Components/Pages/Daily Report';
 
 const App = ()=> {
   const [mounted, setMounted] = useState(false);
@@ -101,6 +107,11 @@ const App = ()=> {
       setTimeout(() => {
         dispatch(clearAuth());
       }, 5000);
+    }
+
+    if (!auth) {
+      dispatch(unsetUsername());
+      dispatch(unsetUserData());
     }
 
     return () => {
@@ -263,6 +274,11 @@ const App = ()=> {
           {/* report sales routes */}
           <Route path="/report_sales" element={<RequiredAuth>
             <ReportSales/>
+          </RequiredAuth>}/>
+
+          {/* daily report routes */}
+          <Route path="/daily_report" element={<RequiredAuth>
+            <DailyReport/>
           </RequiredAuth>}/>
 
           {/* login */}

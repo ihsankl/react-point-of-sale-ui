@@ -1,5 +1,5 @@
 import {Button} from '@mui/material';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import {useNavigate} from 'react-router-dom';
 import BasicTable from '../../BasicTable';
@@ -15,21 +15,27 @@ import {
   closeConfirmDialog,
   openConfirmDialog,
 } from '../../../Redux/Slicer/ConfirmDialog';
+import {setMountPage, unsetMountPage} from '../../../Redux/Slicer/AppState';
 
 const PurchaseOrder = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [mount, setMount] = useState(false);
+  // eslint-disable-next-line max-len
+  const mount = useSelector((state) => state.AppState.pageMounted.purchase_order);
   const PurchaseOrder = useSelector((state) => state.PurchaseOrder);
   const PurchaseOrderData = PurchaseOrder.data?.data ?? [];
   let whichData = [];
 
   useEffect(() => {
-    if (!mount) {
+    if (!mount && PurchaseOrderData.length === 0) {
       initPurchaseOrder();
-      setMount(true);
+      dispatch(setMountPage('purchase_order'));
     }
-    if (PurchaseOrder.isSuccess) dispatch(clearSuccess());
+
+    if (PurchaseOrder.isSuccess) {
+      dispatch(clearSuccess());
+    }
+
     return () => {
 
     };
@@ -76,7 +82,7 @@ const PurchaseOrder = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deletePurchaseOrder(whichData));
-          setMount(false);
+          dispatch(unsetMountPage('purchase_order'));
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {

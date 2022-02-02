@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {clearSuccess, createInvoice} from '../../../Redux/Slicer/Invoice';
 import dayjs from 'dayjs';
 import {isNumber} from '../../../helper';
-import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
 
 const defaultValues = {
   invoice_total_amount: '',
@@ -59,6 +59,7 @@ const CreateInvoice = () => {
   React.useEffect(() => {
     if (InvoiceState.isSuccess) {
       dispatch(setSuccess());
+      dispatch(unsetMountPage('invoice'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);

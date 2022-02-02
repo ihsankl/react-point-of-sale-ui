@@ -1,5 +1,5 @@
 import {Button} from '@mui/material';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
 import {useNavigate} from 'react-router-dom';
 import BasicTable from '../../BasicTable';
@@ -15,22 +15,25 @@ import {
   closeConfirmDialog,
   openConfirmDialog,
 } from '../../../Redux/Slicer/ConfirmDialog';
+import {setMountPage, unsetMountPage} from '../../../Redux/Slicer/AppState';
 
 const Invoice = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [mount, setMount] = useState(false);
   const Invoice = useSelector((state) => state.Invoice);
+  const mount = useSelector((state) => state.AppState.pageMounted.invoice);
   const InvoiceData = Invoice.data?.data ?? [];
   let whichData = [];
 
   useEffect(() => {
-    if (!mount) {
+    if (!mount && InvoiceData.length === 0) {
       initInvoice();
-      setMount(true);
+      dispatch(setMountPage('invoice'));
     }
 
-    if (Invoice.isSuccess) dispatch(clearSuccess());
+    if (Invoice.isSuccess) {
+      dispatch(clearSuccess());
+    }
 
     return () => {
 
@@ -79,7 +82,7 @@ const Invoice = () => {
       <ConfirmDialog
         onConfirm={() => {
           dispatch(deleteInvoice(whichData));
-          setMount(false);
+          dispatch(unsetMountPage('invoice'));
           dispatch(closeConfirmDialog());
         }}
         onCancel={() => {

@@ -37,6 +37,7 @@ const UpdateProductCategory = () => {
   useEffect(() => {
     if (ProductCategoryState.isSuccess) {
       dispatch(setSuccess());
+      dispatch(unsetMountPage('category'));
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);
