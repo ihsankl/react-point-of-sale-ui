@@ -50,8 +50,8 @@ const Budget = ({...props}) => {
       {loading ?
       <Box
         sx={{
-          height: '100%',
           width: '100%',
+          minHeight: '134.078px',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',

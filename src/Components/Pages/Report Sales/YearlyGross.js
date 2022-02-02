@@ -87,10 +87,10 @@ const YearlyGross = ({tablePage, ...props}) => {
   };
 
   const renderCell = (data) => {
-    const x = [];
+    const temp = [];
     for (const key in data) {
       if (Object.prototype.hasOwnProperty.call(data, key)) {
-        x.push(
+        temp.push(
             <TableRow
               key={uuid()}
               hover
@@ -109,7 +109,7 @@ const YearlyGross = ({tablePage, ...props}) => {
         );
       }
     }
-    return x;
+    return temp;
   };
 
   return (
@@ -119,7 +119,7 @@ const YearlyGross = ({tablePage, ...props}) => {
       {loading ?
       <Box
         sx={{
-          height: '100%',
+          minHeight: '785.578px',
           width: '100%',
           display: 'flex',
           justifyContent: 'center',

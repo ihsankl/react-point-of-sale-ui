@@ -46,7 +46,7 @@ const TotalProfit = ({...props}) => {
       {loading ?
       <Box
         sx={{
-          height: '100%',
+          minHeight: '134.078px',
           width: '100%',
           display: 'flex',
           justifyContent: 'center',
