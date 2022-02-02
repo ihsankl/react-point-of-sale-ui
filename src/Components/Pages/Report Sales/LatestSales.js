@@ -16,14 +16,13 @@ import {Bar} from 'react-chartjs-2';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import {headersBuilder, uncapitalize} from '../../../helper';
+import PopupState, {bindMenu, bindTrigger} from 'material-ui-popup-state';
 
 const LatestSales = ({...props}) => {
   const theme = useTheme();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [anchorEl, setAchorEl] = useState(null);
   const [toggle, setToggle] = useState('7 Days');
-  const open = Boolean(anchorEl);
 
   const getData = async () => {
     try {
@@ -49,12 +48,8 @@ const LatestSales = ({...props}) => {
     };
   }, [toggle]);
 
-  const handleClick = (event) => {
-    setAchorEl(event.currentTarget);
-  };
   const handleToggle = (toggle) => {
     setToggle(toggle);
-    setAchorEl(null);
   };
 
   const dataTable = {
@@ -136,35 +131,49 @@ const LatestSales = ({...props}) => {
     <Card sx={{height: '100%'}} elevation={3} {...props}>
       <CardHeader
         action={(
-          <>
-            <Button
-              disabled={loading}
-              endIcon={<ArrowDropDown fontSize="small" />}
-              size="small"
-              onClick={handleClick}
-            >
-                  Last {toggle}
-            </Button>
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleToggle}
-              MenuListProps={{
-                'aria-labelledby': 'basic-button',
-              }}
-            >
-              <MenuItem onClick={()=> handleToggle('7 Days')}>
-                    Last 7 days
-              </MenuItem>
-              <MenuItem onClick={()=> handleToggle('30 Days')}>
-                    Last 30 days
-              </MenuItem>
-              <MenuItem onClick={()=> handleToggle('90 Days')}>
-                    Last 90 days
-              </MenuItem>
-            </Menu>
-          </>
+          <PopupState variant="popover" popupId="demo-popup-menu">
+            {(popupState) => {
+              return (
+                <>
+                  <Button
+                    disabled={loading}
+                    endIcon={<ArrowDropDown fontSize="small" />}
+                    size="small"
+                    {...bindTrigger(popupState)}
+                  >
+                    Last {toggle}
+                  </Button>
+                  <Menu
+                    id="basic-menu"
+                    {...bindMenu(popupState)}
+                    onClose={popupState.close}
+                    MenuListProps={{
+                      'aria-labelledby': 'basic-button',
+                    }}
+                  >
+                    <MenuItem onClick={()=> {
+                      handleToggle('7 Days');
+                      popupState.close();
+                    }}>
+                      Last 7 days
+                    </MenuItem>
+                    <MenuItem onClick={()=> {
+                      handleToggle('30 Days');
+                      popupState.close();
+                    }}>
+                      Last 30 days
+                    </MenuItem>
+                    <MenuItem onClick={()=> {
+                      handleToggle('90 Days');
+                      popupState.close();
+                    }}>
+                      Last 90 days
+                    </MenuItem>
+                  </Menu>
+                </>
+              );
+            }}
+          </PopupState>
         )}
         title="Latest Sales"
       />
