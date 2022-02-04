@@ -1,10 +1,17 @@
-import {CircularProgress} from '@mui/material';
+import {DesktopDatePicker, LocalizationProvider} from '@mui/lab';
+import {Button, CircularProgress, TextField} from '@mui/material';
 import {Box} from '@mui/system';
 import {DataGrid, GridToolbar} from '@mui/x-data-grid';
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {headersBuilder, rupiahFormatter} from '../../../helper';
-import {PaperContainer, TitleWithDivider} from '../../../layout';
+import {
+  FormControlContainer,
+  PaperContainer,
+  TitleWithDivider,
+} from '../../../layout';
+import DateAdapter from '@mui/lab/AdapterDayjs';
+import dayjs from 'dayjs';
 
 const columns = [
   {
@@ -36,10 +43,10 @@ const columns = [
 const DailyReport = () => {
   const [data, setData] = useState([]);
   const [pageSize, setPageSize] = useState(20);
-  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [date, setDate] = useState(new Date());
 
   useEffect(() => {
     if (!mounted && data.length === 0) {
@@ -54,9 +61,10 @@ const DailyReport = () => {
 
   const getDailyReport = async () => {
     try {
+      const formattedDate = dayjs(date).format('YYYY-MM-DD');
       setLoading(true);
       // eslint-disable-next-line max-len
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/reports/daily`, {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/reports/daily?date=${formattedDate}`, {
         ...headersBuilder(),
       });
       if (res) {
@@ -100,8 +108,57 @@ const DailyReport = () => {
             minHeight: '800px',
             maxHeight: '1000px',
             height: 'calc(100vh - 200px)',
+            paddingTop: '1em',
           }}
         >
+          <FormControlContainer
+            sx={{
+              my: '1em',
+              minWidth: '500px',
+              width: '30%',
+            }}
+          >
+            <LocalizationProvider dateAdapter={DateAdapter}>
+              <DesktopDatePicker
+                label="Date"
+                labelId="date_label"
+                inputFormat="YYYY-MM-DD"
+                name="date"
+                mask='____-__-__'
+                id="date"
+                value={date}
+                onChange={(e) => setDate(e)}
+                renderInput={(params) =>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <TextField
+                      variant="filled"
+                      sx={{
+                        flex: 1,
+                        borderTopLeftRadius: '0',
+                        borderBottomLeftRadius: '0',
+                      }}
+                      {...params}
+                    />
+                    <Button
+                      variant='outlined'
+                      sx={{
+                        borderBottomLeftRadius: '0',
+                        borderTopLeftRadius: '0',
+                      }}
+                      onClick={getDailyReport}
+                    >
+                      Filter
+                    </Button>
+                  </Box>
+                }
+              />
+            </LocalizationProvider>
+          </FormControlContainer>
           <DataGrid
             sx={{minWidth: '500px'}}
             components={{Toolbar: GridToolbar}}
