@@ -21,6 +21,8 @@ const BasicInput = ({isUpdate, fields, onSubmit, children}) => {
               error={field.error}
               key={index}
               id={field.id}
+              multiline={!!field.multiline}
+              rows={!!field.multiline ? 4 : null}
               label={field.label}
               name={field.id}
               value={field.value}

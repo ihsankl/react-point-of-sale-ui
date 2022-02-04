@@ -4,7 +4,6 @@ import {
   FormHelperText,
   TextField,
 } from '@mui/material';
-import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useNavigate} from 'react-router-dom';
@@ -17,8 +16,6 @@ import {
 // eslint-disable-next-line no-unused-vars
 import {clearSuccess, updateProduct} from '../../../Redux/Slicer/Product';
 import BasicInput from '../../BasicInput';
-import {DesktopDatePicker, LocalizationProvider} from '@mui/lab';
-import DateAdapter from '@mui/lab/AdapterDayjs';
 import {isNumber} from '../../../helper';
 import {getAllCategory} from '../../../Redux/Slicer/Category';
 import {getProductUnit} from '../../../Redux/Slicer/Product Unit';
@@ -34,7 +31,7 @@ const defaultValues = {
   product_re_order_level: '',
   product_unit_id: '',
   product_category_id: '',
-  product_expired_date: new Date(),
+  product_distributor_price: '',
 };
 
 const UpdateProduct = () => {
@@ -66,7 +63,7 @@ const UpdateProduct = () => {
         product_unit_id: state.data[0].unit_id,
         product_category_id: state.data[0].category_id,
         product_user_id: state.data[0].user_id,
-        product_expired_date: state.data[0].expired_date,
+        product_distributor_price: state.data[0].distributor_price,
       };
       // eslint-disable-next-line max-len
       const findUnit = ProductUnitData.find((unit) => unit.id === data.product_unit_id);
@@ -104,7 +101,7 @@ const UpdateProduct = () => {
       unit_id: formValues.product_unit_id,
       category_id: formValues.product_category_id,
       user_id: UserData.id,
-      expired_date: dayjs(formValues.product_expired_date).format('YYYY-MM-DD'),
+      distributor_price: formValues.product_distributor_price,
     };
     dispatch(updateProduct(data));
   };
@@ -115,12 +112,6 @@ const UpdateProduct = () => {
       ...formValues,
       [name]: value,
     });
-  };
-
-  const handleDateChange = (newValue) => {
-    const value = {...formValues};
-    value.product_expired_date = newValue;
-    setFormValues(value);
   };
 
   useEffect(() => {
@@ -174,11 +165,12 @@ const UpdateProduct = () => {
       label: 'Disc Percentage',
       onChange: handleInputChange,
       value: formValues.product_disc_percentage,
-      error: !isNumber(formValues.product_disc_percentage),
-      type: 'number',
-      // eslint-disable-next-line max-len
-      helperText: isNumber(formValues.product_disc_percentage) || formValues.product_disc_percentage === 0?
-      '' : 'Disc Percentage must be a number',
+    },
+    {
+      id: 'product_distributor_price',
+      label: 'Distributor Price',
+      onChange: handleInputChange,
+      value: formValues.product_distributor_price,
     },
     {
       id: 'product_unit_price',
@@ -229,21 +221,6 @@ const UpdateProduct = () => {
                   Product Unit is required
                 </FormHelperText>
               }
-            </FormControlContainer>
-            <FormControlContainer>
-              <LocalizationProvider dateAdapter={DateAdapter}>
-                <DesktopDatePicker
-                  label="Expired Date"
-                  labelId="product_expired_date_label"
-                  inputFormat="YYYY-MM-DD"
-                  name="product_expired_date"
-                  mask='____-__-__'
-                  id="product_expired_date"
-                  value={formValues.product_expired_date}
-                  onChange={handleDateChange}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
             </FormControlContainer>
             <FormControlContainer>
               <Autocomplete

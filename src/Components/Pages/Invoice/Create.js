@@ -20,6 +20,7 @@ const defaultValues = {
   invoice_amount_tendered: 0,
   invoice_date_recorded: new Date(),
   invoice_customer_id: 1,
+  invoice_note: '',
 };
 
 const CreateInvoice = () => {
@@ -53,6 +54,7 @@ const CreateInvoice = () => {
       date_recorded: dayjs(formValues.invoice_date_recorded).format('YYYY-MM-DD'),
       user_id: UserData.id,
       customer_id: formValues.invoice_customer_id,
+      note: formValues.invoice_note,
     };
     dispatch(createInvoice(data));
   };
@@ -86,6 +88,13 @@ const CreateInvoice = () => {
       label: 'Amount Tendered',
       onChange: handleInputChange,
       value: formValues.invoice_amount_tendered,
+    },
+    {
+      id: 'invoice_note',
+      label: 'Note',
+      onChange: handleInputChange,
+      value: formValues.invoice_note,
+      multiline: true,
     },
   ];
 

@@ -65,7 +65,7 @@ import ReportSales from './Components/Pages/Report Sales';
 
 // redux thing
 import {useDispatch, useSelector} from 'react-redux';
-import {checkToken, clearToken} from './Redux/Slicer/Authentication';
+import {checkToken, clearToken, logout} from './Redux/Slicer/Authentication';
 import {
   setSuccess,
   setUserData,
@@ -117,6 +117,7 @@ const App = ()=> {
     if (!auth) {
       dispatch(unsetUsername());
       dispatch(unsetUserData());
+      dispatch(logout());
     }
 
     return () => {

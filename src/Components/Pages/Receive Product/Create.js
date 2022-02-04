@@ -28,6 +28,7 @@ const defaultValues = {
   receive_product_qty: '',
   receive_product_sub_total: '',
   receive_product_received_date: new Date(),
+  receive_product_expired_date: new Date(),
   receive_product_unit_price: '',
   receive_product_product_id: '',
   receive_product_supplier_id: '',
@@ -86,9 +87,9 @@ const CreateReceiveProduct = () => {
     });
   };
 
-  const handleDateChange = (newValue) => {
+  const handleDateChange = (newValue, name) => {
     const value = {...formValues};
-    value.receive_product_received_date = newValue;
+    value[name] = newValue;
     setFormValues(value);
   };
 
@@ -98,6 +99,8 @@ const CreateReceiveProduct = () => {
       sub_total: formValues.receive_product_sub_total,
       // eslint-disable-next-line max-len
       received_date: dayjs(formValues.receive_product_received_date).format('YYYY-MM-DD'),
+      // eslint-disable-next-line max-len
+      expired_date: dayjs(formValues.receive_product_expired_date).format('YYYY-MM-DD'),
       unit_price: formValues.receive_product_unit_price,
       product_id: formValues.receive_product_product_id,
       user_id: UserData.id,
@@ -152,7 +155,24 @@ const CreateReceiveProduct = () => {
                   mask='____-__-__'
                   id="receive_product_received_date"
                   value={formValues.receive_product_received_date}
-                  onChange={handleDateChange}
+                  // eslint-disable-next-line max-len
+                  onChange={(newValue) => handleDateChange(newValue, 'receive_product_received_date')}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+            </FormControlContainer>
+            <FormControlContainer>
+              <LocalizationProvider dateAdapter={DateAdapter}>
+                <DesktopDatePicker
+                  label="Expired Date"
+                  labelId="receive_product_expired_date_label"
+                  inputFormat="YYYY-MM-DD"
+                  name="receive_product_expired_date"
+                  mask='____-__-__'
+                  id="receive_product_expired_date"
+                  value={formValues.receive_product_expired_date}
+                  // eslint-disable-next-line max-len
+                  onChange={(newValue) => handleDateChange(newValue, 'receive_product_expired_date')}
                   renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>

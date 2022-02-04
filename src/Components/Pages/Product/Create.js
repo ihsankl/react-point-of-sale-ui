@@ -4,9 +4,6 @@ import {
   FormHelperText,
   TextField,
 } from '@mui/material';
-import {DesktopDatePicker, LocalizationProvider} from '@mui/lab';
-import DateAdapter from '@mui/lab/AdapterDayjs';
-import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
@@ -33,7 +30,7 @@ const defaultValues = {
   product_re_order_level: '',
   product_unit_id: '',
   product_category_id: '',
-  product_expired_date: new Date(),
+  product_distributor_price: '',
 };
 
 const CreateProduct = () => {
@@ -73,12 +70,6 @@ const CreateProduct = () => {
     });
   };
 
-  const handleDateChange = (newValue) => {
-    const value = {...formValues};
-    value.product_expired_date = newValue;
-    setFormValues(value);
-  };
-
   const handleSubmit = () => {
     const data = {
       code: formValues.product_code,
@@ -90,7 +81,7 @@ const CreateProduct = () => {
       unit_id: formValues.product_unit_id,
       category_id: formValues.product_category_id,
       user_id: UserData.id,
-      expired_date: dayjs(formValues.product_expired_date).format('YYYY-MM-DD'),
+      distributor_price: formValues.product_distributor_price,
     };
     dispatch(createProduct(data));
   };
@@ -141,9 +132,6 @@ const CreateProduct = () => {
       label: 'Disc Percentage',
       onChange: handleInputChange,
       value: formValues.product_disc_percentage,
-      error: !isNumber(formValues.product_disc_percentage),
-      helperText: isNumber(formValues.product_disc_percentage) ?
-      '' : 'Disc Percentage must be a number',
     },
     {
       id: 'product_unit_price',
@@ -153,6 +141,12 @@ const CreateProduct = () => {
       error: !isNumber(formValues.product_unit_price),
       helperText: isNumber(formValues.product_unit_price) ?
       '' : 'Unit Price must be a number',
+    },
+    {
+      id: 'product_distributor_price',
+      label: 'Distributor Price',
+      onChange: handleInputChange,
+      value: formValues.product_distributor_price,
     },
     {
       id: 'product_re_order_level',
@@ -192,21 +186,6 @@ const CreateProduct = () => {
                   Product Unit is required
                 </FormHelperText>
               }
-            </FormControlContainer>
-            <FormControlContainer>
-              <LocalizationProvider dateAdapter={DateAdapter}>
-                <DesktopDatePicker
-                  label="Expired Date"
-                  labelId="product_expired_date_label"
-                  inputFormat="YYYY-MM-DD"
-                  name="product_expired_date"
-                  mask='____-__-__'
-                  id="product_expired_date"
-                  value={formValues.product_expired_date}
-                  onChange={handleDateChange}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
             </FormControlContainer>
             <FormControlContainer>
               <Autocomplete
