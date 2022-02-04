@@ -32,6 +32,7 @@ const defaultValues = {
   receive_product_unit_price: '',
   receive_product_product_id: '',
   receive_product_supplier_id: '',
+  receive_product_additional_expenses: '',
 };
 
 const CreateReceiveProduct = () => {
@@ -105,6 +106,7 @@ const CreateReceiveProduct = () => {
       product_id: formValues.receive_product_product_id,
       user_id: UserData.id,
       supplier_id: formValues.receive_product_supplier_id,
+      additional_expenses: formValues.receive_product_additional_expenses,
     };
     dispatch(createReceiveProduct(data));
   };
@@ -127,6 +129,12 @@ const CreateReceiveProduct = () => {
       error: !isNumber(formValues.receive_product_sub_total),
       helperText: !!formValues.receive_product_sub_total ?
       '' : 'Sub Total must be a number',
+    },
+    {
+      id: 'receive_product_additional_expenses',
+      label: 'Additional Expenses',
+      onChange: handleInputChange,
+      value: formValues.receive_product_additional_expenses,
     },
     {
       id: 'receive_product_unit_price',

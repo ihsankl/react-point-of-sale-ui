@@ -35,6 +35,7 @@ const defaultValues = {
   receive_product_product_id: '',
   receive_product_user_id: 1,
   receive_product_supplier_id: '',
+  receive_product_additional_expenses: '',
 };
 
 const UpdateReceiveProduct = () => {
@@ -64,6 +65,7 @@ const UpdateReceiveProduct = () => {
         receive_product_product_id: state.data[0].product_id,
         receive_product_user_id: state.data[0].user_id,
         receive_product_supplier_id: state.data[0].supplier_id,
+        receive_product_additional_expenses: state.data[0].additional_expenses,
       };
       // eslint-disable-next-line max-len
       const findSupplier = SupplierData.find((x) => x.id === data.receive_product_supplier_id);
@@ -137,6 +139,12 @@ const UpdateReceiveProduct = () => {
       error: !isNumber(formValues.receive_product_sub_total),
       helperText: !!formValues.receive_product_sub_total ?
       '' : 'Sub Total must be a number',
+    },
+    {
+      id: 'receive_product_additional_expenses',
+      label: 'Additional Expenses',
+      onChange: handleInputChange,
+      value: formValues.receive_product_additional_expenses,
     },
     {
       id: 'receive_product_unit_price',
