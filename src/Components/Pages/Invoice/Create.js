@@ -47,7 +47,8 @@ const CreateInvoice = () => {
   const handleSubmit = () => {
     const data = {
       total_amount: formValues.invoice_total_amount,
-      amount_tendered: !!formValues.invoice_amount_tendered ?? 0,
+      // eslint-disable-next-line max-len
+      amount_tendered: !!formValues.invoice_amount_tendered ? formValues.invoice_amount_tendered: 0,
       // eslint-disable-next-line max-len
       date_recorded: dayjs(formValues.invoice_date_recorded).format('YYYY-MM-DD'),
       user_id: UserData.id,
@@ -99,7 +100,7 @@ const CreateInvoice = () => {
                 <DesktopDatePicker
                   label="Date Recorded"
                   labelId="invoice_date_recorded_label"
-                  inputFormat="YYYY-DD-MM"
+                  inputFormat="YYYY-MM-DD"
                   name="invoice_date_recorded"
                   mask='____-__-__'
                   id="invoice_date_recorded"

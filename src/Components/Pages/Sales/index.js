@@ -13,6 +13,7 @@ import {columnsBuilder} from '../../../helper';
 // eslint-disable-next-line max-len
 import {clearSuccess, deleteSales, getAllSales} from '../../../Redux/Slicer/Sales';
 import {setMountPage, unsetMountPage} from '../../../Redux/Slicer/AppState';
+import {Cached} from '@mui/icons-material';
 
 const Sales = () => {
   const navigate = useNavigate();
@@ -60,14 +61,20 @@ const Sales = () => {
   return (
     <>
       <PaperContainer elevation={3} square>
-        <TitleWithDivider>Sale</TitleWithDivider>
+        <TitleWithDivider>Sales</TitleWithDivider>
         <SubHeader>
           <Button
             onClick={()=> navigate('create')}
             variant="contained"
           >Create New
           </Button>
-
+          <Button
+            onClick={initSales}
+            variant='outlined'
+            startIcon={<Cached/>}
+          >
+            Refresh
+          </Button>
         </SubHeader>
         <BasicTable
           dataRows={SalesData}

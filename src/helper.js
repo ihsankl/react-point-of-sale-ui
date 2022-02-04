@@ -1,5 +1,5 @@
 import {DeleteOutline, Edit} from '@mui/icons-material';
-import {IconButton} from '@mui/material';
+import {Box, IconButton} from '@mui/material';
 import dayjs from 'dayjs';
 import React from 'react';
 import {renderCellExpand} from './Components/GridCellExpand';
@@ -128,8 +128,8 @@ export const columnsBuilder = (data, editCb, deleteCb) => {
     minWidth: 150,
     renderCell: (params) => {
       return (
-        <div
-          style={{
+        <Box
+          sx={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -146,7 +146,7 @@ export const columnsBuilder = (data, editCb, deleteCb) => {
           >
             <DeleteOutline />
           </IconButton>
-        </div>
+        </Box>
       );
     },
   });
@@ -155,17 +155,13 @@ export const columnsBuilder = (data, editCb, deleteCb) => {
 };
 
 export const valueFormatter = (value, property) => {
-  // look if the value string is following the date pattern
-  // then change date value into YYYY-MM-DD format
-  // example of date string = 2022-01-13T17:00:00.000Z
-  const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
-  if (pattern.test(value)) return dayjs(value).format('DD MMM, YYYY');
-  // if value is number, and is 4 digits or more, then format it using
-  // rupiah formatter
-  // if value starts with 08, then format it using phone number formatter
+  if (property.includes('date')) return dayjs(value).format('DD MMM, YYYY');
   if (property === 'contact') return value;
-  // eslint-disable-next-line max-len
-  if (isNumber(value) && value.toString().length >= 4 && property !== 'code' && property !== 'contact') return rupiahFormatter(value);
+  if (property.includes('total') ||
+  property.includes('price') ||
+  property.includes('amount')
+  ) return rupiahFormatter(value);
+
   return value;
 };
 

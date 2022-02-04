@@ -1,9 +1,7 @@
 // /* eslint-disable */
 import {
+  Autocomplete,
   FormHelperText,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
 } from '@mui/material';
 import dayjs from 'dayjs';
@@ -16,6 +14,7 @@ import {
   SubHeader,
   TitleWithDivider,
 } from '../../../layout';
+// eslint-disable-next-line no-unused-vars
 import {clearSuccess, updateProduct} from '../../../Redux/Slicer/Product';
 import BasicInput from '../../BasicInput';
 import {DesktopDatePicker, LocalizationProvider} from '@mui/lab';
@@ -41,6 +40,8 @@ const defaultValues = {
 const UpdateProduct = () => {
   const [formValues, setFormValues] = useState(defaultValues);
   const [mount, setMount] = useState(false);
+  const [productUnitValue, setProductUnitValue] = useState('');
+  const [productCategoryValue, setProductCategoryValue] = useState('');
   const dispatch = useDispatch();
   const {state} = useLocation();
   const navigate = useNavigate();
@@ -67,6 +68,12 @@ const UpdateProduct = () => {
         product_user_id: state.data[0].user_id,
         product_expired_date: state.data[0].expired_date,
       };
+      // eslint-disable-next-line max-len
+      const findUnit = ProductUnitData.find((unit) => unit.id === data.product_unit_id);
+      // eslint-disable-next-line max-len
+      const findCategory = CategoryData.find((category) => category.id === data.product_category_id);
+      setProductCategoryValue(findCategory?.name);
+      setProductUnitValue(findUnit?.name);
       setFormValues(data);
     } else {
       navigate(-1);
@@ -199,26 +206,28 @@ const UpdateProduct = () => {
         <SubHeader>
           <BasicInput isUpdate fields={fields} onSubmit={handleSubmit}>
             <FormControlContainer>
-              <InputLabel id="product_unit_id_label">Product Unit</InputLabel>
-              <Select
-                error={!formValues.product_unit_id}
-                labelId="product_unit_id_label"
-                id="product_unit_id"
+              <Autocomplete
+                value={productUnitValue}
+                onChange={(event, newValue) => {
+                  const value = {...formValues};
+                  value.product_unit_id = newValue?.id;
+                  setProductUnitValue(newValue?.name);
+                  setFormValues(value);
+                }}
                 name="product_unit_id"
-                label="Product Unit"
-                value={formValues.product_unit_id}
-                onChange={handleInputChange}
-              >
-                {ProductUnitData.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {item.name}
-                  </MenuItem>
-                ))}
-              </Select>
+                id="product_unit_id_label"
+                options={ProductUnitData.map((item) => {
+                  return {
+                    ...item, label: `${item.name}`,
+                  };
+                })}
+                // eslint-disable-next-line max-len
+                renderInput={(params) => <TextField error={!formValues.product_unit_id} {...params} label="Product Unit" />}
+              />
               {!formValues.product_unit_id &&
-              <FormHelperText error={!formValues.product_unit_id}>
-                Product Unit is Required
-              </FormHelperText>
+                <FormHelperText error={!formValues.product_unit_id}>
+                  Product Unit is required
+                </FormHelperText>
               }
             </FormControlContainer>
             <FormControlContainer>
@@ -226,7 +235,7 @@ const UpdateProduct = () => {
                 <DesktopDatePicker
                   label="Expired Date"
                   labelId="product_expired_date_label"
-                  inputFormat="YYYY-DD-MM"
+                  inputFormat="YYYY-MM-DD"
                   name="product_expired_date"
                   mask='____-__-__'
                   id="product_expired_date"
@@ -237,30 +246,28 @@ const UpdateProduct = () => {
               </LocalizationProvider>
             </FormControlContainer>
             <FormControlContainer>
-              <InputLabel
-                id="product_category_id_label"
-              >
-                Product Category
-              </InputLabel>
-              <Select
-                error={!formValues.product_category_id}
-                labelId="product_category_id_label"
-                id="product_category_id"
+              <Autocomplete
+                value={productCategoryValue}
+                onChange={(event, newValue) => {
+                  const value = {...formValues};
+                  value.product_category_id = newValue?.id;
+                  setProductCategoryValue(newValue?.name);
+                  setFormValues(value);
+                }}
                 name="product_category_id"
-                label="Product Unit"
-                value={formValues.product_category_id}
-                onChange={handleInputChange}
-              >
-                {CategoryData.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {item.name}
-                  </MenuItem>
-                ))}
-              </Select>
+                id="product_category_id_label"
+                options={CategoryData.map((item) => {
+                  return {
+                    ...item, label: `${item.name}`,
+                  };
+                })}
+                // eslint-disable-next-line max-len
+                renderInput={(params) => <TextField error={!formValues.product_category_id} {...params} label="Product Category" />}
+              />
               {!formValues.product_category_id &&
-              <FormHelperText error={!formValues.product_category_id}>
-                Product Category is Required
-              </FormHelperText>
+                <FormHelperText error={!formValues.product_category_id}>
+                  Product Category is required
+                </FormHelperText>
               }
             </FormControlContainer>
             <FormControlContainer>

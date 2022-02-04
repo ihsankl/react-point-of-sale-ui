@@ -1,4 +1,9 @@
-import {FormHelperText, InputLabel, MenuItem, Select} from '@mui/material';
+import {
+  Autocomplete,
+  FormHelperText,
+  TextField,
+} from '@mui/material';
+import dayjs from 'dayjs';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useNavigate} from 'react-router-dom';
@@ -10,6 +15,7 @@ import {
   FormControlContainer,
 } from '../../../layout';
 import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
+import {getInvoice} from '../../../Redux/Slicer/Invoice';
 import {getProduct} from '../../../Redux/Slicer/Product';
 import {updateSales} from '../../../Redux/Slicer/Sales';
 import BasicInput from '../../BasicInput';
@@ -25,6 +31,8 @@ const defaultValues = {
 
 const UpdateSales = () => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const [productValue, setProductValue] = useState('');
+  const [invoiceValue, setInvoiceValue] = useState('');
   const [mount, setmount] = useState(false);
   const dispatch = useDispatch();
   const {state} = useLocation();
@@ -45,6 +53,13 @@ const UpdateSales = () => {
         sales_invoice_id: state.data[0].invoice_id,
         sales_product_id: state.data[0].product_id,
       };
+      // eslint-disable-next-line max-len
+      const foundInvoice = InvoiceStateData.find( (invoice) => invoice.id === data.sales_invoice_id);
+      // eslint-disable-next-line max-len
+      const foundProduct = ProductStateData.find( (product) => product.id === data.sales_product_id);
+      // eslint-disable-next-line max-len
+      setInvoiceValue(foundInvoice ? `ID: (${foundInvoice?.id}) - ${dayjs(foundInvoice?.date_recorded).format('DD MMM, YYYY')}` : ``);
+      setProductValue(foundProduct?.name ?? ``);
       setFormValues(data);
     } else {
       navigate(-1);
@@ -66,6 +81,9 @@ const UpdateSales = () => {
     if (SalesState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('sales'));
+      dispatch(unsetMountPage('invoice'));
+      dispatch(getInvoice());
+      dispatch(getProduct());
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);
@@ -133,57 +151,56 @@ const UpdateSales = () => {
         <SubHeader>
           <BasicInput isUpdate fields={fields} onSubmit={handleSubmit}>
             <FormControlContainer>
-              <InputLabel
-                id="sales_product_id_label"
-              >
-                Product
-              </InputLabel>
-              <Select
-                error={!formValues.sales_product_id}
-                labelId="sales_product_id_label"
-                id="sales_product_id"
+              <Autocomplete
+                value={productValue}
+                onChange={(event, newValue) => {
+                  const value = {...formValues};
+                  value.sales_product_id = newValue?.id;
+                  setProductValue(newValue?.name);
+                  setFormValues(value);
+                }}
                 name="sales_product_id"
-                label="Product"
-                value={formValues.sales_product_id}
-                onChange={handleInputChange}
-              >
-                {ProductStateData.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {item.name}
-                  </MenuItem>
-                ))}
-              </Select>
+                id="sales_product_id_label"
+                options={ProductStateData.map((item) => {
+                  return {
+                    ...item, label: `${item.name}`,
+                  };
+                })}
+                // eslint-disable-next-line max-len
+                renderInput={(params) => <TextField error={!formValues.sales_product_id} {...params} label="Product" />}
+              />
               {!formValues.sales_product_id &&
-              <FormHelperText error={!formValues.sales_product_id}>
-                Product ID is required
-              </FormHelperText>
+                <FormHelperText error={!formValues.sales_product_id}>
+                  Product ID is required
+                </FormHelperText>
               }
             </FormControlContainer>
             <FormControlContainer>
-              <InputLabel
-                id="sales_invoice_id_label"
-              >
-                Invoice ID
-              </InputLabel>
-              <Select
-                error={!formValues.sales_invoice_id}
-                labelId="sales_invoice_id_label"
-                id="sales_invoice_id"
+              <Autocomplete
+                value={invoiceValue}
+                onChange={(event, newValue) => {
+                  const value = {...formValues};
+                  value.sales_invoice_id = newValue?.id;
+                  // eslint-disable-next-line max-len
+                  const temp = !!newValue ? `ID: (${newValue.id}) - ${dayjs(newValue.date_recorded).format('DD MMM, YYYY')}` : '';
+                  setInvoiceValue(temp);
+                  setFormValues(value);
+                }}
                 name="sales_invoice_id"
-                label="Product"
-                value={formValues.sales_invoice_id}
-                onChange={handleInputChange}
-              >
-                {InvoiceStateData.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {item.id}
-                  </MenuItem>
-                ))}
-              </Select>
+                id="sales_invoice_id_label"
+                options={InvoiceStateData.map((item) => {
+                  return {
+                    // eslint-disable-next-line max-len
+                    ...item, label: `ID: (${item.id}) - ${dayjs(item.date_recorded).format('DD MMM, YYYY')}`,
+                  };
+                })}
+                // eslint-disable-next-line max-len
+                renderInput={(params) => <TextField error={!formValues.sales_invoice_id} {...params} label="Invoice ID" />}
+              />
               {!formValues.sales_invoice_id &&
-              <FormHelperText error={!formValues.sales_invoice_id}>
-                Invoice ID is required!
-              </FormHelperText>
+                <FormHelperText error={!formValues.sales_invoice_id}>
+                  Invoice ID is required
+                </FormHelperText>
               }
             </FormControlContainer>
           </BasicInput>

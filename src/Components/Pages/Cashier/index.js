@@ -26,7 +26,7 @@ import {
   upItem,
 } from '../../../Redux/Slicer/Cashier';
 import {rupiahFormatter} from '../../../helper';
-import {createSales} from '../../../Redux/Slicer/Sales';
+import {clearSuccess, createSales} from '../../../Redux/Slicer/Sales';
 import {getProduct} from '../../../Redux/Slicer/Product';
 import {fetchUserByName} from '../../../Redux/Slicer/User';
 import EditCart from './EditCart';
@@ -69,12 +69,13 @@ const Cashier = () => {
 
     if (SalesState.isSuccess) {
       dispatch(clearItems());
+      dispatch(clearSuccess());
+      initProduct();
       setPaid('');
       setCode('');
     }
 
     if (!!auth && !mountedWithToken) {
-      localStorage.setItem('token', auth);
       initProduct();
       setMountedWithToken(true);
       const data = {username};

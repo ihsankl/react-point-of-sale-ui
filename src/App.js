@@ -58,6 +58,8 @@ import SuccessNotif from './Components/SuccessNotif';
 import Information from './Components/Information';
 import Header from './Components/Header';
 import SidebarMenu from './Components/SidebarMenu';
+import DailyReport from './Components/Pages/Daily Report';
+import NonAuth from './Components/Pages/NonAuth';
 // Reports
 import ReportSales from './Components/Pages/Report Sales';
 
@@ -71,7 +73,7 @@ import {
   unsetUsername,
 } from './Redux/Slicer/AppState';
 import {clearSuccess as clearAuth} from './Redux/Slicer/Authentication';
-import DailyReport from './Components/Pages/Daily Report';
+import {clearSuccess as clearUser} from './Redux/Slicer/User';
 
 const App = ()=> {
   const [mounted, setMounted] = useState(false);
@@ -98,7 +100,10 @@ const App = ()=> {
       setMounted(true);
     }
 
-    if (!!UserData) dispatch(setUserData(UserData[0]));
+    if (!!UserData) {
+      dispatch(setUserData(UserData[0]));
+      dispatch(clearUser());
+    }
 
     if (AuthState.error.state) dispatch(clearToken());
 
@@ -282,27 +287,21 @@ const App = ()=> {
           </RequiredAuth>}/>
 
           {/* login */}
-          <Route path="/login" element={
-            !!auth ? <Navigate replace to="/"/> : <Login />
-          }/>
+          <Route path="/login" element={<NonAuth>
+            <Login />
+          </NonAuth>}/>
 
           {/* register */}
-          <Route path="/register" element={
-            !!auth ? <Navigate replace to="/"/> : <Register />
-          }/>
+          <Route path="/register" element={<NonAuth>
+            <Register />
+          </NonAuth>}/>
 
           {/* redirect unmatch route */}
           <Route path="*" element={<Navigate replace to="/cashier" />}/>
           {/* TODO: give documentation for keyboard shortcuts */}
           {/* TODO: create theme customization */}
-          {/* TODO: change all selection to autocomplete */}
           {/* TODO: optimizing all components */}
-          {/* TODO: get data from dropdown when it's clicked */}
-          {/* TODO: show products and its besides cashier menu */}
-          {/* TODO: add daily reports */}
-          {/* TODO: product CRUD is a mess */}
-          {/* TODO: remove alert when changes tab */}
-          {/* TODO: refining alert system */}
+          {/* TODO: show products and its quantity besides cashier menu */}
         </Routes>
       </BrowserRouter>
     </div>

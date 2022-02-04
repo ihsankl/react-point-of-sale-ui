@@ -1,11 +1,9 @@
 import {
+  Autocomplete,
   Button,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
 } from '@mui/material';
-import React, {useEffect, useState} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   SubHeader,
@@ -13,98 +11,21 @@ import {
   TitleWithDivider,
   FormControlContainer,
 } from '../../../layout';
-import {unsetMountPage} from '../../../Redux/Slicer/AppState';
+import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
 import {getProduct} from '../../../Redux/Slicer/Product';
+// eslint-disable-next-line no-unused-vars
 import {clearSuccess, createSales} from '../../../Redux/Slicer/Sales';
 import BasicInput from '../../BasicInput';
-import {DesktopDatePicker, LocalizationProvider} from '@mui/lab';
-import DateAdapter from '@mui/lab/AdapterDayjs';
-import {Add, Remove} from '@mui/icons-material';
-import {uuid} from '../../../helper';
-import {Box} from '@mui/system';
+import {Add} from '@mui/icons-material';
 import dayjs from 'dayjs';
+import Products from './Products';
+import {getInvoice} from '../../../Redux/Slicer/Invoice';
 
 const defaultValues = {
   sales_user_id: '',
-  sales_date_recorded: new Date(),
   sales_customer_id: 1,
   sales_invoice_id: '',
   sales_products: [],
-};
-
-// {
-//   "user_id":1,
-//   "date_recorded": "2021-12-01",
-//   "customer_id":null,
-//   "invoice_id": null,
-//   "products":[
-//       {
-//           "qty":2,
-//           "unit_price": 5000,
-//           "sub_total": 10000,
-//           "product_id": 104
-//       },
-//       {
-//           "qty": 1,
-//           "unit_price": 6000,
-//           "sub_total": 18000,
-//           "product_id": 105
-//       },
-//        {
-//           "qty":30,
-//           "unit_price": 5000,
-//           "sub_total": 10000,
-//           "product_id": 102
-//       }
-//   ]
-// }
-
-const renderProducts = (products, removeItem) => {
-  const temp = [...products];
-  temp.map((value, index) => {
-    temp.push(
-        <Box
-          key={uuid()}
-          sx={{
-            display: 'flex',
-            gap: '1em',
-            width: '100%',
-          }}
-        >
-          <TextField
-            label="Quantity"
-            variant="outlined"
-            fullWidth
-          />
-          <TextField
-            label="Unit Price"
-            variant="outlined"
-            fullWidth
-          />
-          <TextField
-            label="Sub Total"
-            variant="outlined"
-            fullWidth
-          />
-          <TextField
-            label="Product"
-            variant="outlined"
-            fullWidth
-          />
-          {temp.length > 0 && (
-            <Button
-              variant="text"
-              color="primary"
-              onClick={() => {
-                removeItem();
-              }}
-              startIcon={<Remove />}
-            >
-            </Button>
-          )}
-        </Box>);
-  });
-  return temp;
 };
 
 const CreateSales = () => {
@@ -118,7 +39,15 @@ const CreateSales = () => {
   const UserData = AppState.userData;
   const [formValues, setFormValues] = useState(defaultValues);
   const [mount, setmount] = useState(false);
-  const [products, setProducts] = useState([]);
+  const [invoiceValue, setInvoiceValue] = useState('');
+  const [productFields, setProductFields] = useState([
+    {
+      qty: '',
+      product_id: '',
+      unit_price: '',
+      sub_total: '',
+    },
+  ]);
 
   useEffect(() => {
     if (!mount && !ProductStateData.length) {
@@ -135,24 +64,19 @@ const CreateSales = () => {
     await dispatch(getProduct()).unwrap();
   };
 
-  const handleInputChange = (e) => {
-    const {name, value} = e.target;
-    setFormValues({
-      ...formValues,
-      [name]: value,
-    });
-  };
-
-  const handleDateChange = (newValue) => {
-    const value = {...formValues};
-    value.sales_date_recorded = newValue;
-    setFormValues(value);
+  const handleProductFieldChange = (index, event) => {
+    const values = [...productFields];
+    values[index][event.target.name] = event.target.value;
+    setProductFields(values);
   };
 
   useEffect(() => {
     if (SalesState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('sales'));
+      dispatch(unsetMountPage('invoice'));
+      dispatch(getInvoice());
+      dispatch(getProduct());
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);
@@ -163,24 +87,22 @@ const CreateSales = () => {
     };
   }, [SalesState]);
 
-  const fields = [
-    // {
-    //   id: 'sales_invoice_id',
-    //   label: 'Invoice ID (Optional)',
-    //   onChange: handleInputChange,
-    //   value: formValues.sales_invoice_id,
-    //   error: !isNumber(formValues.sales_invoice_id),
-    //   helperText: !isNumber(formValues.sales_invoice_id) ?
-    //   'Quantity must be a number!' : '',
-    // },
-  ];
+  const fields = [];
 
   const handleSubmit = () => {
     const data = {
-      invoice_id: formValues.sales_invoice_id,
+      // eslint-disable-next-line max-len
+      invoice_id: !!formValues.sales_invoice_id ? formValues.sales_invoice_id : null,
       user_id: UserData.id,
+      products: productFields,
     };
     dispatch(createSales(data));
+  };
+
+  const handleRemove = (index) => {
+    const values = [...productFields];
+    values.splice(index, 1);
+    setProductFields(values);
   };
 
   return (
@@ -190,41 +112,27 @@ const CreateSales = () => {
         <SubHeader>
           <BasicInput fields={fields} onSubmit={handleSubmit}>
             <FormControlContainer>
-              <LocalizationProvider dateAdapter={DateAdapter}>
-                <DesktopDatePicker
-                  label="Date Recorded"
-                  labelId="sales_date_recorded_label"
-                  inputFormat="YYYY-DD-MM"
-                  name="sales_date_recorded"
-                  mask='____-__-__'
-                  id="sales_date_recorded"
-                  value={formValues.sales_date_recorded}
-                  onChange={handleDateChange}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
-            </FormControlContainer>
-            <FormControlContainer>
-              <InputLabel
-                id="sales_invoice_id_label"
-              >
-                Invoice ID (Optional)
-              </InputLabel>
-              <Select
-                labelId="sales_invoice_id_label"
-                id="sales_invoice_id"
+              <Autocomplete
+                value={invoiceValue}
+                onChange={(event, newValue) => {
+                  const value = {...formValues};
+                  value.sales_invoice_id = newValue?.id;
+                  // eslint-disable-next-line max-len
+                  const temp = !!newValue ? `ID: (${newValue.id}) - ${dayjs(newValue.date_recorded).format('DD MMM, YYYY')}` : '';
+                  setInvoiceValue(temp);
+                  setFormValues(value);
+                }}
                 name="sales_invoice_id"
-                label="Supplier"
-                value={formValues.sales_invoice_id}
-                onChange={handleInputChange}
-              >
-                {InvoiceStateData.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {/* eslint-disable-next-line max-len */}
-                    {`${item.id} - ${dayjs(item.date_recorded).format('YYYY-MM-DD')}`}
-                  </MenuItem>
-                ))}
-              </Select>
+                id="sales_invoice_id_label"
+                options={InvoiceStateData.map((item) => {
+                  return {
+                    // eslint-disable-next-line max-len
+                    ...item, label: `ID: (${item.id}) - ${dayjs(item.date_recorded).format('DD MMM, YYYY')}`,
+                  };
+                })}
+                // eslint-disable-next-line max-len
+                renderInput={(params) => <TextField autoFocus {...params} label="Invoice ID (Optional)" />}
+              />
             </FormControlContainer>
             <FormControlContainer>
               <TextField
@@ -237,19 +145,32 @@ const CreateSales = () => {
                 fullWidth
               />
             </FormControlContainer>
-            {renderProducts(products, () => {
-              const temp = [...products];
-              temp.pop();
-              setProducts(temp);
-            }).map((item) => item)}
+            {productFields.map((value, index) => {
+              return (
+                <Products
+                  key ={`product-fields-${index}`}
+                  index={index}
+                  value={value}
+                  handleChange={handleProductFieldChange}
+                  handleRemove={handleRemove}
+                  setProductFields={setProductFields}
+                  productFields={productFields}
+                />
+              );
+            })}
             <FormControlContainer>
               <Button
                 variant="text"
                 color="primary"
                 onClick={() => {
-                  const temp = [...products];
-                  temp.push('');
-                  setProducts(temp);
+                  const temps = [...productFields];
+                  temps.push({
+                    qty: '',
+                    product_id: '',
+                    unit_price: '',
+                    sub_total: '',
+                  });
+                  setProductFields(temps);
                 }}
                 startIcon={<Add />}
               >
@@ -263,4 +184,10 @@ const CreateSales = () => {
   );
 };
 
-export default CreateSales;
+const areEqual = (prevProps, nextProps) => {
+  if (prevProps.productFields !== nextProps.productFields) {
+    return true;
+  }
+};
+
+export default React.memo(CreateSales, areEqual);

@@ -16,6 +16,7 @@ import {
   openConfirmDialog,
 } from '../../../Redux/Slicer/ConfirmDialog';
 import {setMountPage, unsetMountPage} from '../../../Redux/Slicer/AppState';
+import {Cached} from '@mui/icons-material';
 
 const Product = () => {
   const navigate = useNavigate();
@@ -69,7 +70,13 @@ const Product = () => {
             onClick={()=> navigate('create')}
             variant="contained"
           >Create New</Button>
-
+          <Button
+            onClick={initProduct}
+            variant='outlined'
+            startIcon={<Cached/>}
+          >
+            Refresh
+          </Button>
         </SubHeader>
         <BasicTable
           dataRows={ProductData}

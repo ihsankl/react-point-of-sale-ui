@@ -29,6 +29,7 @@ const columns = [
     headerName: 'Sub Total',
     flex: 1,
     editable: false,
+    valueGetter: (params) => rupiahFormatter(params.row.sub_total),
   },
 ];
 

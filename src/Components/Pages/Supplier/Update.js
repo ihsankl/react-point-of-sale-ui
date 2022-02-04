@@ -16,7 +16,7 @@ const defaultValues = {
 
 const UpdateSupplier = () => {
   const [formValues, setFormValues] = useState(defaultValues);
-  const mount = useSelector((state) => state.AppState.pageMount.supplier);
+  const mount = useSelector((state) => state.AppState.pageMounted.supplier);
   const SupplierState = useSelector((state) => state.Supplier);
   const dispatch = useDispatch();
   const {state} = useLocation();

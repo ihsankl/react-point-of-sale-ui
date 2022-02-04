@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {SubHeader, PaperContainer, TitleWithDivider} from '../../../layout';
-import {setSuccess} from '../../../Redux/Slicer/AppState';
+import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
 import {clearSuccess, updateCategory} from '../../../Redux/Slicer/Category';
 import BasicInput from '../../BasicInput';
 

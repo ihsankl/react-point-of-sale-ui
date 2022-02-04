@@ -10,11 +10,11 @@ import {
   Container,
 } from '@mui/material';
 import {styled} from '@mui/material/styles';
-import {useNavigate} from 'react-router-dom';
 import {login} from '../../../Redux/Slicer/Authentication';
 import {useDispatch} from 'react-redux';
 import {setusername} from '../../../Redux/Slicer/AppState';
 import {fetchUserByName} from '../../../Redux/Slicer/User';
+import {useNavigate} from 'react-router-dom';
 
 const defaultValues = {
   username: '',
@@ -54,8 +54,8 @@ const Copyright = (props) => {
 };
 
 const Login = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [formValues, setFormValues] = useState(defaultValues);
 
   const handleInputChange = (e) => {

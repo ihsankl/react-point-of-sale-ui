@@ -91,7 +91,6 @@ const SidebarMenu = () => {
       </ListItem>
 
       <ListItem
-        disabled
         button
         sx={(theme)=> contrastButton(theme, '/sales')}
         onClick={() => navigate('/sales')}

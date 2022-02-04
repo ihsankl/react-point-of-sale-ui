@@ -146,7 +146,7 @@ const CreatePurchaseOrder = () => {
                 <DesktopDatePicker
                   label="Order Date"
                   labelId="purchase_order_order_date_label"
-                  inputFormat="YYYY-DD-MM"
+                  inputFormat="YYYY-MM-DD"
                   name="purchase_order_order_date"
                   mask='____-__-__'
                   id="purchase_order_order_date"

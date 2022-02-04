@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import Axios from 'axios';
 import {headersBuilder, initialState} from '../../helper';
+import storage from 'redux-persist/lib/storage';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -125,6 +126,7 @@ const authenticationSlice = createSlice({
       state.isSuccess = true;
       state.isLoggedIn = false;
       localStorage.removeItem('token');
+      storage.removeItem('persist:root');
     });
     builder.addCase(logout.rejected, (state, action) => {
       state.isLoading = false;
@@ -163,6 +165,8 @@ const authenticationSlice = createSlice({
         state: true,
       };
       state.isSuccess = false;
+      localStorage.removeItem('persist:root');
+      localStorage.removeItem('token');
     });
   },
 });

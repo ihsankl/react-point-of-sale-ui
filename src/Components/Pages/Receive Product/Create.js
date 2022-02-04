@@ -1,9 +1,7 @@
 import {DesktopDatePicker, LocalizationProvider} from '@mui/lab';
 import {
+  Autocomplete,
   FormHelperText,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
 } from '@mui/material';
 import DateAdapter from '@mui/lab/AdapterDayjs';
@@ -46,6 +44,8 @@ const CreateReceiveProduct = () => {
   const Product = useSelector((state) => state.Product);
   const ProductData = Product.data?.data ?? [];
   const UserData = AppState.userData;
+  const [supplierValue, setSupplierValue] = useState('');
+  const [productValue, setProductValue] = useState('');
 
   useEffect(() => {
     if (!mount && !ProductData) {
@@ -61,6 +61,8 @@ const CreateReceiveProduct = () => {
     if (ReceiveProductState.isSuccess) {
       dispatch(setSuccess());
       dispatch(unsetMountPage('receive_product'));
+      dispatch(unsetMountPage('product'));
+      dispatch(getProduct());
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);
@@ -145,7 +147,7 @@ const CreateReceiveProduct = () => {
                 <DesktopDatePicker
                   label="Receive Date"
                   labelId="receive_product_received_date_label"
-                  inputFormat="YYYY-DD-MM"
+                  inputFormat="YYYY-MM-DD"
                   name="receive_product_received_date"
                   mask='____-__-__'
                   id="receive_product_received_date"
@@ -156,63 +158,53 @@ const CreateReceiveProduct = () => {
               </LocalizationProvider>
             </FormControlContainer>
             <FormControlContainer>
-              <InputLabel
-                id="receive_product_supplier_id_label"
-              >
-                Supplier
-              </InputLabel>
-              <Select
-                error={!formValues.receive_product_supplier_id}
-                labelId="receive_product_supplier_id_label"
-                id="receive_product_supplier_id"
+              <Autocomplete
+                value={supplierValue}
+                onChange={(event, newValue) => {
+                  const value = {...formValues};
+                  value.receive_product_supplier_id = newValue?.id;
+                  setSupplierValue(newValue?.name);
+                  setFormValues(value);
+                }}
                 name="receive_product_supplier_id"
-                label="Supplier"
-                value={formValues.receive_product_supplier_id}
-                onChange={handleInputChange}
-              >
-                {SupplierData.map((supplier) => (
-                  <MenuItem
-                    key={supplier.id}
-                    value={supplier.id}
-                  >
-                    {supplier.name}
-                  </MenuItem>
-                ))}
-              </Select>
+                id="receive_product_supplier_id_label"
+                options={SupplierData.map((item) => {
+                  return {
+                    ...item, label: `${item.name}`,
+                  };
+                })}
+                // eslint-disable-next-line max-len
+                renderInput={(params) => <TextField error={!formValues.receive_product_supplier_id} {...params} label="Supplier" />}
+              />
               {!formValues.receive_product_supplier_id &&
-            <FormHelperText error={!formValues.receive_product_supplier_id}>
-              Supplier is required
-            </FormHelperText>
+                <FormHelperText error={!formValues.receive_product_supplier_id}>
+                  Supplier is Required
+                </FormHelperText>
               }
             </FormControlContainer>
             <FormControlContainer>
-              <InputLabel
-                id="receive_product_product_id_label"
-              >
-                Product
-              </InputLabel>
-              <Select
-                error={!formValues.receive_product_product_id}
-                labelId="receive_product_product_id_label"
-                id="receive_product_product_id"
+              <Autocomplete
+                value={productValue}
+                onChange={(event, newValue) => {
+                  const value = {...formValues};
+                  value.receive_product_product_id = newValue?.id;
+                  setProductValue(newValue?.name);
+                  setFormValues(value);
+                }}
                 name="receive_product_product_id"
-                label="Product"
-                value={formValues.receive_product_product_id}
-                onChange={handleInputChange}
-              >
-                {ProductData.map((product) => (
-                  <MenuItem
-                    key={product.id}
-                    value={product.id}
-                  >
-                    {product.name}
-                  </MenuItem>
-                ))}
-              </Select>
+                id="receive_product_product_id"
+                options={ProductData.map((item) => {
+                  return {
+                    ...item, label: `${item.name}`,
+                  };
+                })}
+                // eslint-disable-next-line max-len
+                renderInput={(params) => <TextField error={!formValues.receive_product_product_id} {...params} label="Product" />}
+              />
               {!formValues.receive_product_product_id &&
-            <FormHelperText error={!formValues.receive_product_product_id}>
-              Product is required
-            </FormHelperText>
+                <FormHelperText error={!formValues.receive_product_product_id}>
+                  Product is Required
+                </FormHelperText>
               }
             </FormControlContainer>
             <FormControlContainer>
