@@ -32,7 +32,8 @@ const appReducer = combineReducers({
 });
 
 const rootReducer = (state, action) => {
-  if (action.type === 'logout/fulfilled') {
+  if (action.type === 'logout/fulfilled' ||
+  action.type === 'checkToken/rejected') {
     state = undefined;
   }
   return appReducer(state, action);
