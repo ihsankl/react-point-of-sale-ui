@@ -23,6 +23,7 @@ import {isNumber} from '../../../helper';
 import {getProduct} from '../../../Redux/Slicer/Product';
 import {getSupplier} from '../../../Redux/Slicer/Supplier';
 import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
+import {getProductUnit} from '../../../Redux/Slicer/Product Unit';
 
 const defaultValues = {
   receive_product_qty: '',
@@ -33,6 +34,7 @@ const defaultValues = {
   receive_product_product_id: '',
   receive_product_supplier_id: '',
   receive_product_additional_expenses: '',
+  receive_product_unit_id: '',
 };
 
 const CreateReceiveProduct = () => {
@@ -41,17 +43,23 @@ const CreateReceiveProduct = () => {
   const dispatch = useDispatch();
   const Supplier = useSelector((state) => state.Supplier);
   const ReceiveProductState = useSelector((state) => state.ReceiveProduct);
+  const ProductUnit = useSelector((state) => state.ProductUnit);
   const AppState = useSelector((state) => state.AppState);
   const SupplierData = Supplier.data?.data ?? [];
   const Product = useSelector((state) => state.Product);
   const ProductData = Product.data?.data ?? [];
+  const ProductUnitData = ProductUnit.data?.data ?? [];
   const UserData = AppState.userData;
   const [supplierValue, setSupplierValue] = useState('');
   const [productValue, setProductValue] = useState('');
+  const [productUnitValue, setProductUnitValue] = useState('');
 
   useEffect(() => {
-    if (!mount && !ProductData) {
-      getProductAndSupplier();
+    if (!mount && ProductData.length < 1 ||
+      SupplierData.length < 1 ||
+      ProductUnitData.length < 1
+    ) {
+      getProductSupplierAndProductUnit();
       setmount(true);
     }
     return () => {
@@ -75,9 +83,10 @@ const CreateReceiveProduct = () => {
     };
   }, [ReceiveProductState]);
 
-  const getProductAndSupplier = async () => {
+  const getProductSupplierAndProductUnit = async () => {
     await dispatch(getProduct()).unwrap();
     await dispatch(getSupplier()).unwrap();
+    await dispatch(getProductUnit()).unwrap();
   };
 
   const handleInputChange = (e) => {
@@ -107,6 +116,7 @@ const CreateReceiveProduct = () => {
       user_id: UserData.id,
       supplier_id: formValues.receive_product_supplier_id,
       additional_expenses: formValues.receive_product_additional_expenses,
+      unit_id: formValues.receive_product_unit_id,
     };
     dispatch(createReceiveProduct(data));
   };
@@ -116,6 +126,7 @@ const CreateReceiveProduct = () => {
       id: 'receive_product_qty',
       label: 'Quantity',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.receive_product_qty,
       error: !isNumber(formValues.receive_product_qty),
       helperText: !!formValues.receive_product_qty ?
@@ -125,6 +136,7 @@ const CreateReceiveProduct = () => {
       id: 'receive_product_sub_total',
       label: 'Sub Total',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.receive_product_sub_total,
       error: !isNumber(formValues.receive_product_sub_total),
       helperText: !!formValues.receive_product_sub_total ?
@@ -133,6 +145,7 @@ const CreateReceiveProduct = () => {
     {
       id: 'receive_product_additional_expenses',
       label: 'Additional Expenses',
+      type: 'number',
       onChange: handleInputChange,
       value: formValues.receive_product_additional_expenses,
     },
@@ -140,6 +153,7 @@ const CreateReceiveProduct = () => {
       id: 'receive_product_unit_price',
       label: 'Unit Price',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.receive_product_unit_price,
       error: !isNumber(formValues.receive_product_unit_price),
       helperText: !!formValues.receive_product_unit_price ?
@@ -232,6 +246,31 @@ const CreateReceiveProduct = () => {
               {!formValues.receive_product_product_id &&
                 <FormHelperText error={!formValues.receive_product_product_id}>
                   Product is Required
+                </FormHelperText>
+              }
+            </FormControlContainer>
+            <FormControlContainer>
+              <Autocomplete
+                value={productUnitValue}
+                onChange={(event, newValue) => {
+                  const value = {...formValues};
+                  value.receive_product_unit_id = newValue?.id;
+                  setProductUnitValue(newValue?.name);
+                  setFormValues(value);
+                }}
+                name="receive_product_unit_id"
+                id="receive_product_unit_id_label"
+                options={ProductUnitData.map((item) => {
+                  return {
+                    ...item, label: `${item.name}`,
+                  };
+                })}
+                // eslint-disable-next-line max-len
+                renderInput={(params) => <TextField error={!formValues.receive_product_unit_id} {...params} label="Product Unit" />}
+              />
+              {!formValues.receive_product_unit_id &&
+                <FormHelperText error={!formValues.receive_product_unit_id}>
+                  Product Unit is required
                 </FormHelperText>
               }
             </FormControlContainer>

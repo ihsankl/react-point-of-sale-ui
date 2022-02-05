@@ -75,7 +75,7 @@ const UpdateProduct = () => {
     } else {
       navigate(-1);
     }
-    if (!mount) {
+    if (!mount && CategoryData.length < 1 || ProductUnitData.length < 1) {
       getUnitAndCategory();
       setMount(true);
     }
@@ -153,6 +153,7 @@ const UpdateProduct = () => {
       id: 'product_unit_in_stock',
       label: 'Unit in Stock',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.product_unit_in_stock,
       error: !isNumber(formValues.product_unit_in_stock),
       type: 'number',
@@ -163,18 +164,21 @@ const UpdateProduct = () => {
     {
       id: 'product_disc_percentage',
       label: 'Disc Percentage',
+      type: 'number',
       onChange: handleInputChange,
       value: formValues.product_disc_percentage,
     },
     {
       id: 'product_distributor_price',
       label: 'Distributor Price',
+      type: 'number',
       onChange: handleInputChange,
       value: formValues.product_distributor_price,
     },
     {
       id: 'product_unit_price',
       label: 'Unit Price',
+      type: 'number',
       onChange: handleInputChange,
       value: formValues.product_unit_price,
       error: !isNumber(formValues.product_unit_price),

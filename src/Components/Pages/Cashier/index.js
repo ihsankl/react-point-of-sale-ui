@@ -48,6 +48,7 @@ const Cashier = () => {
   const ProductData = ProductState.data?.data ?? [];
   const {username} = AppState;
   const auth = AuthState.token;
+  const UserData = AppState.userData;
 
   // quick move to scan field
   useKeyboardShortcut(['Control', 'S'],
@@ -244,12 +245,12 @@ const Cashier = () => {
 
   // print receipt
   const handlePrint = () => {
-    const newPaid = paid ?? 0;
-    if (CashierData.length > 0 && newPaid > 0) {
+    const tempPaid = paid ?? 0;
+    if (CashierData.length > 0 && tempPaid > 0) {
       const data = {
-        user_id: 1,
+        user_id: UserData.id,
         products: CashierData,
-        amount_tendered: newPaid,
+        amount_tendered: tempPaid,
       };
       dispatch(createSales(data));
       initProduct();

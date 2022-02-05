@@ -48,7 +48,7 @@ const CreateProduct = () => {
   const [productCategoryValue, setProductCategoryValue] = useState('');
 
   useEffect(() => {
-    if (!mount && ProductUnitData.length === 0 && CategoryData.length === 0) {
+    if (!mount && ProductUnitData.length === 0 || CategoryData.length === 0) {
       getUnitAndCategory();
       setMount(true);
     }
@@ -122,6 +122,7 @@ const CreateProduct = () => {
       id: 'product_unit_in_stock',
       label: 'Unit in Stock',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.product_unit_in_stock,
       error: !isNumber(formValues.product_unit_in_stock),
       helperText: isNumber(formValues.product_unit_in_stock) ?
@@ -130,12 +131,14 @@ const CreateProduct = () => {
     {
       id: 'product_disc_percentage',
       label: 'Disc Percentage',
+      type: 'number',
       onChange: handleInputChange,
       value: formValues.product_disc_percentage,
     },
     {
       id: 'product_unit_price',
       label: 'Unit Price',
+      type: 'number',
       onChange: handleInputChange,
       value: formValues.product_unit_price,
       error: !isNumber(formValues.product_unit_price),
@@ -145,6 +148,7 @@ const CreateProduct = () => {
     {
       id: 'product_distributor_price',
       label: 'Distributor Price',
+      type: 'number',
       onChange: handleInputChange,
       value: formValues.product_distributor_price,
     },

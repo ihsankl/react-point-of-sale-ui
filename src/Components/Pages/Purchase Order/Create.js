@@ -109,6 +109,7 @@ const CreatePurchaseOrder = () => {
     {
       id: 'purchase_order_qty',
       label: 'Quantity',
+      type: 'number',
       onChange: handleInputChange,
       value: formValues.purchase_order_qty,
       error: !isNumber(formValues.purchase_order_qty),
@@ -118,6 +119,7 @@ const CreatePurchaseOrder = () => {
     {
       id: 'purchase_order_sub_total',
       label: 'Sub Total',
+      type: 'number',
       onChange: handleInputChange,
       value: formValues.purchase_order_sub_total,
       error: !isNumber(formValues.purchase_order_sub_total),
@@ -127,6 +129,7 @@ const CreatePurchaseOrder = () => {
     {
       id: 'purchase_order_unit_price',
       label: 'Unit Price',
+      type: 'number',
       onChange: handleInputChange,
       value: formValues.purchase_order_unit_price,
       error: !isNumber(formValues.purchase_order_unit_price),

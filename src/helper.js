@@ -159,7 +159,8 @@ export const valueFormatter = (value, property) => {
   if (property === 'contact') return value;
   if (property.includes('total') ||
   property.includes('price') ||
-  property.includes('amount')
+  property.includes('amount') ||
+  property.includes('additional_expenses')
   ) return rupiahFormatter(value);
 
   return value;

@@ -30,12 +30,12 @@ const defaultValues = {
 
 const CreateSales = () => {
   const dispatch = useDispatch();
-  const ProductState = useSelector((state) => state.Product);
   const SalesState = useSelector((state) => state.Sales);
   const InvoiceState = useSelector((state) => state.Invoice);
+  const ProductState = useSelector((state) => state.Product);
   const AppState = useSelector((state) => state.AppState);
-  const ProductStateData = ProductState.data?.data ?? [];
   const InvoiceStateData = InvoiceState.data?.data ?? [];
+  const ProductStateData = ProductState.data?.data ?? [];
   const UserData = AppState.userData;
   const [formValues, setFormValues] = useState(defaultValues);
   const [mount, setmount] = useState(false);
@@ -50,7 +50,7 @@ const CreateSales = () => {
   ]);
 
   useEffect(() => {
-    if (!mount && !ProductStateData.length) {
+    if (!mount && ProductStateData.length < 1) {
       initProduct();
       setmount(true);
     }

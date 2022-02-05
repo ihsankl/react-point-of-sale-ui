@@ -64,8 +64,8 @@ const UpdateSales = () => {
     } else {
       navigate(-1);
     }
-    if (!mount) {
-      initProduct();
+    if (!mount && ProductStateData.length < 1 || InvoiceStateData.length < 1) {
+      initProductAndInvoice();
       setmount(true);
     }
     return () => {
@@ -73,8 +73,9 @@ const UpdateSales = () => {
     };
   }, [mount]);
 
-  const initProduct = async () => {
+  const initProductAndInvoice = async () => {
     await dispatch(getProduct()).unwrap();
+    await dispatch(getInvoice()).unwrap();
   };
 
   useEffect(() => {
@@ -82,8 +83,7 @@ const UpdateSales = () => {
       dispatch(setSuccess());
       dispatch(unsetMountPage('sales'));
       dispatch(unsetMountPage('invoice'));
-      dispatch(getInvoice());
-      dispatch(getProduct());
+      initProductAndInvoice();
       setTimeout(() => {
         dispatch(clearSuccess());
       }, 5000);
@@ -119,6 +119,7 @@ const UpdateSales = () => {
       id: 'sales_qty',
       label: 'Quantity',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.sales_qty,
       error: !isNumber(formValues.sales_qty),
       helperText: !isNumber(formValues.sales_qty) ?
@@ -128,6 +129,7 @@ const UpdateSales = () => {
       id: 'sales_unit_price',
       label: 'Unit Price',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.sales_unit_price,
       error: !isNumber(formValues.sales_unit_price),
       helperText: !isNumber(formValues.sales_unit_price) ?
@@ -137,6 +139,7 @@ const UpdateSales = () => {
       id: 'sales_sub_total',
       label: 'Sub Total',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.sales_sub_total,
       error: !isNumber(formValues.sales_sub_total),
       helperText: !isNumber(formValues.sales_sub_total) ?

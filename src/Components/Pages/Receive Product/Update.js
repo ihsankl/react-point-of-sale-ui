@@ -36,6 +36,7 @@ const defaultValues = {
   receive_product_user_id: 1,
   receive_product_supplier_id: '',
   receive_product_additional_expenses: '',
+  receive_product_unit_id: '',
 };
 
 const UpdateReceiveProduct = () => {
@@ -47,12 +48,15 @@ const UpdateReceiveProduct = () => {
   const navigate = useNavigate();
   const Supplier = useSelector((x) => x.Supplier);
   const Product = useSelector((x) => x.Product);
+  const ProductUnit = useSelector((x) => x.ProductUnit);
   const AppState = useSelector((x) => x.AppState);
   const SupplierData = Supplier.data?.data ?? [];
   const ProductData = Product.data?.data ?? [];
+  const ProductUnitData = ProductUnit.data?.data ?? [];
   const UserData = AppState.userData;
   const [supplierValue, setSupplierValue] = useState('');
   const [productValue, setProductValue] = useState('');
+  const [productUnitValue, setProductUnitValue] = useState('');
 
   useEffect(() => {
     if (!!state) {
@@ -66,18 +70,22 @@ const UpdateReceiveProduct = () => {
         receive_product_user_id: state.data[0].user_id,
         receive_product_supplier_id: state.data[0].supplier_id,
         receive_product_additional_expenses: state.data[0].additional_expenses,
+        receive_product_unit_id: state.data[0].unit_id,
       };
       // eslint-disable-next-line max-len
       const findSupplier = SupplierData.find((x) => x.id === data.receive_product_supplier_id);
       // eslint-disable-next-line max-len
       const findProduct = ProductData.find((x) => x.id === data.receive_product_product_id);
+      // eslint-disable-next-line max-len
+      const findUnit = ProductUnitData.find((x) => x.id === data.receive_product_unit_id);
       setProductValue(findProduct?.name ?? '');
       setSupplierValue(findSupplier?.name ?? '');
+      setProductUnitValue(findUnit?.name ?? '');
       setFormValues(data);
     } else {
       navigate(-1);
     }
-    if (!mount) {
+    if (!mount && ProductData.length < 1 || SupplierData.length < 1) {
       getProductAndSupplier();
       setmount(true);
     }
@@ -126,6 +134,7 @@ const UpdateReceiveProduct = () => {
       id: 'receive_product_qty',
       label: 'Quantity',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.receive_product_qty,
       error: !isNumber(formValues.receive_product_qty),
       helperText: !!formValues.receive_product_qty ?
@@ -135,6 +144,7 @@ const UpdateReceiveProduct = () => {
       id: 'receive_product_sub_total',
       label: 'Sub Total',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.receive_product_sub_total,
       error: !isNumber(formValues.receive_product_sub_total),
       helperText: !!formValues.receive_product_sub_total ?
@@ -144,12 +154,14 @@ const UpdateReceiveProduct = () => {
       id: 'receive_product_additional_expenses',
       label: 'Additional Expenses',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.receive_product_additional_expenses,
     },
     {
       id: 'receive_product_unit_price',
       label: 'Unit Price',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.receive_product_unit_price,
       error: !isNumber(formValues.receive_product_unit_price),
       helperText: !!formValues.receive_product_unit_price ?
@@ -170,6 +182,8 @@ const UpdateReceiveProduct = () => {
       product_id: formValues.receive_product_product_id,
       user_id: UserData.id,
       supplier_id: formValues.receive_product_supplier_id,
+      additional_expenses: formValues.receive_product_additional_expenses,
+      unit_id: formValues.receive_product_unit_id,
     };
     dispatch(updateReceiveProduct(data));
   };
@@ -259,6 +273,31 @@ const UpdateReceiveProduct = () => {
               {!formValues.receive_product_product_id &&
                 <FormHelperText error={!formValues.receive_product_product_id}>
                   Product is Required
+                </FormHelperText>
+              }
+            </FormControlContainer>
+            <FormControlContainer>
+              <Autocomplete
+                value={productUnitValue}
+                onChange={(event, newValue) => {
+                  const value = {...formValues};
+                  value.receive_product_unit_id = newValue?.id;
+                  setProductUnitValue(newValue?.name);
+                  setFormValues(value);
+                }}
+                name="receive_product_unit_id"
+                id="receive_product_unit_id_label"
+                options={ProductUnitData.map((item) => {
+                  return {
+                    ...item, label: `${item.name}`,
+                  };
+                })}
+                // eslint-disable-next-line max-len
+                renderInput={(params) => <TextField error={!formValues.receive_product_unit_id} {...params} label="Product Unit" />}
+              />
+              {!formValues.receive_product_unit_id &&
+                <FormHelperText error={!formValues.receive_product_unit_id}>
+                  Product Unit is required
                 </FormHelperText>
               }
             </FormControlContainer>

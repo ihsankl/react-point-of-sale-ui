@@ -33,6 +33,7 @@ const Products = ({
             error={!isNumber(value.qty)}
             name="qty"
             label="Quantity"
+            type="number"
             variant="outlined"
             fullWidth
             value={value.qty}
@@ -49,6 +50,7 @@ const Products = ({
             error={!isNumber(value.unit_price)}
             name="unit_price"
             label="Unit Price"
+            type="number"
             variant="outlined"
             fullWidth
             value={value.unit_price}
@@ -65,6 +67,7 @@ const Products = ({
             error={!isNumber(value.sub_total)}
             name="sub_total"
             label="Sub Total"
+            type="number"
             variant="outlined"
             fullWidth
             value={value.sub_total}

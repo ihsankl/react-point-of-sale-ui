@@ -113,6 +113,7 @@ const UpdatePurchaseOrder = () => {
       id: 'purchase_order_qty',
       label: 'Quantity',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.purchase_order_qty,
       error: !formValues.purchase_order_qty,
       helperText: !!formValues.purchase_order_qty ? '' : 'Quantity is required',
@@ -121,6 +122,7 @@ const UpdatePurchaseOrder = () => {
       id: 'purchase_order_sub_total',
       label: 'Sub Total',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.purchase_order_sub_total,
       error: !formValues.purchase_order_sub_total,
       helperText: !!formValues.purchase_order_sub_total ?
@@ -130,6 +132,7 @@ const UpdatePurchaseOrder = () => {
       id: 'purchase_order_unit_price',
       label: 'Unit Price',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.purchase_order_unit_price,
       error: !formValues.purchase_order_unit_price,
       helperText: !!formValues.purchase_order_unit_price ?

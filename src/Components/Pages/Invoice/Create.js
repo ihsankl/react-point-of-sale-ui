@@ -78,6 +78,7 @@ const CreateInvoice = () => {
       id: 'invoice_total_amount',
       label: 'Total Amount',
       onChange: handleInputChange,
+      type: 'number',
       value: formValues.invoice_total_amount,
       error: !isNumber(formValues.invoice_total_amount),
       helperText: isNumber(formValues.invoice_total_amount) ?
@@ -86,6 +87,7 @@ const CreateInvoice = () => {
     {
       id: 'invoice_amount_tendered',
       label: 'Amount Tendered',
+      type: 'number',
       onChange: handleInputChange,
       value: formValues.invoice_amount_tendered,
     },
