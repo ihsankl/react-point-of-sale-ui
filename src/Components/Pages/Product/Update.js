@@ -32,6 +32,7 @@ const defaultValues = {
   product_unit_id: '',
   product_category_id: '',
   product_distributor_price: '',
+  product_capital_price: '',
 };
 
 const UpdateProduct = () => {
@@ -64,6 +65,7 @@ const UpdateProduct = () => {
         product_category_id: state.data[0].category_id,
         product_user_id: state.data[0].user_id,
         product_distributor_price: state.data[0].distributor_price,
+        product_capital_price: state.data[0].capital_price,
       };
       // eslint-disable-next-line max-len
       const findUnit = ProductUnitData.find((unit) => unit.id === data.product_unit_id);
@@ -102,6 +104,7 @@ const UpdateProduct = () => {
       category_id: formValues.product_category_id,
       user_id: UserData.id,
       distributor_price: formValues.product_distributor_price,
+      capital_price: formValues.product_capital_price,
     };
     dispatch(updateProduct(data));
   };
@@ -186,6 +189,18 @@ const UpdateProduct = () => {
       // eslint-disable-next-line max-len
       helperText: isNumber(formValues.product_unit_price) || formValues.product_unit_price === 0?
       '' : 'Unit Price must be a number',
+    },
+    {
+      id: 'product_capital_price',
+      label: 'Capital Price',
+      type: 'number',
+      onChange: handleInputChange,
+      value: formValues.product_capital_price,
+      error: !isNumber(formValues.product_capital_price),
+      type: 'number',
+      // eslint-disable-next-line max-len
+      helperText: isNumber(formValues.product_capital_price) || formValues.product_capital_price === 0?
+      '' : 'Capital Price must be a number',
     },
     {
       id: 'product_re_order_level',

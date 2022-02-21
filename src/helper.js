@@ -1,7 +1,7 @@
 import {DeleteOutline, Edit} from '@mui/icons-material';
 import {Box, IconButton} from '@mui/material';
 import dayjs from 'dayjs';
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import {renderCellExpand} from './Components/GridCellExpand';
 /**
  * replace _ with space
@@ -113,7 +113,7 @@ export const columnsBuilder = (data, editCb, deleteCb) => {
         minWidth: 100,
         flex: 1,
         // hide every column containing id
-        hide: property.includes('id') ? true : false,
+        hide: columnHidden(property),
         valueGetter: (params)=> valueFormatter(params.row[property], property),
         renderCell: renderCellExpand,
       });
@@ -154,7 +154,16 @@ export const columnsBuilder = (data, editCb, deleteCb) => {
   return columnsArr;
 };
 
-export const valueFormatter = (value, property) => {
+const columnHidden = (property) => {
+  if (property.includes('id')) return true;
+  if (property.includes('re_order_level')) return true;
+  if (property.includes('disc_percentage')) return true;
+  if (property.includes('customer')) return true;
+  return false;
+};
+
+
+const valueFormatter = (value, property) => {
   if (property.includes('date')) return dayjs(value).format('DD MMM, YYYY');
   if (property === 'contact') return value;
   if (property.includes('total') ||
@@ -242,3 +251,28 @@ export const uncapitalize = (str) => {
   // eslint-disable-next-line max-len
   return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toLowerCase() + txt.substr(1).toLowerCase()).replace(/\s/g, '');
 };
+
+/**
+ * useInterval custom hook
+ * @param {object} callback callback of the hook.
+ * @param {function} delay delay of interval.
+ */
+export function useInterval(callback, delay) {
+  const savedCallback = useRef();
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    const tick = () => {
+      savedCallback.current();
+    };
+    if (delay !== null) {
+      const id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}

@@ -85,9 +85,6 @@ const Invoice = () => {
             columnsBuilder(InvoiceData[0], handleUpdate, handleDelete)
           }
         />
-        <Button onClick={() => initInvoice()}>
-          Refresh
-        </Button>
       </PaperContainer>
       <ConfirmDialog
         onConfirm={() => {

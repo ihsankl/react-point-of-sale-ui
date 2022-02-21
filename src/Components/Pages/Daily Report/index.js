@@ -44,6 +44,7 @@ const DailyReport = () => {
   const [data, setData] = useState([]);
   const [pageSize, setPageSize] = useState(20);
   const [loading, setLoading] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [total, setTotal] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [date, setDate] = useState(new Date());
@@ -97,7 +98,7 @@ const DailyReport = () => {
               justifyContent: 'center',
               alignItems: 'center',
               width: '100%',
-              height: '500px',
+              minHeight: '500px',
             }}
           >
             <CircularProgress sx={{width: '100%', height: '100%'}} />
@@ -107,7 +108,6 @@ const DailyReport = () => {
           sx={{
             minHeight: '800px',
             maxHeight: '1000px',
-            height: 'calc(100vh - 200px)',
             paddingTop: '1em',
           }}
         >
@@ -160,7 +160,7 @@ const DailyReport = () => {
             </LocalizationProvider>
           </FormControlContainer>
           <DataGrid
-            sx={{minWidth: '500px'}}
+            sx={{minWidth: '500px', minHeight: '500px'}}
             components={{Toolbar: GridToolbar}}
             rows={data}
             columns={columns}
@@ -174,10 +174,10 @@ const DailyReport = () => {
               console.log(row); console.log('onRowEditCommit');
             }}
           />
+          <h2>Total: {rupiahFormatter(total)}</h2>
+
         </Box>
         )}
-        <h2>Total: {rupiahFormatter(total)}</h2>
-        {/* eslint-disable-next-line max-len */}
       </PaperContainer>
     </>
   );

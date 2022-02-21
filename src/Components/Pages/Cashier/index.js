@@ -1,6 +1,11 @@
 /* eslint-disable camelcase */
-import {Delete, Print} from '@mui/icons-material';
 import {
+  Delete as DeleteIcon,
+  Loop as LoopIcon,
+  Print as PrintIcon,
+} from '@mui/icons-material';
+import {
+  Autocomplete,
   Box,
   Button,
   IconButton,
@@ -25,17 +30,24 @@ import {
   removeItem,
   upItem,
 } from '../../../Redux/Slicer/Cashier';
-import {rupiahFormatter} from '../../../helper';
-import {clearSuccess, createSales} from '../../../Redux/Slicer/Sales';
+import {headersBuilder, rupiahFormatter} from '../../../helper';
+import {
+  clearSuccess as clearSales,
+  createSales,
+} from '../../../Redux/Slicer/Sales';
 import {getProduct} from '../../../Redux/Slicer/Product';
 import {fetchUserByName} from '../../../Redux/Slicer/User';
 import EditCart from './EditCart';
+import axios from 'axios';
+import dayjs from 'dayjs';
+import {setSuccess, unsetSuccess} from '../../../Redux/Slicer/AppState';
 
 const Cashier = () => {
   const [pageSize, setPageSize] = useState(20);
-  const [mountedWithToken, setMountedWithToken] = useState(false);
   const [paid, setPaid] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const [code, setCode] = useState('');
+  const [codeLabel, setCodeLabel] = useState('');
   const barcodeRef = useRef(null);
   const paidRef = useRef(null);
   const dispatch = useDispatch();
@@ -52,7 +64,7 @@ const Cashier = () => {
 
   // quick move to scan field
   useKeyboardShortcut(['Control', 'S'],
-      () => barcodeRef.current.focus(),
+      () => barcodeRef.current?.focus(),
       {overrideSystem: true});
 
   // quick move to paid field
@@ -62,23 +74,23 @@ const Cashier = () => {
 
   // print receipt
   useKeyboardShortcut(['Control', 'D'],
-      () => handlePrint(),
+      () => handleInputSales(),
       {overrideSystem: true});
 
   useEffect(() => {
-    barcodeRef.current.focus();
+    barcodeRef.current?.focus();
 
     if (SalesState.isSuccess) {
+      handlePrint();
       dispatch(clearItems());
-      dispatch(clearSuccess());
+      dispatch(clearSales());
       initProduct();
       setPaid('');
       setCode('');
     }
 
-    if (!!auth && !mountedWithToken) {
+    if (!!auth) {
       initProduct();
-      setMountedWithToken(true);
       const data = {username};
       dispatch(fetchUserByName(data));
     }
@@ -89,7 +101,6 @@ const Cashier = () => {
   }, [
     SalesState,
     auth,
-    mountedWithToken,
   ]);
 
   const initProduct = async () => {
@@ -98,7 +109,6 @@ const Cashier = () => {
 
   // handle scan
   const handleScan = (e) => {
-    const code = e.target.value;
     // if pressed enter
     if (e.key === 'Enter') {
       const product = ProductData.find((item) => item.code === code);
@@ -132,8 +142,9 @@ const Cashier = () => {
           }
         }
       }
-      setCode('');
     }
+    setCodeLabel('');
+    setCode('');
   };
   // handle remove item
   const handleRemove = (row) => {
@@ -226,7 +237,7 @@ const Cashier = () => {
               onClick={() => handleRemove(CashierData.indexOf(params.row))}
               color="inherit"
             >
-              <Delete />
+              <DeleteIcon />
             </IconButton>
           </Box>
         );
@@ -237,14 +248,13 @@ const Cashier = () => {
   // sum up the total
   // unit_price * sub_total
   const total = CashierData.reduce((acc, item) => {
-    return acc + (item.sub_total);
+    return parseInt(acc) + (parseInt(item.sub_total));
   }, 0);
 
   // count change
-  const change = paid - total;
+  const change = parseInt(paid) - parseInt(total);
 
-  // print receipt
-  const handlePrint = () => {
+  const handleInputSales = () => {
     const tempPaid = paid ?? 0;
     if (CashierData.length > 0 && tempPaid > 0) {
       const data = {
@@ -254,6 +264,33 @@ const Cashier = () => {
       };
       dispatch(createSales(data));
       initProduct();
+    }
+  };
+
+  const handlePrint = async () => {
+    const data = {
+      products: CashierData,
+      receipt_id: '#1',
+      operator: UserData?.username,
+      date: dayjs().format('DD/MM/YYYY'),
+      total: total,
+      change: change,
+      paid: paid,
+    };
+    try {
+      // eslint-disable-next-line max-len
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/sales/print`, data, {
+        ...headersBuilder(),
+      });
+      if (res) {
+        dispatch(setSuccess());
+        setTimeout(() => {
+          dispatch(unsetSuccess());
+        }, 3000);
+      }
+    } catch (error) {
+      // TODO: handle error
+      console.log(error.message);
     }
   };
 
@@ -276,9 +313,17 @@ const Cashier = () => {
               }}
               onSubmit={(e) => e.preventDefault()}
             >
-              <FormControlContainer sx={{width: '100%'}}>
+              <FormControlContainer
+                sx={{
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: '.3em',
+                }}
+              >
                 <TextField
                   label="Barcode"
+                  sx={{flex: 1}}
                   variant="outlined"
                   fullWidth
                   inputRef={barcodeRef}
@@ -286,6 +331,36 @@ const Cashier = () => {
                   value={code}
                   onKeyDown={handleScan}
                 />
+                <Autocomplete
+                  sx={{
+                    flex: 1,
+                  }}
+                  value={codeLabel}
+                  onChange={(event, newValue) => {
+                    setCodeLabel(newValue);
+                    setCode(newValue?.code);
+                  }}
+                  onKeyDown={handleScan}
+                  options={ProductData.map((item) => {
+                    return {
+                      label: `${item.code} - ${item.name}`,
+                      code: item.code,
+                    };
+                  })}
+                  renderInput={(params) =>
+                    <TextField
+                      label="Name"
+                      {...params}
+                    />
+                  }
+                />
+                <Button
+                  onClick={()=> dispatch(getProduct())}
+                  variant='outlined'
+                  aria-label="delete"
+                >
+                  <LoopIcon />
+                </Button>
               </FormControlContainer>
             </FormContainer>
             <DataGrid
@@ -344,9 +419,9 @@ const Cashier = () => {
               >
                 <Button
                   disabled={CashierData.length === 0 || !paid || paid < total}
-                  onClick={handlePrint}
+                  onClick={handleInputSales}
                   variant="contained"
-                  startIcon={<Print />}
+                  startIcon={<PrintIcon />}
                   sx={{
                     px: '2em',
                     py: '1em',
@@ -357,8 +432,8 @@ const Cashier = () => {
               </Box>
             </Box>
           </Box>
-          <Box sx={{flex: 1}}>
-          </Box>
+          {/* eslint-disable-next-line max-len */}
+          <Box sx={{flex: 1}}/>
         </Box>
       </PaperContainer>
     </>

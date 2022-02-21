@@ -1,6 +1,7 @@
 // /* eslint-disable */
 import {
   Autocomplete,
+  Button,
   FormHelperText,
   TextField,
 } from '@mui/material';
@@ -20,6 +21,8 @@ import {isNumber} from '../../../helper';
 import {getProductUnit} from '../../../Redux/Slicer/Product Unit';
 import {getAllCategory} from '../../../Redux/Slicer/Category';
 import {setSuccess, unsetMountPage} from '../../../Redux/Slicer/AppState';
+import {Box} from '@mui/system';
+import {Loop} from '@mui/icons-material';
 
 const defaultValues = {
   product_code: '',
@@ -31,6 +34,7 @@ const defaultValues = {
   product_unit_id: '',
   product_category_id: '',
   product_distributor_price: '',
+  product_capital_price: '',
 };
 
 const CreateProduct = () => {
@@ -82,6 +86,7 @@ const CreateProduct = () => {
       category_id: formValues.product_category_id,
       user_id: UserData.id,
       distributor_price: formValues.product_distributor_price,
+      capital_price: formValues.product_capital_price,
     };
     dispatch(createProduct(data));
   };
@@ -146,6 +151,16 @@ const CreateProduct = () => {
       '' : 'Unit Price must be a number',
     },
     {
+      id: 'product_capital_price',
+      label: 'Capital Price',
+      type: 'number',
+      onChange: handleInputChange,
+      value: formValues.product_capital_price,
+      error: !isNumber(formValues.product_capital_price),
+      helperText: isNumber(formValues.product_capital_price) ?
+      '' : 'Capital Price must be a number',
+    },
+    {
       id: 'product_distributor_price',
       label: 'Distributor Price',
       type: 'number',
@@ -167,24 +182,38 @@ const CreateProduct = () => {
         <SubHeader>
           <BasicInput fields={fields} onSubmit={handleSubmit}>
             <FormControlContainer>
-              <Autocomplete
-                value={productUnitValue}
-                onChange={(event, newValue) => {
-                  const value = {...formValues};
-                  value.product_unit_id = newValue?.id;
-                  setProductUnitValue(newValue?.name);
-                  setFormValues(value);
+              <Box
+                sx={{
+                  display: 'flex',
+                  gap: '1em',
+                  width: '100%',
                 }}
-                name="product_unit_id"
-                id="product_unit_id_label"
-                options={ProductUnitData.map((item) => {
-                  return {
-                    ...item, label: `${item.name}`,
-                  };
-                })}
-                // eslint-disable-next-line max-len
-                renderInput={(params) => <TextField error={!formValues.product_unit_id} {...params} label="Product Unit" />}
-              />
+              >
+                <Autocomplete
+                  sx={{flex: 1}}
+                  value={productUnitValue}
+                  onChange={(event, newValue) => {
+                    const value = {...formValues};
+                    value.product_unit_id = newValue?.id;
+                    setProductUnitValue(newValue?.name);
+                    setFormValues(value);
+                  }}
+                  name="product_unit_id"
+                  id="product_unit_id_label"
+                  options={ProductUnitData.map((item) => {
+                    return {
+                      ...item, label: `${item.name}`,
+                    };
+                  })}
+                  // eslint-disable-next-line max-len
+                  renderInput={(params) => <TextField error={!formValues.product_unit_id} {...params} label="Product Unit" />}
+                />
+                <Button
+                  variant="outlined"
+                  startIcon={<Loop />}
+                  onClick={() => dispatch(getProductUnit())}
+                />
+              </Box>
               {!formValues.product_unit_id &&
                 <FormHelperText error={!formValues.product_unit_id}>
                   Product Unit is required
